@@ -1,2 +1,4 @@
 /biggan-deep-512
 /notebooks/outputs/*
+back_end/*.jpg
+back_end/*.png
