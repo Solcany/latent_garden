@@ -1,0 +1,83 @@
+[gd_scene load_steps=3 format=2]
+
+[ext_resource path="res://Tile.tscn" type="PackedScene" id=1]
+[ext_resource path="res://portal.tscn" type="PackedScene" id=2]
+
+[node name="Level" type="Node2D"]
+
+[node name="portal" parent="." instance=ExtResource( 2 )]
+position = Vector2( 411.457, 294.942 )
+
+[node name="tiles" type="Node2D" parent="."]
+
+[node name="tile" parent="tiles" instance=ExtResource( 1 )]
+position = Vector2( 32.1865, 566.279 )
+
+[node name="tile2" parent="tiles" instance=ExtResource( 1 )]
+position = Vector2( 94.7094, 498.482 )
+
+[node name="tile3" parent="tiles" instance=ExtResource( 1 )]
+position = Vector2( 157.232, 498.482 )
+
+[node name="tile4" parent="tiles" instance=ExtResource( 1 )]
+position = Vector2( 220.789, 566.279 )
+
+[node name="tile5" parent="tiles" instance=ExtResource( 1 )]
+position = Vector2( 284.862, 566.279 )
+
+[node name="tile6" parent="tiles" instance=ExtResource( 1 )]
+position = Vector2( 348.935, 566.279 )
+
+[node name="tile17" parent="tiles" instance=ExtResource( 1 )]
+position = Vector2( 348.935, 358.558 )
+
+[node name="tile18" parent="tiles" instance=ExtResource( 1 )]
+position = Vector2( 411.457, 358.558 )
+
+[node name="tile19" parent="tiles" instance=ExtResource( 1 )]
+position = Vector2( 475.53, 358.558 )
+
+[node name="tile20" parent="tiles" instance=ExtResource( 1 )]
+position = Vector2( 539.087, 506.463 )
+
+[node name="tile21" parent="tiles" instance=ExtResource( 1 )]
+position = Vector2( 603.16, 506.463 )
+
+[node name="tile22" parent="tiles" instance=ExtResource( 1 )]
+position = Vector2( 667.233, 506.463 )
+
+[node name="tile23" parent="tiles" instance=ExtResource( 1 )]
+position = Vector2( 731.306, 513.869 )
+
+[node name="tile24" parent="tiles" instance=ExtResource( 1 )]
+position = Vector2( 794.345, 421.598 )
+
+[node name="tile7" parent="tiles" instance=ExtResource( 1 )]
+position = Vector2( 411.457, 566.279 )
+
+[node name="tile8" parent="tiles" instance=ExtResource( 1 )]
+position = Vector2( 475.53, 566.279 )
+
+[node name="tile9" parent="tiles" instance=ExtResource( 1 )]
+position = Vector2( 539.087, 566.279 )
+
+[node name="tile10" parent="tiles" instance=ExtResource( 1 )]
+position = Vector2( 603.16, 566.279 )
+
+[node name="tile11" parent="tiles" instance=ExtResource( 1 )]
+position = Vector2( 667.233, 566.279 )
+
+[node name="tile12" parent="tiles" instance=ExtResource( 1 )]
+position = Vector2( 731.306, 566.279 )
+
+[node name="tile13" parent="tiles" instance=ExtResource( 1 )]
+position = Vector2( 794.345, 566.279 )
+
+[node name="tile14" parent="tiles" instance=ExtResource( 1 )]
+position = Vector2( 858.418, 566.279 )
+
+[node name="tile15" parent="tiles" instance=ExtResource( 1 )]
+position = Vector2( 922.491, 566.279 )
+
+[node name="tile16" parent="tiles" instance=ExtResource( 1 )]
+position = Vector2( 986.564, 566.279 )
