@@ -92,26 +92,32 @@ func _ready():
 	bounding_box.x2 = float(bounding_box.x2)
 	bounding_box.y2 = float(bounding_box.y2)
 	
-	# get points from data array
-	var points : Array = []
-	for val in data.data:
-		var x : float = float(val.z_2d[0])
-		var y : float = float(val.z_2d[1])
-		var point : Vector2 = Vector2(x,y)
-		points.append(point)
-	# remap all points to arbitrary domain		
-	var remapped_points : Array = remap_points(points, bounding_box, DOMAIN_WIDTH)
+	# remap points of all generations into arbitrary domain	
+	var remapped_points : Array = []
+	for generation_data in data.data:
+		var points : Array = []
+		for v in generation_data:
+			var x : float = float(v.data.z_2d[0])
+			var y : float = float(v.data.z_2d[1])
+			var point : Vector2 = Vector2(x,y)
+			points.append(point)
+		remapped_points.append(remap_points(points, bounding_box, DOMAIN_WIDTH))
 	
 	# merge all image data into dict
-	#var img_data : Array = []
-	for i in range(remapped_points.size()):
-		var point : Vector2 = remapped_points[i]
-		var img_name : String = data.data[i].img_idx
-		var dict : Dictionary = {"pos" : point, "name" : img_name}
-		IMAGES_DATA.append(dict)
-		
-	# show images
-	#load_and_show_images(IMAGES_PATH, img_format, img_data)
+	var n_classes : int = data.data.size()
+	var n_points : int = remapped_points[0].size()
+	for c_i in range(n_classes):
+		var generation_data : Dictionary = data.data[c_i]
+		var generation_points : Array = remapped_points[c_i]
+		var generation : Array
+		for i in range(n_points):
+			var point : Vector2 = generation_points[i]
+			var img_name : String = generation_data[i].data.img_idx
+			generation.append({"pos" : point, "name" : img_name})
+		IMAGES_DATA.append(generation)
+			
+		# show images
+		#load_and_show_images(IMAGES_PATH, img_format, img_data)
 
 func _draw():
 	debug_show_points(IMAGES_DATA)
