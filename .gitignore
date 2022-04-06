@@ -1,4 +1,11 @@
-/back_end/biggan/notebooks/outputs/*
+back_end/biggan/notebooks/outputs/*
 .DS_store
-/front_end/latent_garden_godot/.import/*
-/back_end/biggan/pretrained/*
+front_end/latent_garden_godot/.import/*
+back_end/biggan/pretrained/*
+front_end/latent_garden_godot/Data/*.jpg
+front_end/latent_garden_godot/Data/*.png
+front_end/latent_garden_godot/Data/*/*.png
+front_end/latent_garden_godot/Data/*/*.jpg
+front_end/latent_garden_godot/Data/*/*/*.png
+front_end/latent_garden_godot/Data/*/*/*.jpg
+*.import

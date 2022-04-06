@@ -1,11 +1,11 @@
 extends Node2D
 
-const IMAGES_PATH = "res://Data/images/"
-const DATA_PATH = "res://Data/data.json"
-const DOMAIN_WIDTH = 300
-const IMAGE_WIDHT_SCALAR = 0.1
-
+const IMAGES_PATH_ROOT : String = "res://Data/images/"
+const DATA_PATH : String = "res://Data/data.json"
+const DOMAIN_WIDTH : int = 300
+const IMAGE_WIDHT_SCALAR : float= 0.1
 var IMAGES_DATA : Array = []
+var IMAGE_FORMAT : String
 
 
 func cond(v) -> bool:
@@ -65,28 +65,37 @@ func remap_points(points : Array, b_box_2d : Dictionary, new_dim: int)->Array:
 		new_points.append(new_point)
 	return new_points
 
-func load_and_show_images(images_path : String, image_format : String, images_data : Array) -> void:
-	for image_data in images_data:
+func load_and_show_images(images_root_path : String, image_format : String, images_data : Dictionary) -> void:
+	var points = images_data.points
+	var label = images_data.label
+	
+	var images = Node2D.new()
+	images.set_name("images");
+	
+	for datapoint in points:
 		var sprite : Sprite = Sprite.new() 
 		var node : Node2D = Node2D.new()
-		var path = images_path + image_data.name + "." + image_format
+		var path = images_root_path + label + "/"+ datapoint.name + "." + image_format
 		var tex : Texture = load(path)
 		sprite.set_texture(tex)
 		sprite.scale = Vector2(IMAGE_WIDHT_SCALAR, IMAGE_WIDHT_SCALAR)
-		node.set_position(image_data.pos)      
+		node.set_position(datapoint.pos)      
 		node.add_child(sprite)
-		add_child(node)	  
+		images.add_child(node)
+	self.add_child(images)  
 		
-func debug_show_points(images_data : Array) -> void:
+func debug_show_points(images_data : Dictionary) -> void:
+	var points = images_data.points
 	var color : Color = Color(1.0, 0.0, 0.0)
-	for image_data in images_data:
-		draw_circle(image_data.pos, 1.0, color)
+	for datapoint in points:
+		draw_circle(datapoint.pos, 1.0, color)
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	var data : Dictionary = load_data(DATA_PATH)
-	var img_format : String = data["meta"].img_format
-	var bounding_box : Dictionary = data["meta"].bounding_box_2d
+	IMAGE_FORMAT = data.meta.img_format
+	var bounding_box : Dictionary = data.meta.bounding_box_2d
+	var n_generations : int = data.data.size()
 	bounding_box.x1 = float(bounding_box.x1)
 	bounding_box.y1 = float(bounding_box.y1)
 	bounding_box.x2 = float(bounding_box.x2)
@@ -94,33 +103,59 @@ func _ready():
 	
 	# remap points of all generations into arbitrary domain	
 	var remapped_points : Array = []
-	for generation_data in data.data:
-		var points : Array = []
-		for v in generation_data:
-			var x : float = float(v.data.z_2d[0])
-			var y : float = float(v.data.z_2d[1])
-			var point : Vector2 = Vector2(x,y)
-			points.append(point)
-		remapped_points.append(remap_points(points, bounding_box, DOMAIN_WIDTH))
 	
-	# merge all image data into dict
-	var n_classes : int = data.data.size()
+	for g_i in range(n_generations):
+		var gen_data = data.data[g_i].data
+		var points2d : Array = []
+		for datapoint in gen_data:
+			var x : float = float(datapoint.z_2d[0])
+			var y : float = float(datapoint.z_2d[1]) 
+			var point2d : Vector2 = Vector2(x,y)
+			points2d.append(point2d)
+		remapped_points.append(remap_points(points2d, bounding_box, DOMAIN_WIDTH))
+
+	# merge all image data into a new dict array
+	#
+	# images data shape (pseudo code):
+	# IMAGES_DATA = [ 
+	#					generation1 = { generation label = String,
+	#								    points = [{point2d = Vector2, image name= String}, 
+	#											  {point2d, image name},
+	#										     ...]}
+	#					generation2,
+	#					generation3,
+	#					...]
+	
 	var n_points : int = remapped_points[0].size()
-	for c_i in range(n_classes):
-		var generation_data : Dictionary = data.data[c_i]
-		var generation_points : Array = remapped_points[c_i]
-		var generation : Array
+	for g_i in range(n_generations):
+		var gen_data : Array = data.data[g_i].data
+		var gen_points2d : Array = remapped_points[g_i]
+		var gen_label : String = data.data[g_i].label
+		var new_datapoints : Array
 		for i in range(n_points):
-			var point : Vector2 = generation_points[i]
-			var img_name : String = generation_data[i].data.img_idx
-			generation.append({"pos" : point, "name" : img_name})
+			var point2d : Vector2 = gen_points2d[i]
+			var img_name : String = gen_data[i].img_name
+			new_datapoints.append({"pos" : point2d, "name" : img_name})
+		var generation : Dictionary = {"label": gen_label, 
+									   "points": new_datapoints}
 		IMAGES_DATA.append(generation)
-			
-		# show images
-		#load_and_show_images(IMAGES_PATH, img_format, img_data)
+		
+	# show images
+	#load_and_show_images(IMAGES_PATH_ROOT, img_format, IMAGES_DATA[2])
 
 func _draw():
-	debug_show_points(IMAGES_DATA)
-
+	debug_show_points(IMAGES_DATA[2])
+	load_and_show_images(IMAGES_PATH_ROOT, IMAGE_FORMAT, IMAGES_DATA[2])
+	print(get_tree())
 #func _process(delta):
 #	pass
+
+
+func _input(event):
+	if event.is_action_pressed("delete"):
+		self.get_node("images").queue_free()
+
+	#	for child in children:
+	#		print(len(children))
+	#		print(child)
+		#get_node("images").queue_free()
