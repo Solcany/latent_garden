@@ -102,23 +102,26 @@ func create_image_plane(pos : Vector3, texture : Texture, mesh_size : float)-> M
 	var centerZ : float = pos.z
 
 	meshInstance.translation = Vector3(centerX, centerY, centerZ)
-
 	return meshInstance
 
-
-func add_image_planes_to_scene(images_data : Array)-> void:
+func add_image_canvases_to_scene(images_data : Array)-> void:
+	var canvas_z_pos : float = 0
 	for i in range(images_data.size()):
 		var generation = images_data[i]
-#		var c_name : String = canvas_name_root + str(i)	
-#		var image_canvas = Node2D.new()
-#		image_canvas.set_name(c_name)
-#		image_canvas.visible = true
-#		image_canvas.set_position(Vector3(0,0,canvas_z_pos))
-#		canvas_z_pos += 100
+		var c_name : String = CANVAS_NAME_ROOT + str(i)	
+		var image_canvas = Spatial.new()
+		image_canvas.set_name(c_name)
+		image_canvas.visible = true
+		image_canvas.translate(Vector3(0,0,canvas_z_pos))
+		canvas_z_pos += 0.3
 		for datapoint in generation.datapoints:
-#			image_canvas.add_child(node)
 			var meshInstance : MeshInstance = create_image_plane(datapoint.pos, datapoint.texture, 0.1)
-			self.add_child(meshInstance) 
+			image_canvas.add_child(meshInstance) 
+		self.add_child(image_canvas)
+	print(self.get_children())
+	#get_node("image_canvas2")
+	#$image_canvas1.visible = true
+	
 	
 func debug_show_points(images_data : Dictionary) -> void:
 	pass
@@ -127,12 +130,6 @@ func debug_show_points(images_data : Dictionary) -> void:
 #	for datapoint in points:
 #		draw_circle(datapoint.pos, 1.0, color)
 
-
-
-#	$MeshInstance.mesh = tmpMesh
-
-
-# Called when the node enters the scene tree for the first time.
 func _ready():
 	var data : Dictionary = load_data(DATA_PATH)
 	IMAGE_FORMAT = data.meta.img_format
@@ -161,9 +158,9 @@ func _ready():
 	# each generation represents
 	# image_data = [ 
 	#					generation1 : Dictionary = { generation_label : String,
-	#								   				 points = [{point2d : Vector2, texture : Texture}, 
-	#											    		   {point2d, texture},
-	#														   {point2d, texture},
+	#								   				 points = [{point3d : Vector3, texture : Texture}, 
+	#											    		   {point3d, texture},
+	#														   {point3d, texture},
 	#										     				...]}
 	#					generation2,
 	#					generation3,
@@ -184,20 +181,14 @@ func _ready():
 									   "datapoints": new_datapoints}
 		IMAGES_DATA.append(generation)
 		
-	add_image_planes_to_scene(IMAGES_DATA)
+	add_image_canvases_to_scene(IMAGES_DATA)
 
 
 func _draw():
 	pass
 
-
 func _input(event):
 	if event.is_action_pressed("delete"):
-#		self.get_node("images").queue_free()
 		var children = self.get_children()
 		for child in children:
 			print(child)
-	#	for child in children:
-	#		print(len(children))
-	#		print(child)
-		#get_node("images").queue_free()

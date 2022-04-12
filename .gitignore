@@ -9,3 +9,4 @@ front_end/latent_garden_godot/Data/*/*.jpg
 front_end/latent_garden_godot/Data/*/*/*.png
 front_end/latent_garden_godot/Data/*/*/*.jpg
 *.import
+tmp/
