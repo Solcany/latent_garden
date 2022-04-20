@@ -7,7 +7,7 @@ const CANVAS_NAME_ROOT : String = "image_canvas"
 const IMAGE_WIDHT_SCALAR : float= 0.1
 var IMAGES_DATA : Array = []
 var IMAGE_FORMAT : String
-
+var IMAGE_CANVAS_SCENE = load("res://ImageCanvas.tscn")
 
 func cond(v) -> bool:
 	return v == 0
@@ -109,10 +109,12 @@ func add_image_canvases_to_scene(images_data : Array)-> void:
 	for i in range(images_data.size()):
 		var generation = images_data[i]
 		var c_name : String = CANVAS_NAME_ROOT + str(i)	
-		var image_canvas = Spatial.new()
+		var image_canvas = IMAGE_CANVAS_SCENE.instance()
 		image_canvas.set_name(c_name)
 		image_canvas.visible = true
 		image_canvas.translate(Vector3(0,0,canvas_z_pos))
+		var detector : Spatial = get_node("BodyEnteredDetector")
+		detector.connect("body_entered", image_canvas, "_on_BodyDetector_body_entered")
 		canvas_z_pos += 0.3
 		for datapoint in generation.datapoints:
 			var meshInstance : MeshInstance = create_image_plane(datapoint.pos, datapoint.texture, 0.1)
