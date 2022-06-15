@@ -21,9 +21,9 @@ func _ready():
 
 func _physics_process(delta):	
 	var overlaps : Array = get_overlapping_bodies()
-#	if !overlaps.empty():
+	if !overlaps.empty():
 #		emit_signal("player_entered");
-		#print("overlaps!")
+		print("overlaps!")
 		
 		
 #		for ov in overlaps:
