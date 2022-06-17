@@ -1,6 +1,6 @@
 [gd_scene load_steps=11 format=2]
 
-[ext_resource path="res://latentWalker3d.gd" type="Script" id=1]
+[ext_resource path="res://spawn_player_detectors.gd" type="Script" id=1]
 [ext_resource path="res://fps_camera.gd" type="Script" id=2]
 [ext_resource path="res://floor_3d.gd" type="Script" id=3]
 
@@ -28,6 +28,7 @@ script = ExtResource( 1 )
 
 [node name="BodyEnteredDetector" type="Area" parent="."]
 transform = Transform( 3, 0, 0, 0, 1, 0, 0, 0, 3, 0, -0.0496547, -0.337947 )
+visible = false
 script = ExtResource( 3 )
 
 [node name="CollisionShape" type="CollisionShape" parent="BodyEnteredDetector"]
@@ -52,15 +53,15 @@ move_in_xz = true
 [node name="cam" type="Camera" parent="3d_player"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0.0028494 )
 
-[node name="collider" type="RigidBody" parent="3d_player"]
+[node name="player_collider" type="RigidBody" parent="3d_player"]
 
-[node name="MeshInstance" type="MeshInstance" parent="3d_player/collider"]
+[node name="MeshInstance" type="MeshInstance" parent="3d_player/player_collider"]
 transform = Transform( 0.05, 0, 0, 0, -2.18557e-09, -0.05, 0, 0.05, -2.18557e-09, 0, 0.0191733, 0 )
 visible = false
 mesh = SubResource( 6 )
 material/0 = null
 
-[node name="CollisionShape" type="CollisionShape" parent="3d_player/collider"]
+[node name="CollisionShape" type="CollisionShape" parent="3d_player/player_collider"]
 transform = Transform( 0.05, 0, 0, 0, -2.18557e-09, -0.05, 0, 0.05, -2.18557e-09, 0, 0.0191733, 0 )
 shape = SubResource( 7 )
 

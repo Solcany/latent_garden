@@ -1,6 +1,7 @@
 extends Area
 
 
+
 # Declare member variables here. Examples:
 # var a = 2
 # var b = "text"
@@ -8,7 +9,8 @@ extends Area
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
-	pass # Replace with function body.
+	connect("body_entered", self, "_on_self_entered")
+	##pass # Replace with function body.
 
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -20,10 +22,12 @@ func _ready():
 
 
 func _physics_process(delta):	
-	var overlaps : Array = get_overlapping_bodies()
-	if !overlaps.empty():
+
+	pass
+	#var overlaps : Array = get_overlapping_bodies()
+#	if !overlaps.empty():
 #		emit_signal("player_entered");
-		print("overlaps!")
+#		print("overlaps!")
 		
 		
 #		for ov in overlaps:
@@ -33,4 +37,7 @@ func _physics_process(delta):
 #	elif(is_in_portal):
 #		is_in_portal = false
 #		emit_signal("player_left_portal")
-		
+
+func _on_self_entered(body):
+	print("Detector:" + self.name)	
+	print("body:" + body.name)
