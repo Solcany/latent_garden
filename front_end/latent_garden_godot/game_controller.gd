@@ -9,7 +9,17 @@ func _ready():
 	set_process_input(true)
 	
 func _input(event):
-	if event.is_action_pressed("inc_warp"): global_variables.warp += 0.01
-	if event.is_action_pressed("dec_warp"): global_variables.warp -= 0.01
-	if event.is_action_pressed("inc_origin"): global_variables.origin += 0.1
-	if event.is_action_pressed("dec_origin"): global_variables.origin -= 0.1
+	#if event.is_action_pressed("inc_room_scale"): global_variables.room_scale += global_variables.room_scalar
+	#if event.is_action_pressed("dec_room_scale"): global_variables.room_scale -= global_variables.room_scalar
+	if event is InputEventMouseButton:
+		if event.is_pressed():
+			if event.button_index == BUTTON_WHEEL_UP:
+				global_variables.room_scale_z += global_variables.room_scalar_z
+
+			if event.button_index == BUTTON_WHEEL_DOWN:
+				global_variables.room_scale_z -= global_variables.room_scalar_z
+				if(global_variables.room_scale_z < global_variables.init_room_scale_z): 
+					global_variables.room_scale_z = global_variables.init_room_scale_z
+
+
+

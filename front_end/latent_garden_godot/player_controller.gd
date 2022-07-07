@@ -7,7 +7,7 @@ enum KeyLayout {
 	ZDSQ_AE
 }
 
-export (KeyLayout) var key_layout:int = KeyLayout.ARROWS
+export (KeyLayout) var key_layout:int = KeyLayout.WASD_QE
 
 export (float,0,10) var view_sensitivity : float = 0.25
 export (float,0,10) var rotation_damping : float = 5
