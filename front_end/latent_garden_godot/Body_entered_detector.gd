@@ -15,22 +15,9 @@ func _ready():
 #func _process(delta):
 #	pass
 
-func _physics_process(delta):	
-	pass
-	#var overlaps : Array = get_overlapping_bodies()
-#	if !overlaps.empty():
-#		emit_signal("player_entered");
-#		print("overlaps!")
-		
-		
-#		for ov in overlaps:
-#			if(ov.kind && ov.kind == "Portal" && !is_in_portal):
-#				is_in_portal = true
-#				emit_signal("player_entered_portal")
-#	elif(is_in_portal):
-#		is_in_portal = false
-#		emit_signal("player_left_portal")
-
-#func _on_self_entered(body):
-#	print("Detector:" + self.name)	
-#	print("body:" + body.name)
+# Called every frame. 'delta' is the elapsed time since the previous frame.
+func _process(delta):
+		#cube.translation.z = (-global_variables.room_scale_z)
+		self.scale = Vector3(global_variables.init_room_scale_x,
+							global_variables.init_room_scale_y,
+							global_variables.room_scale_z)

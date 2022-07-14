@@ -1,9 +1,5 @@
 extends Spatial
-var is_player_in_room = false
-
-# Declare member variables here. Examples:
-# var a = 2
-# var b = "text"
+var is_player_in_room = true
 
 
 # Called when the node enters the scene tree for the first time.
@@ -13,19 +9,18 @@ func _ready():
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta):
-	print(is_player_in_room)
 	if is_player_in_room:
-		$RoomContainer.visible = true
+		$room_contents.visible = true
 	else:
-		$RoomContainer.visible = false
+		$room_contents.visible = false
 
 
 func _on_body_entered_room(body):
-	is_player_in_room = true
+	#is_player_in_room = true
 	print("room entered!")
 	
 func _on_body_exited_room(body):
-	is_player_in_room = false
+	#is_player_in_room = false
 	print("room exited!")	
 	
 	
