@@ -6,7 +6,8 @@ signal room_scale_changed
 # from anywhere in the project
 
 func handle_room_scale_changed():
-	connect("room_scale_changed", get_parent() , "_on_room_scale_changed")
+	var rooms_ref = get_parent().get_node("rooms")
+	connect("room_scale_changed", rooms_ref , "_on_room_scale_changed")
 
 func _ready():
 	set_process_input(true)
@@ -23,6 +24,7 @@ func _input(event):
 
 			if event.button_index == BUTTON_WHEEL_DOWN:
 				global_variables.room_scale_z -= global_variables.room_scaling_step_z
+				self.emit_signal("room_scale_changed")
 				if(global_variables.room_scale_z < global_variables.init_room_scale_z): 
 					global_variables.room_scale_z = global_variables.init_room_scale_z
 

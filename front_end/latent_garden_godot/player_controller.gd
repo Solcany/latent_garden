@@ -10,7 +10,7 @@ enum KeyLayout {
 export (KeyLayout) var key_layout:int = KeyLayout.WASD_QE
 
 export (float,0,10) var view_sensitivity : float = 0.25
-export (float,0,10) var rotation_damping : float = 5
+export (float,0,10) var rotation_damping : float = 50
 export (float,0,10) var acceleration_speed : float = 0.2
 export (float,0,10) var decay_speed : float = 4
 export (float,0,30) var max_speed : float = 8
