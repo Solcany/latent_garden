@@ -9,7 +9,8 @@ func _ready():
 	for i in range(global_variables.rooms_amt):
 		var room = Room.instance()
 		#room.scale.z = detector_scalar_z
-		#room.translation.z = step_z * i
+		
+		room.translation.x = -global_variables.init_room_scale_x*2 * i
 		var room_name  = "room_" + str(i)
 		room.name = room_name
 		self.add_child(room)

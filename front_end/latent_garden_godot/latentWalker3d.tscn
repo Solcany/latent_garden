@@ -35,7 +35,7 @@ environment = SubResource( 5 )
 script = ExtResource( 3 )
 
 [node name="fps_player" type="Spatial" parent="."]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 7.37902 )
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.08653, 1.57744 )
 script = ExtResource( 2 )
 
 [node name="cam" type="Camera" parent="fps_player"]
