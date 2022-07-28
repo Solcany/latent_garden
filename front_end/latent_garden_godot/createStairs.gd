@@ -2,16 +2,33 @@ extends Spatial
 
 
 func create_stairs():
-	var stairs_amount = 5
-	var step = 1 / stairs_amount
+	var stairs_amount = 40.0
+	var step = 1.0 / stairs_amount
+	print(step)
 	var vertices = []
-	# vertical step
+	# rectangle from lines
+	# render with _surf.begin(Mesh.PRIMITIVE_LINES)
+	
 	vertices.append( Vector3( -1, 1, 1 ) )
 	vertices.append( Vector3( 1, 1, 1 ) )	
+	vertices.append( Vector3( 1, 1, 1 ) )		
 	vertices.append( Vector3( 1, step, 1 ) )	
+	vertices.append( Vector3( 1, step, 1 ) )		
 	vertices.append( Vector3( -1, step, 1 ) )	
+	vertices.append( Vector3( -1, step, 1 ) )		
 	vertices.append( Vector3( -1, 1, 1 ) )		
 		
+	# rectangle from triangles
+	# render with _surf.begin(Mesh.PRIMITIVE_TRIANGLES)	
+	# bottom triangle
+#	vertices.append( Vector3( -1, 1, 1 ) )
+#	vertices.append( Vector3( 1, 1, 1 ) )		
+#	vertices.append( Vector3( 1, -step, 1 ) )
+	# top triangle
+#	vertices.append( Vector3( 1, -step, 1 ) )	
+#	vertices.append( Vector3( -1, -step, 1 ) )		
+#	vertices.append( Vector3( -1, 1, 1 ) )		
+#
 #	vertices.append( Vector3( 1, -1, -1 ) )
 #	vertices.append( Vector3( 1, -1, -1 ) )
 #	vertices.append( Vector3( 1, -1, 1 ) )

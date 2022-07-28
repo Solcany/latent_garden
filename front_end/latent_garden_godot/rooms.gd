@@ -13,6 +13,7 @@ func _ready():
 		room.translation.x = -global_variables.init_room_scale_x*2 * i
 		var room_name  = "room_" + str(i)
 		room.name = room_name
+		room.room_index = i
 		self.add_child(room)
 		
 		# GameController controls the room_scale variable
