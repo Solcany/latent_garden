@@ -1,6 +1,8 @@
+# create wireframey shell of the room
+
 extends Spatial
 
-func cube_create():
+func create_cube():
 	var vertices = []
 	# top
 	vertices.append( Vector3( -1, -1, -1 ) )
@@ -45,7 +47,7 @@ func cube_create():
 	return _meshInstance
 
 func _ready():
-	var cube : MeshInstance = cube_create()
+	var cube : MeshInstance = create_cube()
 	cube.scale = Vector3(global_variables.init_room_scale_x,
 						global_variables.init_room_scale_y,
 						global_variables.init_room_scale_z)

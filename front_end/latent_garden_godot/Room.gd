@@ -1,5 +1,6 @@
 extends Spatial
 
+# room index has to be set when Room is instantiated
 var room_index = 0
 
 var is_player_in_room = true

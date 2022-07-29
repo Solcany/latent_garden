@@ -69,14 +69,15 @@ func create_image_mesh(pos : Vector3, texture : Texture, mesh_size : float)-> Me
 
 
 func add_images_to_frames(frames):
+	var i = 0
 	for frame in frames.get_children():
-		var texture : Texture = load("data/images/test.jpg")
-		var x = global_variables.frame_scale.x + 0.0001 # add the value to prevent clipping
+		var texture_path = "data/images/" + str(room_index) + "/" + str(i) + ".jpg"
+		var texture : Texture = load(texture_path)
+		var x = global_variables.frame_scale.x + 0.001 # add the tiny value to prevent clipping 
 		var position = Vector3(x, 0, 0)
-		var image_mesh : MeshInstance = create_image_mesh(position, 
-														texture,
-														0.1)
+		var image_mesh : MeshInstance = create_image_mesh(position, texture, global_variables.frame_scale.z)
 		frame.add_child(image_mesh)
+		i += 1
 	return frames
 	
 func destroy_frames():
