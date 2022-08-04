@@ -1,5 +1,5 @@
 extends Spatial
-export var floors_amount = 2
+export var floors_amount = 12
 
 var Floor = load("res://Floor.tscn")
 signal room_scale_changed
