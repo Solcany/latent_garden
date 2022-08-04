@@ -1,6 +1,6 @@
 extends Spatial
-export var detector_scalar_z = 0.1
-var step_z = 0.11
+export var floor_index = 0
+
 var Room = load("res://Room.tscn")
 signal room_scale_changed
 
@@ -8,7 +8,6 @@ signal room_scale_changed
 func _ready():
 	for i in range(global_variables.rooms_amt):
 		var room = Room.instance()
-		#room.scale.z = detector_scalar_z
 		
 		room.translation.x = -global_variables.init_room_scale_x*2 * i
 		var room_name  = "room_" + str(i)

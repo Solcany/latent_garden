@@ -6,8 +6,8 @@ signal room_scale_changed
 # from anywhere in the project
 
 func handle_room_scale_changed():
-	var rooms_ref = get_parent().get_node("rooms")
-	connect("room_scale_changed", rooms_ref , "_on_room_scale_changed")
+	var floors_ref = get_parent().get_node("floors")
+	connect("room_scale_changed", floors_ref , "_on_room_scale_changed")
 
 func _ready():
 	set_process_input(true)
