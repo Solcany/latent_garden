@@ -1,7 +1,7 @@
 extends Spatial
 export var floors_amount = 12
 
-var Floor = load("res://Floor.tscn")
+var Floor = load("res://Create_floor.tscn")
 signal room_scale_changed
 
 # Called when the node enters the scene tree for the first time.

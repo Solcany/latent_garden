@@ -4,7 +4,7 @@
 [ext_resource path="res://game_controller.gd" type="Script" id=3]
 [ext_resource path="res://floors.gd" type="Script" id=4]
 
-[sub_resource type="Environment" id=3]
+[sub_resource type="Environment" id=1]
 background_mode = 1
 background_color = Color( 1, 1, 1, 1 )
 ambient_light_color = Color( 0.678431, 0.658824, 0.658824, 1 )
@@ -18,7 +18,7 @@ script = ExtResource( 4 )
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.36842, 0 )
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
-environment = SubResource( 3 )
+environment = SubResource( 1 )
 
 [node name="GameController" type="Node" parent="."]
 script = ExtResource( 3 )

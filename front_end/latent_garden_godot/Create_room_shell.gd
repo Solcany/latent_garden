@@ -1,6 +1,5 @@
-# create wireframey shell of the room
-
 extends Spatial
+# creates wireframey shell
 
 func create_cube():
 	var vertices = []
@@ -45,20 +44,14 @@ func create_cube():
 	_surf.commit( _mesh )
 	_meshInstance.set_mesh(_mesh)
 	return _meshInstance
-
+	
+# Called when the node enters the scene tree for the first time.
 func _ready():
-	var cube : MeshInstance = create_cube()
-	cube.scale = Vector3(global_variables.init_room_scale_x,
-						global_variables.init_room_scale_y,
-						global_variables.init_room_scale_z)
-	cube.name = "cube"
-	self.add_child(cube)
-		
+	var shell : MeshInstance = create_cube()
+	self.add_child(shell)
+
+
+
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta):
-	var cube = get_node("cube")
-	if cube != null: 
-		#cube.translation.z = (-global_variables.room_scale_z)
-		cube.scale = Vector3(global_variables.init_room_scale_x,
-							global_variables.init_room_scale_y,
-							global_variables.room_scale_z)
+	pass
