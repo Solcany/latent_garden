@@ -16,7 +16,6 @@ _global_script_class_icons={
 [application]
 
 config/name="Latent Garden"
-run/main_scene="res://latentWalker3d.tscn"
 config/icon="res://icon.png"
 
 [autoload]
