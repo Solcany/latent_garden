@@ -1,28 +1,22 @@
 extends Area
 
+func handle_body_entered():
+	connect("body_entered", get_parent(), "_on_body_entered_room")
+	
+func handle_body_exited():
+	connect("body_exited", get_parent(), "_on_body_exited_room")
 
 
-# Declare member variables here. Examples:
-# var a = 2
-# var b = "text"
-
-
-# Called when the node enters the scene tree for the first time.
 func _ready():
-	connect("body_entered", self, "_on_self_entered")
+	handle_body_entered()
+	handle_body_exited()
 	##pass # Replace with function body.
-
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 #func _process(delta):
 #	pass
 
-	
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-
-
 func _physics_process(delta):	
-
 	pass
 	#var overlaps : Array = get_overlapping_bodies()
 #	if !overlaps.empty():
@@ -38,6 +32,6 @@ func _physics_process(delta):
 #		is_in_portal = false
 #		emit_signal("player_left_portal")
 
-func _on_self_entered(body):
-	print("Detector:" + self.name)	
-	print("body:" + body.name)
+#func _on_self_entered(body):
+#	print("Detector:" + self.name)	
+#	print("body:" + body.name)

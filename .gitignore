@@ -1,5 +1,5 @@
 back_end/biggan/notebooks/outputs/*
-.DS_store
+.DS_Store
 front_end/latent_garden_godot/.import/*
 back_end/biggan/pretrained/*
 front_end/latent_garden_godot/Data/*.jpg

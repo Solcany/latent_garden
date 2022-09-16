@@ -1,7 +1,6 @@
-extends Area2D
+extends StaticBody
 
-const kind : String = "Portal"
-export (String) var level_name = "level"
+
 # Declare member variables here. Examples:
 # var a = 2
 # var b = "text"
@@ -13,9 +12,8 @@ func _ready():
 
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
-#func _process(delta):
-#	pass
-
-
-func _on_Portal_body_entered(body):
-	pass # Replace with function body.
+func _process(delta):
+		#cube.translation.z = (-global_variables.room_scale_z)
+		self.scale = Vector3(global_variables.init_room_scale_x,
+							global_variables.init_room_scale_y,
+							global_variables.room_scale_z)
