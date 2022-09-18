@@ -9,8 +9,8 @@ func create_polyline(vertices: Array) -> MeshInstance:
 
 	_surf.begin(Mesh.PRIMITIVE_LINES)
 	for v in vertices:
-#		_surf.add_color(Color(1,1,0))
-#		_surf.add_uv(Vector2(0, 0))
+		_surf.add_color(Color(1,0,0)) # set WorldEnvironment Ambient Light to a valuue to make this visible
+		_surf.add_uv(Vector2(0, 0))
 		_surf.add_vertex(v)
 	_surf.index()
 	_surf.commit( _mesh )
@@ -29,11 +29,11 @@ func _ready():
 		var polyline : MeshInstance = create_polyline(vertices)
 
 		var mat = SpatialMaterial.new()
-		mat.albedo_color = Color( 1, 0, 0 )
+		#mat.albedo_color = Color( 1, 0, 0 )
 		mat.vertex_color_use_as_albedo = true
-		mat.emission = Color(1, 0, 0)
-		mat.emission_enabled = true
-		mat.emission_energy = 5
+		#mat.emission = Color(1, 0, 0)
+		#mat.emission_enabled = true
+		#mat.emission_energy = 5
 		polyline.set_surface_material(0, mat)
 		
 #		_cube.scale = Vector3(global_variables.init_room_scale_x,
