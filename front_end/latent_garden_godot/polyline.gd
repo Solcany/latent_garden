@@ -85,6 +85,6 @@ func _process(_delta):
 #								global_variables.init_room_scale_y,
 #								global_variables.room_scale_z)
 func _on_Timer_timeout():
-	var vertices_slice = all_vertices.slice(0, vertex_index)
+	vertices_slice = all_vertices.slice(0, vertex_index)
 	print(vertices_slice)
 	vertex_index += 1 
