@@ -82,19 +82,6 @@ func normalise_embeddings(embeddings: Array) -> Array:
 		normalised.append(Vector3(norm_x, norm_y, norm_z))
 	return normalised
 	
-	
-#vector<ofVec2f> ofApp::scale_vectors(vector<ofVec2f> &vectors, ofVec2f scalars, int max_width) {
-#    float w = max_width * scalars.x;
-#    float h = max_width * scalars.y;
-#
-#    vector<ofVec2f> scaled_vectors;
-#    for(auto & v : vectors) {
-#        ofVec2f scaled_v(v.x * w, v.y * h);
-#        scaled_vectors.push_back(scaled_v);
-#    }
-#    return scaled_vectors;
-#}
-
 func scale_normalised_embeddings(embeddings : Array, bounding_box_proportions: Vector3, max_bounding_box_side_size: int) -> Array:
 	var x_scalar : float = max_bounding_box_side_size * bounding_box_proportions.x
 	var y_scalar : float = max_bounding_box_side_size * bounding_box_proportions.y	
@@ -107,7 +94,29 @@ func scale_normalised_embeddings(embeddings : Array, bounding_box_proportions: V
 		var scaled_z : float = embedding.z * z_scalar
 		scaled.append(Vector3(scaled_x, scaled_y, scaled_z))
 	return scaled		
-			
+
+func get_embeddings_mesh(vertices : Array) -> Mesh:
+	var mesh = Mesh.new()
+	var surf = SurfaceTool.new()
+
+	surf.begin(Mesh.PRIMITIVE_POINTS)
+	for vertex in vertices:
+		# this sets color individually for each vertex
+		# set WorldEnvironment Ambient Light to a value to make this visible
+		surf.add_color(Color(255,0,0)) 
+		surf.add_uv(Vector2(0, 0))
+		surf.add_vertex(vertex)
+	surf.index()
+	surf.commit( mesh )
+	return mesh
+
+
+func set_mesh_material(mesh: MeshInstance):
+	var mat = SpatialMaterial.new()
+	# use vertex color to color the mesh
+	mat.vertex_color_use_as_albedo = true
+	mesh.set_surface_material(0, mat)
+
 				
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -116,8 +125,13 @@ func _ready():
 	var embeddings_normalised : Array = normalise_embeddings(embeddings)	
 	var embeddings_bounding_box_proportions : Vector3 = get_embeddings_bounding_box_proportions(embeddings)
 	var embeddings_scaled : Array = scale_normalised_embeddings(embeddings_normalised, embeddings_bounding_box_proportions, EMBEDDINGS_BOUNDING_BOX_MAX_WIDTH)
-
-	#print(get_vec_array_max(embeddings, "z")) # bug: returns -inf?
+	
+	var embeddings_mesh : Mesh = get_embeddings_mesh(embeddings_scaled)
+	var embeddings_mesh_instance = MeshInstance.new();
+	set_mesh_material(embeddings_mesh_instance)
+	embeddings_mesh_instance.set_mesh(embeddings_mesh)
+	embeddings_mesh_instance.name = "polyline_" + str(0)
+	self.add_child(embeddings_mesh_instance)	
 	
 	
 
