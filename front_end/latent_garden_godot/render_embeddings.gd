@@ -1,8 +1,19 @@
 extends Spatial
 
+### CONSTANTS ###
 const EMBEDDINGS_DIMENSIONS = 3 # how many dimensions do the embeddings have?
-const EMBEDDINGS_BOUNDING_BOX_MAX_WIDTH = 10 # how long is the longest side of the bounding box of the embeddings?
+const EMBEDDINGS_BOUNDING_BOX_MAX_WIDTH = 1000 # how long is the longest side of the bounding box of the embeddings?
+const TIMER_DELAY = 0.01
+const VERTICES_INITIAL_INDEX = 2
 
+### GLOBALS ###
+var vertices_length : int = 0
+var vertices_last_index : int = VERTICES_INITIAL_INDEX
+var the_vertices : Array = [] # all vertices
+var the_vertices_slice : Array = [] # slice of the vertices rendered in animation
+var timer = null # global timer
+
+### CSV IMPORT ###
 func load_csv_of_floats(path : String, row_size: int) -> Array:
 	# Godot interprets .csv files as game language translation...
 	# ...it breaks when trying to load a regular non translation data .csv
@@ -25,6 +36,7 @@ func load_csv_of_floats(path : String, row_size: int) -> Array:
 	
 	return data
 	
+### EMBEDDINGS GEOMETRY ###
 func array_to_Vector3(array: Array) -> Array:
 	# helper function to converst array of 3dim arrays to array of Vector3
 	var vectors : Array = []
@@ -95,7 +107,8 @@ func scale_normalised_embeddings(embeddings : Array, bounding_box_proportions: V
 		scaled.append(Vector3(scaled_x, scaled_y, scaled_z))
 	return scaled		
 
-func get_embeddings_mesh(vertices : Array) -> Mesh:
+### RENDERING ###
+func get_points_mesh(vertices : Array) -> Mesh:
 	var mesh = Mesh.new()
 	var surf = SurfaceTool.new()
 
@@ -109,7 +122,38 @@ func get_embeddings_mesh(vertices : Array) -> Mesh:
 	surf.index()
 	surf.commit( mesh )
 	return mesh
+	
+func get_polyline_vertices(vertices : Array, close=false):
+# segements of polyline are created from a vertex pair
+# duplicate every vertex except of the first and the last to create the connected segments
+# Array of Vector3 is expected
+	var polyline : Array = []
+	for index in range(vertices.size()):
+		var vertex : Vector3 = vertices[index]
+		polyline.append(vertex)
+		if(index > 0 && index < vertices.size()-1):
+			# if the vertex is not the first nor the last create a duplicate
+			polyline.append(vertex)
+		if(close && index == vertices.size()-1):
+			# with close=true argument create a closed polygon instead of polyline
+			polyline.append(vertices[0])
+	return polyline	
+	
+func get_polyline_mesh(polyline_vertices: Array) -> Mesh:
+	# excepts array of Vector3(s)
+	var _mesh = Mesh.new()
+	var _surf = SurfaceTool.new()
 
+	_surf.begin(Mesh.PRIMITIVE_LINES)
+	for vertex in polyline_vertices:
+		# this sets color individually for each vertex
+		# set WorldEnvironment Ambient Light to a value to make this visible
+		_surf.add_color(Color(255,0,0)) 
+		_surf.add_uv(Vector2(0, 0))
+		_surf.add_vertex(vertex)
+	_surf.index()
+	_surf.commit( _mesh )
+	return _mesh	
 
 func set_mesh_material(mesh: MeshInstance):
 	var mat = SpatialMaterial.new()
@@ -118,24 +162,52 @@ func set_mesh_material(mesh: MeshInstance):
 	mesh.set_surface_material(0, mat)
 
 				
-# Called when the node enters the scene tree for the first time.
+### ANIMATION ###
+# every tick of the timer additional embedding is added to the array of embeddings
+# the array is rendered in the _process
+
+func init_timer(timer):
+	# expects globally initialised variable
+	timer = Timer.new()
+	add_child(timer)
+	timer.connect("timeout", self, "_on_Timer_timeout")
+	timer.set_wait_time(TIMER_DELAY)
+	timer.set_one_shot(false) # Make sure it loops
+	timer.start()
+	
+func _on_Timer_timeout():
+	# increase last vertex index every on every timeout
+	the_vertices_slice = the_vertices.slice(0, vertices_last_index)
+	if(vertices_last_index >  vertices_length): 
+		vertices_last_index = 0
+	else:
+		vertices_last_index += 1 		
+
+### THE PROGRAM ###
+
 func _ready():
-	var embeddings : Array = load_csv_of_floats("data/noise/sky_watch_data_friday_embeddings.txt", EMBEDDINGS_DIMENSIONS)
+	var embeddings : Array = load_csv_of_floats("data/noise/sky_watch_data_friday_embeddings.txt", EMBEDDINGS_DIMENSIONS)	
 	embeddings = array_to_Vector3(embeddings)
 	var embeddings_normalised : Array = normalise_embeddings(embeddings)	
 	var embeddings_bounding_box_proportions : Vector3 = get_embeddings_bounding_box_proportions(embeddings)
 	var embeddings_scaled : Array = scale_normalised_embeddings(embeddings_normalised, embeddings_bounding_box_proportions, EMBEDDINGS_BOUNDING_BOX_MAX_WIDTH)
 	
-	var embeddings_mesh : Mesh = get_embeddings_mesh(embeddings_scaled)
-	var embeddings_mesh_instance = MeshInstance.new();
+	# set the vertices of embeddings to a global variable
+	# the global variable is used tot animate the embeddings
+	the_vertices = embeddings_scaled
+	
+	# Initiate and add the embeddings Mesh Instance, the actual mesh will be set in _Process
+	# var embeddings_mesh : Mesh = get_points_mesh(embeddings_scaled)
+	var embeddings_mesh_instance = MeshInstance.new()
 	set_mesh_material(embeddings_mesh_instance)
-	embeddings_mesh_instance.set_mesh(embeddings_mesh)
-	embeddings_mesh_instance.name = "polyline_" + str(0)
-	self.add_child(embeddings_mesh_instance)	
+	#embeddings_mesh_instance.set_mesh(embeddings_mesh)
+	embeddings_mesh_instance.name = "embeddings_mesh"
+	self.add_child(embeddings_mesh_instance)	# add the embeddings mesh to the scene
 	
-	
+	vertices_length = embeddings.size() # set global var
+	init_timer(timer) # init global timer
 
-
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-#func _process(delta):
-#	pass
+func _process(delta):
+	var embeddings_mesh = get_node("embeddings_mesh")
+	var mesh : Mesh = get_polyline_mesh(get_polyline_vertices(the_vertices_slice))
+	embeddings_mesh.set_mesh(mesh)
