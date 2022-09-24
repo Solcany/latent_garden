@@ -2,7 +2,7 @@ extends Spatial
 
 ### CONSTANTS ###
 const EMBEDDINGS_DIMENSIONS = 3 # how many dimensions do the embeddings have?
-const EMBEDDINGS_BOUNDING_BOX_MAX_WIDTH = 1000 # how long is the longest side of the bounding box of the embeddings?
+const EMBEDDINGS_BOUNDING_BOX_MAX_WIDTH = 50 # how long is the longest side of the bounding box of the embeddings?
 const TIMER_DELAY = 0.01
 const VERTICES_INITIAL_INDEX = 2
 
@@ -116,7 +116,7 @@ func get_points_mesh(vertices : Array) -> Mesh:
 	for vertex in vertices:
 		# this sets color individually for each vertex
 		# set WorldEnvironment Ambient Light to a value to make this visible
-		surf.add_color(Color(255,0,0)) 
+		surf.add_color(Color(255,255,255)) 
 		surf.add_uv(Vector2(0, 0))
 		surf.add_vertex(vertex)
 	surf.index()
@@ -148,7 +148,7 @@ func get_polyline_mesh(polyline_vertices: Array) -> Mesh:
 	for vertex in polyline_vertices:
 		# this sets color individually for each vertex
 		# set WorldEnvironment Ambient Light to a value to make this visible
-		_surf.add_color(Color(255,0,0)) 
+		_surf.add_color(Color(255,255,255)) 
 		_surf.add_uv(Vector2(0, 0))
 		_surf.add_vertex(vertex)
 	_surf.index()
@@ -206,6 +206,14 @@ func _ready():
 	
 	vertices_length = embeddings.size() # set global var
 	init_timer(timer) # init global timer
+	
+	
+	# show the embeddings as points ?
+	var embeddings_as_points = MeshInstance.new()
+	embeddings_as_points.set_mesh(get_points_mesh(the_vertices))	
+	set_mesh_material(embeddings_as_points)	
+	self.add_child(embeddings_as_points)	
+	
 
 func _process(delta):
 	var embeddings_mesh = get_node("embeddings_mesh")
