@@ -160,6 +160,74 @@ func set_mesh_material(mesh: MeshInstance):
 	# use vertex color to color the mesh
 	mat.vertex_color_use_as_albedo = true
 	mesh.set_surface_material(0, mat)
+	
+	
+### DEBUG RENDERING ###
+
+func create_cube_mesh(v1: Vector3, v2: Vector3) -> Mesh:
+	var vertices = []
+	##top
+	#line1
+	vertices.append( Vector3( v1.x, v1.y, v1.z ) )	
+	vertices.append( Vector3( v2.x, v1.y, v1.z ) )	
+	#line2
+	vertices.append( Vector3( v2.x, v1.y, v1.z ) )	
+	vertices.append( Vector3( v2.x, v1.y, v2.z ) )	
+	#line3
+	vertices.append( Vector3( v2.x, v1.y, v2.z ) )	
+	vertices.append( Vector3( v1.x, v1.y, v2.z ) )	
+	#line4
+	vertices.append( Vector3( v1.x, v1.y, v2.z ) )	
+	vertices.append( Vector3( v1.x, v1.y, v1.z ) )	
+	
+	
+	##bottom
+	#line1
+	vertices.append( Vector3( v1.x, v2.y, v1.z ) )	
+	vertices.append( Vector3( v2.x, v2.y, v1.z ) )	
+	#line2
+	vertices.append( Vector3( v2.x, v2.y, v1.z ) )	
+	vertices.append( Vector3( v2.x, v2.y, v2.z ) )	
+	#line3
+	vertices.append( Vector3( v2.x, v2.y, v2.z ) )	
+	vertices.append( Vector3( v1.x, v2.y, v2.z ) )	
+	#line4
+	vertices.append( Vector3( v1.x, v2.y, v2.z ) )	
+	vertices.append( Vector3( v1.x, v2.y, v1.z ) )	
+	
+	##sides
+	#line1
+	vertices.append( Vector3( v1.x, v1.y, v1.z ) )		
+	vertices.append( Vector3( v1.x, v2.y, v1.z ) )		
+	#line2			
+	vertices.append( Vector3( v2.x, v1.y, v1.z ) )	
+	vertices.append( Vector3( v2.x, v1.y, v2.z ) )	
+	#line3		
+	vertices.append( Vector3( v2.x, v2.y, v1.z ) )	
+	vertices.append( Vector3( v2.x, v2.y, v2.z ) )		
+	#line4
+	vertices.append( Vector3( v1.x, v2.y, v1.z ) )	
+	vertices.append( Vector3( v1.x, v2.y, v2.z ) )	
+		
+	var mesh = Mesh.new()
+	var surf = SurfaceTool.new()
+	
+	surf.begin(Mesh.PRIMITIVE_LINES)
+	for v in vertices:
+		surf.add_vertex(v)
+	surf.index()
+	surf.commit( mesh )
+
+	return mesh
+	
+func create_bounding_box_mesh():
+	var v = EMBEDDINGS_BOUNDING_BOX_MAX_WIDTH
+	var bounding_box_mesh = create_cube_mesh(Vector3(-v,-v,-v), Vector3(v,v,v))
+	var bounding_box_mesh_instance : MeshInstance
+	bounding_box_mesh_instance.set_mesh(bounding_box_mesh)
+	
+	return bounding_box_mesh_instance
+	#self.add_child(bounding_box_mesh_instance)	
 
 				
 ### ANIMATION ###
@@ -206,6 +274,9 @@ func _ready():
 	
 	vertices_length = embeddings.size() # set global var
 	init_timer(timer) # init global timer
+	
+	
+	create_bounding_box_mesh()
 	
 	
 	# show the embeddings as points ?
