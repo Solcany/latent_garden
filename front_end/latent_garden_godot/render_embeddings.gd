@@ -2,7 +2,7 @@ extends Spatial
 
 ### CONSTANTS ###
 const EMBEDDINGS_DIMENSIONS = 3 # how many dimensions do the embeddings have?
-const EMBEDDINGS_BOUNDING_BOX_MAX_WIDTH = 50 # how long is the longest side of the bounding box of the embeddings?
+const EMBEDDINGS_BOUNDING_BOX_MAX_WIDTH = 20 # how long is the longest side of the bounding box of the embeddings?
 const TIMER_DELAY = 0.01
 const VERTICES_INITIAL_INDEX = 2
 const DEBUG = true
@@ -166,6 +166,9 @@ func set_mesh_material(mesh: MeshInstance):
 ### DEBUG RENDERING ###
 
 func create_cube_mesh(v1: Vector3, v2: Vector3) -> Mesh:
+	#v1 is the back-top-left vertex of the cube
+	#v2 is the front-bottom-right vertex of the cube
+	
 	var vertices = []
 	##top
 	#line1
@@ -202,12 +205,12 @@ func create_cube_mesh(v1: Vector3, v2: Vector3) -> Mesh:
 	vertices.append( Vector3( v1.x, v2.y, v1.z ) )		
 	#line2			
 	vertices.append( Vector3( v2.x, v1.y, v1.z ) )	
-	vertices.append( Vector3( v2.x, v1.y, v2.z ) )	
-	#line3		
 	vertices.append( Vector3( v2.x, v2.y, v1.z ) )	
+	#line3		
+	vertices.append( Vector3( v2.x, v1.y, v2.z ) )	
 	vertices.append( Vector3( v2.x, v2.y, v2.z ) )		
 	#line4
-	vertices.append( Vector3( v1.x, v2.y, v1.z ) )	
+	vertices.append( Vector3( v1.x, v1.y, v2.z ) )	
 	vertices.append( Vector3( v1.x, v2.y, v2.z ) )	
 		
 	var mesh = Mesh.new()
@@ -221,7 +224,7 @@ func create_cube_mesh(v1: Vector3, v2: Vector3) -> Mesh:
 
 	return mesh
 	
-func get_bounding_vertices(embeddings : Array)	 -> Array:
+func get_bounding_vertices(embeddings : Array)	 -> Dictionary:
 	var min_x : float= get_vec_array_min(embeddings, "x")
 	var min_y : float= get_vec_array_min(embeddings, "y")
 	var min_z : float= get_vec_array_min(embeddings, "z")
@@ -232,16 +235,14 @@ func get_bounding_vertices(embeddings : Array)	 -> Array:
 	var min_vec = Vector3(min_x, min_y, min_z)
 	var max_vec = Vector3(max_x, max_y, max_z)	
 	
-	return [min_vec, max_vec]
+	return {"min": min_vec, "max": max_vec}
 		
-func create_bounding_box_mesh(embeddings_min : Vector3, embeddings_max : Vector3) -> MeshInstance:
-	var v = EMBEDDINGS_BOUNDING_BOX_MAX_WIDTH
-	var bounding_box_mesh = create_cube_mesh(Vector3(-v,-v,-v), Vector3(v,v,v))
-	var bounding_box_mesh_instance : MeshInstance
+func create_embeddings_bounding_box_mesh(embeddings) -> MeshInstance:
+	var bounding_vertices : Dictionary = get_bounding_vertices(embeddings)
+	var bounding_box_mesh : Mesh = create_cube_mesh(bounding_vertices.min, bounding_vertices.max)
+	var bounding_box_mesh_instance : MeshInstance = MeshInstance.new()
 	bounding_box_mesh_instance.set_mesh(bounding_box_mesh)
-	
 	return bounding_box_mesh_instance
-	#self.add_child(bounding_box_mesh_instance)	
 
 				
 ### ANIMATION ###
@@ -297,8 +298,8 @@ func _ready():
 		self.add_child(embeddings_as_points)	
 		
 		# show embeddings bounding box 
-		var bounding_box_mesh_instance : MeshInstance = create_bounding_box_mesh()
-		self.add_child(bounding_box_mesh_instance)			
+		var embeddings_bounding_box_mesh : MeshInstance = create_embeddings_bounding_box_mesh(embeddings_scaled)
+		self.add_child(embeddings_bounding_box_mesh)			
 	
 
 func _process(delta):
