@@ -246,20 +246,10 @@ func create_embeddings_bounding_box_mesh(embeddings) -> MeshInstance:
 
 				
 ### ANIMATION ###
-# every tick of the timer additional embedding is added to the array of embeddings
-# the array is rendered in the _process
-
-func init_timer(timer):
-	# expects globally initialised variable
-	timer = Timer.new()
-	add_child(timer)
-	timer.connect("timeout", self, "_on_Timer_timeout")
-	timer.set_wait_time(TIMER_DELAY)
-	timer.set_one_shot(false) # Make sure it loops
-	timer.start()
+# Expects a Timer node in the parent scene tree
 	
 func _on_Timer_timeout():
-	# increase last vertex index every on every timeout
+	# on the tick of the timer the next embedding is added to the array of visible embeddings
 	the_vertices_slice = the_vertices.slice(0, vertices_last_index)
 	if(vertices_last_index >  vertices_length): 
 		vertices_last_index = 0
@@ -288,7 +278,7 @@ func _ready():
 	self.add_child(embeddings_mesh_instance)	# add the embeddings mesh to the scene
 	
 	vertices_length = embeddings.size() # set the global var
-	init_timer(timer) # init global timer
+#	init_timer(timer) # init global timer
 	
 	if(DEBUG):
 		# show the embeddings as points		
