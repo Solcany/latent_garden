@@ -5,6 +5,7 @@ const EMBEDDINGS_DIMENSIONS = 3 # how many dimensions do the embeddings have?
 const EMBEDDINGS_BOUNDING_BOX_MAX_WIDTH = 50 # how long is the longest side of the bounding box of the embeddings?
 const TIMER_DELAY = 0.01
 const VERTICES_INITIAL_INDEX = 2
+const DEBUG = true
 
 ### GLOBALS ###
 var vertices_length : int = 0
@@ -105,8 +106,8 @@ func scale_normalised_embeddings(embeddings : Array, bounding_box_proportions: V
 		var scaled_y : float = embedding.y * y_scalar
 		var scaled_z : float = embedding.z * z_scalar
 		scaled.append(Vector3(scaled_x, scaled_y, scaled_z))
-	return scaled		
-
+	return scaled	
+	
 ### RENDERING ###
 func get_points_mesh(vertices : Array) -> Mesh:
 	var mesh = Mesh.new()
@@ -220,7 +221,20 @@ func create_cube_mesh(v1: Vector3, v2: Vector3) -> Mesh:
 
 	return mesh
 	
-func create_bounding_box_mesh():
+func get_bounding_vertices(embeddings : Array)	 -> Array:
+	var min_x : float= get_vec_array_min(embeddings, "x")
+	var min_y : float= get_vec_array_min(embeddings, "y")
+	var min_z : float= get_vec_array_min(embeddings, "z")
+	var max_x : float= get_vec_array_max(embeddings, "x")
+	var max_y : float= get_vec_array_max(embeddings, "y")
+	var max_z : float= get_vec_array_max(embeddings, "z")
+	
+	var min_vec = Vector3(min_x, min_y, min_z)
+	var max_vec = Vector3(max_x, max_y, max_z)	
+	
+	return [min_vec, max_vec]
+		
+func create_bounding_box_mesh(embeddings_min : Vector3, embeddings_max : Vector3) -> MeshInstance:
 	var v = EMBEDDINGS_BOUNDING_BOX_MAX_WIDTH
 	var bounding_box_mesh = create_cube_mesh(Vector3(-v,-v,-v), Vector3(v,v,v))
 	var bounding_box_mesh_instance : MeshInstance
@@ -272,18 +286,19 @@ func _ready():
 	embeddings_mesh_instance.name = "embeddings_mesh"
 	self.add_child(embeddings_mesh_instance)	# add the embeddings mesh to the scene
 	
-	vertices_length = embeddings.size() # set global var
+	vertices_length = embeddings.size() # set the global var
 	init_timer(timer) # init global timer
 	
-	
-	create_bounding_box_mesh()
-	
-	
-	# show the embeddings as points ?
-	var embeddings_as_points = MeshInstance.new()
-	embeddings_as_points.set_mesh(get_points_mesh(the_vertices))	
-	set_mesh_material(embeddings_as_points)	
-	self.add_child(embeddings_as_points)	
+	if(DEBUG):
+		# show the embeddings as points		
+		var embeddings_as_points = MeshInstance.new()
+		embeddings_as_points.set_mesh(get_points_mesh(the_vertices))	
+		set_mesh_material(embeddings_as_points)	
+		self.add_child(embeddings_as_points)	
+		
+		# show embeddings bounding box 
+		var bounding_box_mesh_instance : MeshInstance = create_bounding_box_mesh()
+		self.add_child(bounding_box_mesh_instance)			
 	
 
 func _process(delta):
