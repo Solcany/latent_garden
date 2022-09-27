@@ -4,7 +4,6 @@ const folder_path = "data/images/sky_watch_friday/"
 const image_suffix = ".JPG"
 var current_image_index = 0
 const images_total = 116 
-
 var textures = []
 
 func _ready():

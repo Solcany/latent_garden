@@ -28,6 +28,7 @@ script = ExtResource( 1 )
 
 [node name="show_weather_image" type="MeshInstance" parent="."]
 transform = Transform( 16, 0, 0, 0, 10, 0, 0, 0, 1, 0, 0, 0 )
+visible = false
 mesh = SubResource( 2 )
 script = ExtResource( 3 )
 

@@ -1,20 +1,24 @@
 extends Spatial
 
 ### CONSTANTS ###
+const DEBUG = true
 const EMBEDDINGS_DIMENSIONS = 3 # how many dimensions do the embeddings have?
 const EMBEDDINGS_BOUNDING_BOX_MAX_WIDTH = 20 # how long is the longest side of the bounding box of the embeddings?
 const TIMER_DELAY = 0.01
 const VERTICES_INITIAL_INDEX = 2
-const DEBUG = true
+const IMAGES_FOLDER_PATH = "data/images/sky_watch_friday/"
+const IMAGE_EXT = ".JPG"
+const NUM_IMAGES = 116 
+
 
 ### GLOBALS ###
 var vertices_length : int = 0
 var vertices_last_index : int = VERTICES_INITIAL_INDEX
 var the_vertices : Array = [] # all vertices
 var the_vertices_slice : Array = [] # slice of the vertices rendered in animation
-var timer = null # global timer
+var textures : Array = []
 
-### CSV IMPORT ###
+### ASSET IMPORTS ###
 func load_csv_of_floats(path : String, row_size: int) -> Array:
 	# Godot interprets .csv files as game language translation...
 	# ...it breaks when trying to load a regular non translation data .csv
@@ -36,6 +40,17 @@ func load_csv_of_floats(path : String, row_size: int) -> Array:
 	print("csv: ", path, " loaded!")
 	
 	return data
+	
+func load_images_to_textures(folder_path : String, extension : String, num_images: int, start_index: int = 1) -> Array:
+	# expects folder with numbered image files, example: "1.jpg"
+	var textures  : Array = []
+	for i in range(start_index, num_images+start_index): #refactor: scan the folder for files, instead of using indexed loop
+		var image_path = folder_path + str(i) + extension
+		var texture : Texture = load(image_path)
+		textures.append(texture)	
+	return textures
+	
+
 	
 ### EMBEDDINGS GEOMETRY ###
 func array_to_Vector3(array: Array) -> Array:
@@ -268,6 +283,9 @@ func _ready():
 	# set the vertices of embeddings to a global variable
 	# the global variable is used tot animate the embeddings
 	the_vertices = embeddings_scaled
+	
+	# preload all weather images as textures
+	textures = load_images_to_textures(IMAGES_FOLDER_PATH, IMAGE_EXT, NUM_IMAGES)
 	
 	# Initiate and add the embeddings Mesh Instance, the actual mesh will be set in _Process
 	# var embeddings_mesh : Mesh = get_points_mesh(embeddings_scaled)
