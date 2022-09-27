@@ -37,14 +37,14 @@ func _ready():
 
 
 func _on_Timer_timeout():
-	pass
-#	var mat = SpatialMaterial.new()
-#	mat.albedo_texture = textures[current_image_index]
-#	self.set_material_override(mat)	
+#	pass
+	var mat = SpatialMaterial.new()
+	mat.albedo_texture = textures[current_image_index]
+	self.set_surface_material(0, mat)	
 #
-#	if(current_image_index > images_total-1): 
-#		current_image_index = 0
-#	else:
-#		current_image_index += 1 			
+	if(current_image_index > images_total-2): 
+		current_image_index = 0
+	else:
+		current_image_index += 1 			
 
 
