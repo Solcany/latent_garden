@@ -7,6 +7,7 @@ const EMBEDDINGS_BOUNDING_BOX_MAX_WIDTH = 20 # how long is the longest side of t
 const TIMER_DELAY = 0.01
 const VERTICES_INITIAL_INDEX = 2
 const IMAGES_FOLDER_PATH = "data/images/sky_watch_friday/"
+const IMAGE_ASPECT_RATIO : Vector2 = Vector2(1.6, 0.8)
 const IMAGE_EXT = ".JPG"
 const NUM_IMAGES = 116 
 
@@ -16,7 +17,7 @@ var vertices_length : int = 0
 var vertices_last_index : int = VERTICES_INITIAL_INDEX
 var the_vertices : Array = [] # all vertices
 var the_vertices_slice : Array = [] # slice of the vertices rendered in animation
-var textures : Array = []
+
 
 ### ASSET IMPORTS ###
 func load_csv_of_floats(path : String, row_size: int) -> Array:
@@ -171,11 +172,29 @@ func get_polyline_mesh(polyline_vertices: Array) -> Mesh:
 	_surf.commit( _mesh )
 	return _mesh	
 
-func set_mesh_material(mesh: MeshInstance):
+func set_vertex_color_mesh_material(mesh: MeshInstance):
 	var mat = SpatialMaterial.new()
 	# use vertex color to color the mesh
 	mat.vertex_color_use_as_albedo = true
 	mesh.set_surface_material(0, mat)
+	
+
+func get_textured_meshes(positions : Array, textures: Array) -> Array:
+	assert(positions.size() == textures.size(), "ERROR: positions array size doesn't match the textures array size")
+	var size : int = positions.size()
+	var meshes : Array = []
+	for index in range(size):
+		var mesh : QuadMesh = QuadMesh.new()		
+		var mesh_instance: MeshInstance = MeshInstance.new()
+		mesh_instance.set_mesh(mesh)		
+		var mat : SpatialMaterial = SpatialMaterial.new()
+		mat.albedo_texture = textures[index]
+		mesh_instance.set_surface_material(0, mat)
+		var pos : Vector3 = positions[index]
+		mesh_instance.global_translation = pos
+		meshes.append(mesh_instance)
+	return meshes
+	 
 	
 	
 ### DEBUG RENDERING ###
@@ -278,19 +297,24 @@ func _ready():
 	embeddings = array_to_Vector3(embeddings)
 	var embeddings_normalised : Array = normalise_embeddings(embeddings)	
 	var embeddings_bounding_box_proportions : Vector3 = get_embeddings_bounding_box_proportions(embeddings)
-	var embeddings_scaled : Array = scale_normalised_embeddings(embeddings_normalised, embeddings_bounding_box_proportions, EMBEDDINGS_BOUNDING_BOX_MAX_WIDTH)
+	var embeddings_scaled : Array = scale_normalised_embeddings(embeddings_normalised, 
+															embeddings_bounding_box_proportions, 
+															EMBEDDINGS_BOUNDING_BOX_MAX_WIDTH)
 	
 	# set the vertices of embeddings to a global variable
 	# the global variable is used tot animate the embeddings
 	the_vertices = embeddings_scaled
 	
-	# preload all weather images as textures
-	textures = load_images_to_textures(IMAGES_FOLDER_PATH, IMAGE_EXT, NUM_IMAGES)
+	# ppreload all weather images as textures
+	var textures = load_images_to_textures(IMAGES_FOLDER_PATH, IMAGE_EXT, NUM_IMAGES)
+	var weather_image_meshes = get_textured_meshes(embeddings_scaled, textures)
+	for mesh in weather_image_meshes:
+		self.add_child(mesh)
 	
 	# Initiate and add the embeddings Mesh Instance, the actual mesh will be set in _Process
 	# var embeddings_mesh : Mesh = get_points_mesh(embeddings_scaled)
 	var embeddings_mesh_instance = MeshInstance.new()
-	set_mesh_material(embeddings_mesh_instance)
+	set_vertex_color_mesh_material(embeddings_mesh_instance)
 	#embeddings_mesh_instance.set_mesh(embeddings_mesh)
 	embeddings_mesh_instance.name = "embeddings_mesh"
 	self.add_child(embeddings_mesh_instance)	# add the embeddings mesh to the scene
@@ -302,7 +326,7 @@ func _ready():
 		# show the embeddings as points		
 		var embeddings_as_points = MeshInstance.new()
 		embeddings_as_points.set_mesh(get_points_mesh(the_vertices))	
-		set_mesh_material(embeddings_as_points)	
+		set_vertex_color_mesh_material(embeddings_as_points)	
 		self.add_child(embeddings_as_points)	
 		
 		# show embeddings bounding box 
