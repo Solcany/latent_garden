@@ -17,6 +17,8 @@ var vertices_length : int = 0
 var vertices_last_index : int = VERTICES_INITIAL_INDEX
 var the_vertices : Array = [] # all vertices
 var the_vertices_slice : Array = [] # slice of the vertices rendered in animation
+var camera_ref = null
+
 
 
 ### ASSET IMPORTS ###
@@ -178,20 +180,44 @@ func set_vertex_color_mesh_material(mesh: MeshInstance):
 	mat.vertex_color_use_as_albedo = true
 	mesh.set_surface_material(0, mat)
 	
+func normalise_value(value):
+	if(value <= 99):
+		return value / 10.0
+	elif (value > 99 && value <= 999):
+		return value / 100.0
+	elif (value > 999 && value <= 9999):
+		return value / 1000.0
+	elif (value > 9999 && value <= 99999):
+		return value / 10000.0		
+	## WIP: this should go beyond 99999, for now the func is only used for normalising aspect ratios
+	# of images whose pixel dimension don't got beyond 99999
 
-func get_textured_meshes(positions : Array, textures: Array) -> Array:
+func get_normalised_texture_aspect_ratio(texture: Texture) -> Vector2:
+	var width = texture.get_width()
+	var height = texture.get_height()
+	var normalised : Vector2 = Vector2(normalise_value(width), normalise_value(height))
+	return normalised
+
+func get_textured_meshes(positions : Array, textures: Array, mesh_width : int = 1, mesh_name_prefix : String = "mesh_") -> Array:
 	assert(positions.size() == textures.size(), "ERROR: positions array size doesn't match the textures array size")
 	var size : int = positions.size()
 	var meshes : Array = []
 	for index in range(size):
-		var mesh : QuadMesh = QuadMesh.new()		
+		var mesh : QuadMesh = QuadMesh.new()
 		var mesh_instance: MeshInstance = MeshInstance.new()
-		mesh_instance.set_mesh(mesh)		
+		mesh_instance.set_mesh(mesh)
 		var mat : SpatialMaterial = SpatialMaterial.new()
-		mat.albedo_texture = textures[index]
+		var texture : Texture = textures[index]
+		var texture_aspect_ratio = get_normalised_texture_aspect_ratio(texture)		
+		mat.albedo_texture = texture
 		mesh_instance.set_surface_material(0, mat)
+		mesh_instance.scale = Vector3(mesh_width * texture_aspect_ratio.x,
+									mesh_width * texture_aspect_ratio.y,
+									0)
 		var pos : Vector3 = positions[index]
-		mesh_instance.global_translation = pos
+		mesh_instance.translation = pos
+		mesh_instance.set_rotation_degrees(Vector3(0, -90, 0))
+		mesh_instance.name = mesh_name_prefix + str(index)
 		meshes.append(mesh_instance)
 	return meshes
 	 
@@ -305,9 +331,12 @@ func _ready():
 	# the global variable is used tot animate the embeddings
 	the_vertices = embeddings_scaled
 	
+	# set camera reference
+	camera_ref = get_parent().get_node("fps_player")
+	
 	# ppreload all weather images as textures
 	var textures = load_images_to_textures(IMAGES_FOLDER_PATH, IMAGE_EXT, NUM_IMAGES)
-	var weather_image_meshes = get_textured_meshes(embeddings_scaled, textures)
+	var weather_image_meshes = get_textured_meshes(embeddings_scaled, textures, 2, "weather_mesh_")
 	for mesh in weather_image_meshes:
 		self.add_child(mesh)
 	
@@ -319,8 +348,9 @@ func _ready():
 	embeddings_mesh_instance.name = "embeddings_mesh"
 	self.add_child(embeddings_mesh_instance)	# add the embeddings mesh to the scene
 	
+	# set amount of embeddings	
 	vertices_length = embeddings.size() # set the global var
-#	init_timer(timer) # init global timer
+
 	
 	if(DEBUG):
 		# show the embeddings as points		
@@ -333,8 +363,17 @@ func _ready():
 		var embeddings_bounding_box_mesh : MeshInstance = create_embeddings_bounding_box_mesh(embeddings_scaled)
 		self.add_child(embeddings_bounding_box_mesh)			
 	
-
 func _process(delta):
+	# animate embeddings polyline
 	var embeddings_mesh = get_node("embeddings_mesh")
 	var mesh : Mesh = get_polyline_mesh(get_polyline_vertices(the_vertices_slice))
 	embeddings_mesh.set_mesh(mesh)
+	
+	# make weather images follow the camera movement
+	# WIP: doesn't work, probably issue with the Up vector set in the look_at func
+	#	for index in range(vertices_length):
+	#		var weather_mesh = get_node("weather_mesh_" + str(index))
+	#		weather_mesh.look_at(camera_ref.translation, Vector3(0,0,0))
+		
+	
+	

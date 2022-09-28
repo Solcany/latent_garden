@@ -16,11 +16,10 @@ ambient_light_color = Color( 1, 1, 1, 1 )
 environment = SubResource( 1 )
 
 [node name="fps_player" type="Spatial" parent="."]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.557224, 30.0393 )
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 35 )
 script = ExtResource( 2 )
 
 [node name="cam" type="Camera" parent="fps_player"]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 4.30898 )
 
 [node name="show_embeddings" type="Spatial" parent="."]
 transform = Transform( -4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, -9.98182, -5.8369, 14.4642 )
