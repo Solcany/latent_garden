@@ -12,3 +12,4 @@ front_end/latent_garden_godot/Data/*/*/*.jpg
 tmp/
 pyenv/
 __pycache__/
+rnn-generated-poetry/
