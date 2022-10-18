@@ -18,3 +18,5 @@ vae-lagging-encoder/
 vae-lagging-encoder/
 sle_gan/
 *.h5
+*.jpg
+*.png
