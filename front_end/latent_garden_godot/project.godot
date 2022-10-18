@@ -16,11 +16,17 @@ _global_script_class_icons={
 
 config/name="Latent Garden"
 run/main_scene="res://render_embeddings.tscn"
+run/delta_sync_after_draw=true
 config/icon="res://icon.png"
 
 [autoload]
 
 global_variables="*res://global_variables.gd"
+
+[display]
+
+window/size/width=1920
+window/size/height=1080
 
 [input]
 

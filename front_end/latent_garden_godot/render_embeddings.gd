@@ -2,6 +2,7 @@ extends Spatial
 
 ### CONSTANTS ###
 const DEBUG = true
+const SHOW_WEATHER_IMAGES = true
 const EMBEDDINGS_DIMENSIONS = 3 # how many dimensions do the embeddings have?
 const EMBEDDINGS_BOUNDING_BOX_MAX_WIDTH = 20 # how long is the longest side of the bounding box of the embeddings?
 const TIMER_DELAY = 0.01
@@ -334,11 +335,12 @@ func _ready():
 	# set camera reference
 	camera_ref = get_parent().get_node("fps_player")
 	
-	# ppreload all weather images as textures
-	var textures = load_images_to_textures(IMAGES_FOLDER_PATH, IMAGE_EXT, NUM_IMAGES)
-	var weather_image_meshes = get_textured_meshes(embeddings_scaled, textures, 2, "weather_mesh_")
-	for mesh in weather_image_meshes:
-		self.add_child(mesh)
+	# preload all weather images as textures
+	if(SHOW_WEATHER_IMAGES):
+		var textures = load_images_to_textures(IMAGES_FOLDER_PATH, IMAGE_EXT, NUM_IMAGES)
+		var weather_image_meshes = get_textured_meshes(embeddings_scaled, textures, 2, "weather_mesh_")
+		for mesh in weather_image_meshes:
+			self.add_child(mesh)
 	
 	# Initiate and add the embeddings Mesh Instance, the actual mesh will be set in _Process
 	# var embeddings_mesh : Mesh = get_points_mesh(embeddings_scaled)
@@ -346,7 +348,7 @@ func _ready():
 	set_vertex_color_mesh_material(embeddings_mesh_instance)
 	#embeddings_mesh_instance.set_mesh(embeddings_mesh)
 	embeddings_mesh_instance.name = "embeddings_mesh"
-	self.add_child(embeddings_mesh_instance)	# add the embeddings mesh to the scene
+	#self.add_child(embeddings_mesh_instance)	# add the embeddings mesh to the scene
 	
 	# set amount of embeddings	
 	vertices_length = embeddings.size() # set the global var
@@ -364,10 +366,11 @@ func _ready():
 		self.add_child(embeddings_bounding_box_mesh)			
 	
 func _process(delta):
+	pass
 	# animate embeddings polyline
-	var embeddings_mesh = get_node("embeddings_mesh")
-	var mesh : Mesh = get_polyline_mesh(get_polyline_vertices(the_vertices_slice))
-	embeddings_mesh.set_mesh(mesh)
+	#var embeddings_mesh = get_node("embeddings_mesh")
+	#var mesh : Mesh = get_polyline_mesh(get_polyline_vertices(the_vertices_slice))
+	#embeddings_mesh.set_mesh(mesh)
 	
 	# make weather images follow the camera movement
 	# WIP: doesn't work, probably issue with the Up vector set in the look_at func

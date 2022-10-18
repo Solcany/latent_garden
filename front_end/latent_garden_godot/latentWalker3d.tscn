@@ -6,7 +6,7 @@
 
 [sub_resource type="Environment" id=1]
 background_mode = 1
-background_color = Color( 1, 1, 1, 1 )
+background_color = Color( 0.368627, 0.345098, 0.231373, 1 )
 ambient_light_color = Color( 0.678431, 0.658824, 0.658824, 1 )
 
 [node name="Game" type="Spatial"]
