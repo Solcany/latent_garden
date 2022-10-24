@@ -1,3 +1,6 @@
+if __name__ == '__main__':
+    main()
+
 import numpy as np
 import tensorflow as tf
 import sle_gan
@@ -52,8 +55,6 @@ def main():
             image_output_path = dir_path + "/" + str(point_index) + ".jpg"
             image.save(image_output_path, format="JPEG")
 
-if __name__ == '__main__':
-    main()
 
 
 

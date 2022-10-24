@@ -12,15 +12,12 @@ const IMAGE_ASPECT_RATIO : Vector2 = Vector2(1.6, 0.8)
 const IMAGE_EXT = ".JPG"
 const NUM_IMAGES = 116 
 
-
 ### GLOBALS ###
 var vertices_length : int = 0
 var vertices_last_index : int = VERTICES_INITIAL_INDEX
 var the_vertices : Array = [] # all vertices
 var the_vertices_slice : Array = [] # slice of the vertices rendered in animation
 var camera_ref = null
-
-
 
 ### ASSET IMPORTS ###
 func load_csv_of_floats(path : String, row_size: int) -> Array:
