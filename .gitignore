@@ -11,5 +11,12 @@ front_end/latent_garden_godot/Data/*/*/*.jpg
 *.import
 tmp/
 pyenv/
+env/
 __pycache__/
 rnn-generated-poetry/
+vae-lagging-encoder/
+vae-lagging-encoder/
+sle_gan/
+*.h5
+*.jpg
+*.png

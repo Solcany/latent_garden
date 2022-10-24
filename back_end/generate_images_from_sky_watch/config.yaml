@@ -1,0 +1,16 @@
+name: "experiment"
+override: true
+data_folder: "data/dung_256x256_sle_gan_ready"
+resolution: 256 #Either 256, 512 or 1024. Default is 512.
+generator_weights: False
+discriminator_weights: False
+batch_size: 8
+epochs: 1000
+G_learning_rate: 0.0002
+D_learning_rate: 0.0002
+diff_augment: False
+diff_augment_policies: "translation,cutout"
+fid: False
+fid_frequency: 1 #FID will be evaluated at this frequency (epochs)
+fid_number_of_images: 128 #This many images will be used for the FID calculation
+
