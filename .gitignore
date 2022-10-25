@@ -20,3 +20,4 @@ sle_gan/
 *.h5
 *.jpg
 *.png
+back_end/umap_sky_watch_images/output/*.csv

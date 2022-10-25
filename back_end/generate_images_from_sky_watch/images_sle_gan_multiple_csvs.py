@@ -1,6 +1,3 @@
-if __name__ == '__main__':
-    main()
-
 import numpy as np
 import tensorflow as tf
 import sle_gan
@@ -10,7 +7,7 @@ import glob
 import PIL
 
 GENERATOR_WEIGHTS_PATH = "./data/weights/metfaces_G-e388.h5"
-GLOB_INPUT_DATA_PATH = '/users/m/documents/_DIGITAL/rust/sky_watch/process_sky_images_to_tiles/data/output/friday_tiles/csv/*.csv'
+GLOB_INPUT_DATA_PATH = '/users/m/documents/_DIGITAL/rust/sky_watch/process_sky_images_to_tiles/output/friday_tiles/csv/*.csv'
 OUTPUT_PATH = './output/friday_images'
 IM_SHAPE = (256,256)
 
@@ -32,7 +29,7 @@ def generate_image(generator, latent_point):
     return PIL.Image.fromarray(generated_image)
 
 def main():
-    # get the csv data
+    # get the csv data, sort them based on number found in the csvs paths
     csv_paths = sorted(glob.glob(GLOB_INPUT_DATA_PATH), key=lambda path: int(re.search(r'\d+', path).group()))
 
     # create the output dir
@@ -55,6 +52,8 @@ def main():
             image_output_path = dir_path + "/" + str(point_index) + ".jpg"
             image.save(image_output_path, format="JPEG")
 
+if __name__ == '__main__':
+    main()
 
 
 
