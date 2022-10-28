@@ -21,6 +21,25 @@ var the_vertices : Array = [] # all vertices
 var the_vertices_slice : Array = [] # slice of the vertices rendered in animation
 var camera_ref = null
 
+### UTILS ###
+
+func get_unique_numbers_of_array(array: Array) -> Array:
+	var uniques : Array = []
+	
+	for value in array:
+		if(uniques.size() > 0):
+			var is_value_unique: bool = true
+			for unique_value in uniques:
+				if(value == unique_value):
+					is_value_unique = false
+					break
+			if(is_value_unique):
+				uniques.append(value)
+		else:
+			uniques.append(value)
+	
+	return uniques
+
 ### ASSET IMPORTS ###
 func load_csv_of_floats(path : String, row_size: int) -> Array:
 	# Godot interprets .csv files as game language translation...
@@ -49,9 +68,9 @@ func load_embeddings_groups_from_csv(csv_path : String, row_size: int, skip_head
 	# ...it breaks when trying to load a regular non translation data .csv
 	# therefore change .csv extension to .txt to load it successfuly
 	
-	# func loads embeddings(3d coordinates) from a csv
-	# col 0 in the csv is expected to be the index of the emeddings instance
-	# the rest should be cols of 3d coordinates (x, y, z)
+	# func loads grouped embeddings(3d coordinates) from a csv
+	# col 0 in the csv is expected to be the index of the emeddings group
+	# the rest should be 3 cols of the 3d coordinates (x, y, z)
 	var file = File.new()
 	file.open(csv_path, file.READ)
 	
@@ -257,7 +276,26 @@ func get_textured_meshes(positions : Array, textures: Array, mesh_width : int = 
 		meshes.append(mesh_instance)
 	return meshes
 	 
-	
+#func add_embeddings_groups_meshes_to_scene(embeddings: Array, group_indices: Array) -> Void:
+#	var n_groups = embeddings.size()
+#
+#	for i_group in range(n_groups):
+#
+#		for i_el in range()
+#		var embedding : Vector3 = embeddings[i]
+#		var group_index : int = group_indices[i]
+#
+#		for
+#		if(group_index == i):
+#
+		
+		# Initiate and add the embeddings Mesh Instance, the actual mesh will be set in _Process
+	# var embeddings_mesh : Mesh = get_points_mesh(embeddings_scaled)
+	#var embeddings_mesh_instance = MeshInstance.new()
+	#set_vertex_color_mesh_material(embeddings_mesh_instance)
+	#embeddings_mesh_instance.set_mesh(embeddings_mesh)
+	#embeddings_mesh_instance.name = "embeddings_mesh"
+	#self.add_child(embeddings_mesh_instance)	# add the embeddings mesh to the scene
 	
 ### DEBUG RENDERING ###
 
@@ -355,21 +393,23 @@ func _on_Timer_timeout():
 ### THE PROGRAM ###
 
 func _ready():
-	var csv_row_length = EMBEDDINGS_DIMENSIONS
+	var csv_row_length : int = EMBEDDINGS_DIMENSIONS
 	if(HAS_INDEXED_EMBEDDINGS):
 		csv_row_length += 1
-	var embeddings : Array = load_embeddings_groups_from_csv(EMBEDDINGS_CSV_PATH, csv_row_length)	
-	print(embeddings[0])
+	var embeddings_data : Array = load_embeddings_groups_from_csv(EMBEDDINGS_CSV_PATH, csv_row_length)	
+	var embeddings : Array = embeddings_data[0]
+	var embeddings_group_indices : Array = embeddings_data[1]
+
 #	embeddings = array_to_Vector3(embeddings)
 	var embeddings_normalised : Array = normalise_embeddings(embeddings)	
-#	var embeddings_bounding_box_proportions : Vector3 = get_embeddings_bounding_box_proportions(embeddings)
-#	var embeddings_scaled : Array = scale_normalised_embeddings(embeddings_normalised, 
-#															embeddings_bounding_box_proportions, 
-#															EMBEDDINGS_BOUNDING_BOX_MAX_WIDTH)
+	var embeddings_bounding_box_proportions : Vector3 = get_embeddings_bounding_box_proportions(embeddings)
+	var embeddings_scaled : Array = scale_normalised_embeddings(embeddings_normalised, 
+															embeddings_bounding_box_proportions, 
+															EMBEDDINGS_BOUNDING_BOX_MAX_WIDTH)
 	
 	# set the vertices of embeddings to a global variable
 	# the global variable is used tot animate the embeddings
-	#the_vertices = embeddings_scaled
+	the_vertices = embeddings_scaled
 	
 	# set camera reference
 	#camera_ref = get_parent().get_node("fps_player")
@@ -380,6 +420,7 @@ func _ready():
 #		var weather_image_meshes = get_textured_meshes(embeddings_scaled, textures, 2, "weather_mesh_")
 #		for mesh in weather_image_meshes:
 #			self.add_child(mesh)
+	
 	
 	# Initiate and add the embeddings Mesh Instance, the actual mesh will be set in _Process
 	# var embeddings_mesh : Mesh = get_points_mesh(embeddings_scaled)
