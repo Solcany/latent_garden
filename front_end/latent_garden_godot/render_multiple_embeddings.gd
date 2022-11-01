@@ -2,9 +2,9 @@ extends Spatial
 
 ### CONSTANTS ###
 const DEBUG = true
-const SHOW_WEATHER_IMAGES = true
-const SHOW_EMBEDDINGS_AS_POLYLINE = true
+const EMBEDDINGS_CSV_PATH = "data/embeddings/sky_watch_gan_images_embeddings.txt"
 const EMBEDDINGS_DIMENSIONS = 3 # how many dimensions do the embeddings have?
+const HAS_INDEXED_EMBEDDINGS = true
 const EMBEDDINGS_BOUNDING_BOX_MAX_WIDTH = 20 # how long is the longest side of the bounding box of the embeddings?
 const TIMER_DELAY = 0.01
 const VERTICES_INITIAL_INDEX = 2
@@ -12,6 +12,14 @@ const IMAGES_FOLDER_PATH = "data/images/sky_watch_friday/"
 const IMAGE_ASPECT_RATIO : Vector2 = Vector2(1.6, 0.8)
 const IMAGE_EXT = ".JPG"
 const NUM_IMAGES = 116 
+const GROUPS_COLORS = [Color(200, 0, 0), 
+					  Color(0, 200, 0),
+					  Color(0, 0, 200),
+					  Color(0, 200, 200),
+					  Color(200, 200, 0),
+					  Color(200, 0, 200),
+					  Color(200, 100, 150)
+					]
 
 ### GLOBALS ###
 var vertices_length : int = 0
@@ -19,6 +27,25 @@ var vertices_last_index : int = VERTICES_INITIAL_INDEX
 var the_vertices : Array = [] # all vertices
 var the_vertices_slice : Array = [] # slice of the vertices rendered in animation
 var camera_ref = null
+
+### UTILS ###
+
+func get_unique_numbers_of_array(array: Array) -> Array:
+	var uniques : Array = []
+	
+	for value in array:
+		if(uniques.size() > 0):
+			var is_value_unique: bool = true
+			for unique_value in uniques:
+				if(value == unique_value):
+					is_value_unique = false
+					break
+			if(is_value_unique):
+				uniques.append(value)
+		else:
+			uniques.append(value)
+	
+	return uniques
 
 ### ASSET IMPORTS ###
 func load_csv_of_floats(path : String, row_size: int) -> Array:
@@ -42,6 +69,53 @@ func load_csv_of_floats(path : String, row_size: int) -> Array:
 	print("csv: ", path, " loaded!")
 	
 	return data
+	
+func load_embeddings_groups_from_csv(csv_path : String, row_size: int, skip_header: bool = true) -> Array:
+	# Godot interprets .csv files as game language translation...
+	# ...it breaks when trying to load a regular non translation data .csv
+	# therefore change .csv extension to .txt to load it successfuly
+	
+	# func loads grouped embeddings(3d coordinates) from a csv
+	# col 0 in the csv is expected to be the index of the emeddings group
+	# the rest should be 3 cols of the 3d coordinates (x, y, z)
+	var file = File.new()
+	file.open(csv_path, file.READ)
+	
+	var embeddings : Array = []
+	var embeddings_groups_indices : Array = []
+	
+	var current_row_index : int = 0
+	while !file.eof_reached():
+		var	csv_row = file.get_csv_line()
+		if(csv_row.size() == row_size):
+			var embedding : Vector3 = Vector3(float(csv_row[1]), float(csv_row[2]),float(csv_row[3]))
+			var group_index: int = int(csv_row[0])
+
+			# skip header, header must be 1st line of the read csv
+			if(skip_header && current_row_index > 0):		
+				embeddings_groups_indices.append(group_index)		
+				embeddings.append(embedding)	
+			# if there's no header, consider the 1st line to be data
+			elif(!skip_header):	
+				embeddings_groups_indices.append(group_index)	
+				embeddings.append(embedding)
+		current_row_index += 1
+	file.close()
+	
+	print("data from csv: ", csv_path, " loaded")
+	
+	return [embeddings, embeddings_groups_indices]
+	
+func group_embeddings(embeddings : Array, embeddings_group_indices: Array) -> Array:
+	var n_groups : Array = get_unique_numbers_of_array(embeddings_group_indices)
+	var grouped_embeddings : Array = []
+
+	for i_group in n_groups:
+		grouped_embeddings.append([])
+		for i in range(embeddings.size()):
+			if (embeddings_group_indices[i] == i_group):
+				grouped_embeddings[i_group].append(embeddings[i])
+	return grouped_embeddings
 	
 func load_images_to_textures(folder_path : String, extension : String, num_images: int, start_index: int = 1) -> Array:
 	# expects folder with numbered image files, example: "1.jpg"
@@ -126,7 +200,7 @@ func scale_normalised_embeddings(embeddings : Array, bounding_box_proportions: V
 	return scaled	
 	
 ### RENDERING ###
-func get_points_mesh(vertices : Array) -> Mesh:
+func get_points_mesh(vertices : Array, vertex_color: Color = Color(255,255,255)) -> Mesh:
 	var mesh = Mesh.new()
 	var surf = SurfaceTool.new()
 
@@ -134,14 +208,14 @@ func get_points_mesh(vertices : Array) -> Mesh:
 	for vertex in vertices:
 		# this sets color individually for each vertex
 		# set WorldEnvironment Ambient Light to a value to make this visible
-		surf.add_color(Color(255,255,255)) 
+		surf.add_color(vertex_color) 
 		surf.add_uv(Vector2(0, 0))
 		surf.add_vertex(vertex)
 	surf.index()
 	surf.commit( mesh )
 	return mesh
 	
-func get_polyline_vertices(vertices : Array, close=false):
+func get_polyline_vertices(vertices : Array, close=false) -> Array:
 # segements of polyline are created from a vertex pair
 # duplicate every vertex except of the first and the last to create the connected segments
 # Array of Vector3 is expected
@@ -157,7 +231,7 @@ func get_polyline_vertices(vertices : Array, close=false):
 			polyline.append(vertices[0])
 	return polyline	
 	
-func get_polyline_mesh(polyline_vertices: Array) -> Mesh:
+func get_polyline_mesh(polyline_vertices: Array, vertex_color: Color = Color(255,255,255)) -> Mesh:
 	# excepts array of Vector3(s)
 	var _mesh = Mesh.new()
 	var _surf = SurfaceTool.new()
@@ -166,7 +240,7 @@ func get_polyline_mesh(polyline_vertices: Array) -> Mesh:
 	for vertex in polyline_vertices:
 		# this sets color individually for each vertex
 		# set WorldEnvironment Ambient Light to a value to make this visible
-		_surf.add_color(Color(255,255,255)) 
+		_surf.add_color(vertex_color) 
 		_surf.add_uv(Vector2(0, 0))
 		_surf.add_vertex(vertex)
 	_surf.index()
@@ -179,7 +253,10 @@ func set_vertex_color_mesh_material(mesh: MeshInstance):
 	mat.vertex_color_use_as_albedo = true
 	mesh.set_surface_material(0, mat)
 	
-
+func set_mesh_albedo_color(mesh: MeshInstance, color: Color):
+	var mat = SpatialMaterial.new()
+	mat.albedo_color = color 
+	mesh.set_surface_material(0, mat)		
 	
 func normalise_value(value):
 	if(value <= 99):
@@ -222,8 +299,23 @@ func get_textured_meshes(positions : Array, textures: Array, mesh_width : int = 
 		meshes.append(mesh_instance)
 	return meshes
 	 
-	
-	
+func add_embeddings_groups_meshes_to_scene(grouped_embeddings: Array, groups_colors : Array) -> void:	
+	for group_i in range(grouped_embeddings.size()):
+		var group = grouped_embeddings[group_i]
+		# Initiate and add the embeddings Mesh Instance, the actual mesh will be set in _Process		
+		var polyline_vertices : Array = get_polyline_vertices(group)
+		var group_mesh : Mesh = get_polyline_mesh(polyline_vertices)
+		var group_mesh_instance = MeshInstance.new()
+		#set_vertex_color_mesh_material(group_mesh_instance)	
+		group_mesh_instance.set_mesh(group_mesh)
+		
+		# always set the material only after the mesh was set
+		set_mesh_albedo_color(group_mesh_instance, GROUPS_COLORS[group_i])		
+		group_mesh_instance.name = "mesh_group_" + str(group_i)
+		# add the embeddings mesh to the scene
+		self.add_child(group_mesh_instance)	
+				
+				
 ### DEBUG RENDERING ###
 
 func create_cube_mesh(v1: Vector3, v2: Vector3) -> Mesh:
@@ -320,8 +412,14 @@ func _on_Timer_timeout():
 ### THE PROGRAM ###
 
 func _ready():
-	var embeddings : Array = load_csv_of_floats("data/noise/sky_watch_data_friday_embeddings.txt", EMBEDDINGS_DIMENSIONS)	
-	embeddings = array_to_Vector3(embeddings)
+	var csv_row_length : int = EMBEDDINGS_DIMENSIONS
+	if(HAS_INDEXED_EMBEDDINGS):
+		csv_row_length += 1
+	var embeddings_data : Array = load_embeddings_groups_from_csv(EMBEDDINGS_CSV_PATH, csv_row_length)	
+	var embeddings : Array = embeddings_data[0]
+	var embeddings_group_indices : Array = embeddings_data[1]
+
+#	embeddings = array_to_Vector3(embeddings)
 	var embeddings_normalised : Array = normalise_embeddings(embeddings)	
 	var embeddings_bounding_box_proportions : Vector3 = get_embeddings_bounding_box_proportions(embeddings)
 	var embeddings_scaled : Array = scale_normalised_embeddings(embeddings_normalised, 
@@ -330,58 +428,18 @@ func _ready():
 	
 	# set the vertices of embeddings to a global variable
 	# the global variable is used tot animate the embeddings
-	the_vertices = embeddings_scaled
-	
-	# set camera reference
-	camera_ref = get_parent().get_node("fps_player")
-	
-	# preload all weather images as textures
-	if(SHOW_WEATHER_IMAGES):
-		var textures = load_images_to_textures(IMAGES_FOLDER_PATH, IMAGE_EXT, NUM_IMAGES)
-		var weather_image_meshes = get_textured_meshes(embeddings_scaled, textures, 2, "weather_mesh_")
-		for mesh in weather_image_meshes:
-			self.add_child(mesh)
-	
-	if(SHOW_EMBEDDINGS_AS_POLYLINE):
-		# Initiate and add the embeddings Mesh Instance, the actual mesh will be set in _Process
-		#var embeddings_mesh : Mesh = get_points_mesh(embeddings_scaled)
-		var embeddings_mesh : Mesh = get_polyline_mesh(get_polyline_vertices(embeddings_scaled))	
-		var embeddings_mesh_instance = MeshInstance.new()
+	var grouped_embeddings : Array = group_embeddings(embeddings_scaled, embeddings_group_indices)
+	add_embeddings_groups_meshes_to_scene(grouped_embeddings, GROUPS_COLORS)
 
-		embeddings_mesh_instance.set_mesh(embeddings_mesh)
-		# always set the material only after the mesh was set
-		set_vertex_color_mesh_material(embeddings_mesh_instance)	
-
-		embeddings_mesh_instance.name = "embeddings_mesh"
-		self.add_child(embeddings_mesh_instance)	# add the embeddings mesh to the scene
-	
-		# set amount of embeddings	
-		vertices_length = embeddings.size() # set the global var
-
-	
 	if(DEBUG):
+		pass
 		# show the embeddings as points		
 		var embeddings_as_points = MeshInstance.new()
 		embeddings_as_points.set_mesh(get_points_mesh(the_vertices))	
 		set_vertex_color_mesh_material(embeddings_as_points)	
 		self.add_child(embeddings_as_points)	
-		
-		# show embeddings bounding box 
+#
+#		# show embeddings bounding box 
 		var embeddings_bounding_box_mesh : MeshInstance = create_embeddings_bounding_box_mesh(embeddings_scaled)
 		self.add_child(embeddings_bounding_box_mesh)			
-	
-func _process(delta):
-	pass
-	# animate embeddings polyline
-	#var embeddings_mesh = get_node("embeddings_mesh")
-	#var mesh : Mesh = get_polyline_mesh(get_polyline_vertices(the_vertices_slice))
-	#embeddings_mesh.set_mesh(mesh)
-	
-	# make weather images follow the camera movement
-	# WIP: doesn't work, probably issue with the Up vector set in the look_at func
-	#	for index in range(vertices_length):
-	#		var weather_mesh = get_node("weather_mesh_" + str(index))
-	#		weather_mesh.look_at(camera_ref.translation, Vector3(0,0,0))
-		
-	
 	
