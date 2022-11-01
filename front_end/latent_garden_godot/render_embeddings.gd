@@ -3,6 +3,7 @@ extends Spatial
 ### CONSTANTS ###
 const DEBUG = true
 const SHOW_WEATHER_IMAGES = true
+const SHOW_EMBEDDINGS_AS_POLYLINE = true
 const EMBEDDINGS_DIMENSIONS = 3 # how many dimensions do the embeddings have?
 const EMBEDDINGS_BOUNDING_BOX_MAX_WIDTH = 20 # how long is the longest side of the bounding box of the embeddings?
 const TIMER_DELAY = 0.01
@@ -178,6 +179,8 @@ func set_vertex_color_mesh_material(mesh: MeshInstance):
 	mat.vertex_color_use_as_albedo = true
 	mesh.set_surface_material(0, mat)
 	
+
+	
 func normalise_value(value):
 	if(value <= 99):
 		return value / 10.0
@@ -339,16 +342,21 @@ func _ready():
 		for mesh in weather_image_meshes:
 			self.add_child(mesh)
 	
-	# Initiate and add the embeddings Mesh Instance, the actual mesh will be set in _Process
-	# var embeddings_mesh : Mesh = get_points_mesh(embeddings_scaled)
-	var embeddings_mesh_instance = MeshInstance.new()
-	set_vertex_color_mesh_material(embeddings_mesh_instance)
-	#embeddings_mesh_instance.set_mesh(embeddings_mesh)
-	embeddings_mesh_instance.name = "embeddings_mesh"
-	#self.add_child(embeddings_mesh_instance)	# add the embeddings mesh to the scene
+	if(SHOW_EMBEDDINGS_AS_POLYLINE):
+		# Initiate and add the embeddings Mesh Instance, the actual mesh will be set in _Process
+		#var embeddings_mesh : Mesh = get_points_mesh(embeddings_scaled)
+		var embeddings_mesh : Mesh = get_polyline_mesh(get_polyline_vertices(embeddings_scaled))	
+		var embeddings_mesh_instance = MeshInstance.new()
+
+		embeddings_mesh_instance.set_mesh(embeddings_mesh)
+		# always set the material only after the mesh was set
+		set_vertex_color_mesh_material(embeddings_mesh_instance)	
+
+		embeddings_mesh_instance.name = "embeddings_mesh"
+		self.add_child(embeddings_mesh_instance)	# add the embeddings mesh to the scene
 	
-	# set amount of embeddings	
-	vertices_length = embeddings.size() # set the global var
+		# set amount of embeddings	
+		vertices_length = embeddings.size() # set the global var
 
 	
 	if(DEBUG):
