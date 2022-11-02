@@ -20,7 +20,7 @@ ambient_light_color = Color( 1, 1, 1, 1 )
 environment = SubResource( 1 )
 
 [node name="fps_player" type="Spatial" parent="."]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -1.33513, 0.725052, 26.1277 )
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 9.15255, 7.29517, 23.6201 )
 script = ExtResource( 2 )
 
 [node name="cam" type="Camera" parent="fps_player"]

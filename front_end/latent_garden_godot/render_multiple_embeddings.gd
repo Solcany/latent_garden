@@ -12,13 +12,12 @@ const IMAGES_FOLDER_PATH = "data/images/sky_watch_friday/"
 const IMAGE_ASPECT_RATIO : Vector2 = Vector2(1.6, 0.8)
 const IMAGE_EXT = ".JPG"
 const NUM_IMAGES = 116 
-const GROUPS_COLORS = [Color(200, 0, 0), 
-					  Color(0, 200, 0),
-					  Color(0, 0, 200),
-					  Color(0, 200, 200),
-					  Color(200, 200, 0),
-					  Color(200, 0, 200),
-					  Color(200, 100, 150)
+const GROUPS_COLORS = [[232,169,100], 
+					  [198,190,154],
+					  [173,139,50],
+					  [232,169,100],
+					  [214,24,24],
+					  [222,96,55],
 					]
 
 ### GLOBALS ###
@@ -46,6 +45,17 @@ func get_unique_numbers_of_array(array: Array) -> Array:
 			uniques.append(value)
 	
 	return uniques
+	
+func get_normalised_colors(colors: Array) -> Array:
+	# convert array of rgb vals in 0-255 range to 0-1 range
+	var normalised_colors : Array = [] 
+	for c_arr in colors:
+		var normalised : Array = []
+		for c in c_arr:
+			normalised.append(c/255.0)
+		normalised_colors.append(Color(normalised[0], normalised[1], normalised[2]))
+	return normalised_colors
+			
 
 ### ASSET IMPORTS ###
 func load_csv_of_floats(path : String, row_size: int) -> Array:
@@ -304,13 +314,13 @@ func add_embeddings_groups_meshes_to_scene(grouped_embeddings: Array, groups_col
 		var group = grouped_embeddings[group_i]
 		# Initiate and add the embeddings Mesh Instance, the actual mesh will be set in _Process		
 		var polyline_vertices : Array = get_polyline_vertices(group)
-		var group_mesh : Mesh = get_polyline_mesh(polyline_vertices)
+		var group_mesh : Mesh = get_polyline_mesh(polyline_vertices, groups_colors[group_i])
 		var group_mesh_instance = MeshInstance.new()
-		#set_vertex_color_mesh_material(group_mesh_instance)	
+
 		group_mesh_instance.set_mesh(group_mesh)
-		
+		set_vertex_color_mesh_material(group_mesh_instance)	
 		# always set the material only after the mesh was set
-		set_mesh_albedo_color(group_mesh_instance, GROUPS_COLORS[group_i])		
+		#set_mesh_albedo_color(group_mesh_instance, groups_colors[group_i])		
 		group_mesh_instance.name = "mesh_group_" + str(group_i)
 		# add the embeddings mesh to the scene
 		self.add_child(group_mesh_instance)	
@@ -429,7 +439,8 @@ func _ready():
 	# set the vertices of embeddings to a global variable
 	# the global variable is used tot animate the embeddings
 	var grouped_embeddings : Array = group_embeddings(embeddings_scaled, embeddings_group_indices)
-	add_embeddings_groups_meshes_to_scene(grouped_embeddings, GROUPS_COLORS)
+	var colors : Array = get_normalised_colors(GROUPS_COLORS)
+	add_embeddings_groups_meshes_to_scene(grouped_embeddings, colors)
 
 	if(DEBUG):
 		pass
