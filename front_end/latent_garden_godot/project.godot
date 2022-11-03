@@ -8,14 +8,26 @@
 
 config_version=4
 
-_global_script_classes=[  ]
+_global_script_classes=[ {
+"base": "Object",
+"class": "Geometry",
+"language": "GDScript",
+"path": "res://Geometry.gd"
+}, {
+"base": "Object",
+"class": "Utils",
+"language": "GDScript",
+"path": "res://Utils.gd"
+} ]
 _global_script_class_icons={
+"Geometry": "",
+"Utils": ""
 }
 
 [application]
 
 config/name="Latent Garden"
-run/main_scene="res://render_embeddings.tscn"
+run/main_scene="res://drawing_in_latent_space.tscn"
 run/delta_sync_after_draw=true
 config/icon="res://icon.png"
 
