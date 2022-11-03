@@ -327,7 +327,6 @@ func _ready():
 	var embeddings_scaled : Array = scale_normalised_embeddings(embeddings_normalised, 
 															embeddings_bounding_box_proportions, 
 															EMBEDDINGS_BOUNDING_BOX_MAX_WIDTH)
-	
 	# set the vertices of embeddings to a global variable
 	# the global variable is used tot animate the embeddings
 	the_vertices = embeddings_scaled

@@ -54,7 +54,7 @@ static func normalise_3d_embeddings(embeddings: Array) -> Array:
 		normalised.append(Vector3(norm_x, norm_y, norm_z))
 	return normalised
 	
-func normalise_2d_embeddings(embeddings: Array) -> Array:
+static func normalise_2d_embeddings(embeddings: Array) -> Array:
 	var min_x : float = Utils.get_vec_array_min(embeddings, "x")
 	var min_y : float = Utils.get_vec_array_min(embeddings, "y")
 	var max_x : float = Utils.get_vec_array_max(embeddings, "x")

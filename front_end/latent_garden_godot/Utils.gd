@@ -93,6 +93,14 @@ static func get_normalised_colors(colors: Array) -> Array:
 		normalised_colors.append(Color(normalised[0], normalised[1], normalised[2]))
 	return normalised_colors
 
+static func array_to_Vector2(array: Array) -> Array:
+	# helper function to converst array of 2dim arrays to array of Vector2
+	var vectors : Array = []
+	for numbers in array:
+		var vec = Vector2(numbers[0], numbers[1])
+		vectors.append(vec)
+	return vectors
+
 static func array_to_Vector3(array: Array) -> Array:
 	# helper function to converst array of 3dim arrays to array of Vector3
 	var vectors : Array = []
@@ -100,6 +108,7 @@ static func array_to_Vector3(array: Array) -> Array:
 		var vec = Vector3(numbers[0], numbers[1], numbers[2])
 		vectors.append(vec)
 	return vectors
+	
 	
 static func get_vec_array_max(array : Array, pos : String, max_val_init : int = -100000000 ) -> float:
 	# find the highest float value in array
