@@ -19,4 +19,4 @@ func _ready():
 	var embeddings_scaled : Array = Geom.scale_normalised_3d_embeddings(embeddings_normalised, 
 																	embeddings_bounding_box_proportions, 
 																	EMBEDDINGS_BOUNDING_BOX_MAX_WIDTH)
-	print(embeddings_normalised[1])
+
