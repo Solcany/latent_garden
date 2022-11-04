@@ -38,7 +38,6 @@ transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0.0028494 )
 transform = Transform( 0.05, 0, 0, 0, -2.18557e-09, -0.05, 0, 0.05, -2.18557e-09, 0, 0.0191733, 0 )
 visible = false
 mesh = SubResource( 1 )
-material/0 = null
 
 [node name="CollisionShape" type="CollisionShape" parent="player_controller/player_collider"]
 transform = Transform( 0.05, 0, 0, 0, -2.18557e-09, -0.05, 0, 0.05, -2.18557e-09, 0, 0.0191733, 0 )

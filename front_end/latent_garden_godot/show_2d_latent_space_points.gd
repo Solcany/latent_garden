@@ -32,18 +32,10 @@ func _ready():
 	Mat.assign_vertex_albedo_color_material(embeddings_mesh_instance)
 	self.add_child(embeddings_mesh_instance)	
 	
-	
-	var bounding_box_coords : Array = Geom.get_3d_bounding_vertices(embeddings_scaled)
-	var bounding_box_min : Vector3 = bounding_box_coords[0]
-	var bounding_box_max : Vector3 = bounding_box_coords[1]	
-	
-	center_self(bounding_box_min, bounding_box_max)
+	var bounding_box_coords : Array = Geom.get_3d_bounding_box_from_vertices(embeddings_scaled)
+	center_self(bounding_box_coords[0], bounding_box_coords[1])
 	
 	if(DEBUG):
-
-		var bounding_box_mesh = Geom.get_cube_mesh(bounding_box_min, bounding_box_max)
-		var bounding_box_mesh_instance = MeshInstance.new()
-		bounding_box_mesh_instance.set_mesh(bounding_box_mesh)
-		self.add_child(bounding_box_mesh_instance)
+		Geom.add_debug_box_to_the_scene(self, bounding_box_coords[0], bounding_box_coords[1])
 		
 		
