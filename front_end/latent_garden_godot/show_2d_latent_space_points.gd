@@ -11,9 +11,9 @@ const DEBUG = true
 # var b = "text"
 
 func center_self(bounding_vec_min: Vector3, bounding_vec_max: Vector3) -> void: 
-	self.translation.x = bounding_vec_max.x/2
-	self.translation.y = bounding_vec_max.y/2
-	self.translation.z = bounding_vec_max.z/2
+	self.translation.x = -bounding_vec_max.x/2
+	self.translation.y = -bounding_vec_max.y/2
+	self.translation.z = -bounding_vec_max.z/2
 	
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -36,6 +36,7 @@ func _ready():
 	var bounding_box_coords : Array = Geom.get_3d_bounding_vertices(embeddings_scaled)
 	var bounding_box_min : Vector3 = bounding_box_coords[0]
 	var bounding_box_max : Vector3 = bounding_box_coords[1]	
+	
 	center_self(bounding_box_min, bounding_box_max)
 	
 	if(DEBUG):

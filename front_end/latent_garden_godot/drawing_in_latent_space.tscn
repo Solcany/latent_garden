@@ -9,7 +9,7 @@ ambient_light_color = Color( 1, 1, 1, 1 )
 [node name="App" type="Spatial"]
 
 [node name="Camera" type="Camera" parent="."]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 4.48814 )
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1.29062 )
 
 [node name="Latent Space" type="Spatial" parent="."]
 script = ExtResource( 1 )
