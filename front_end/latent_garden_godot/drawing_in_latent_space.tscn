@@ -4,12 +4,12 @@
 
 [sub_resource type="Environment" id=1]
 background_mode = 1
-background_color = Color( 0.713726, 0.298039, 0.298039, 1 )
 ambient_light_color = Color( 1, 1, 1, 1 )
 
 [node name="App" type="Spatial"]
 
 [node name="Camera" type="Camera" parent="."]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 4.48814 )
 
 [node name="Latent Space" type="Spatial" parent="."]
 script = ExtResource( 1 )

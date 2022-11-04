@@ -2,6 +2,9 @@ extends Reference
 
 class_name Geom
 
+
+## Embeddings
+
 static func group_embeddings(embeddings : Array, embeddings_group_indices: Array) -> Array:
 	var n_groups : Array = Utils.get_unique_numbers_of_array(embeddings_group_indices)
 	var grouped_embeddings : Array = []
@@ -115,21 +118,21 @@ static func scale_normalised_2d_embeddings(embeddings : Array, bounding_box_prop
 	return scaled	
 		
 	
-### RENDERING ###
-#func get_points_mesh(vertices : Array, vertex_color: Color = Color(255,255,255)) -> Mesh:
-#	var mesh = Mesh.new()
-#	var surf = SurfaceTool.new()
-#
-#	surf.begin(Mesh.PRIMITIVE_POINTS)
-#	for vertex in vertices:
-#		# this sets color individually for each vertex
-#		# set WorldEnvironment Ambient Light to a value to make this visible
-#		surf.add_color(vertex_color) 
-#		surf.add_uv(Vector2(0, 0))
-#		surf.add_vertex(vertex)
-#	surf.index()
-#	surf.commit( mesh )
-#	return mesh
+### Mesh
+static func get_points_mesh_from_vectors_arr(vertices : Array, vertex_color: Color = Color(255,255,255)) -> Mesh:
+	var mesh = Mesh.new()
+	var surf = SurfaceTool.new()
+
+	surf.begin(Mesh.PRIMITIVE_POINTS)
+	for vertex in vertices:
+		# this sets color individually for each vertex
+		# set WorldEnvironment Ambient Light to a value to make this visible
+		surf.add_color(vertex_color) 
+		surf.add_uv(Vector2(0, 0))
+		surf.add_vertex(vertex)
+	surf.index()
+	surf.commit( mesh )
+	return mesh
 #
 #func get_polyline_vertices(vertices : Array, close=false) -> Array:
 ## segements of polyline are created from a vertex pair
