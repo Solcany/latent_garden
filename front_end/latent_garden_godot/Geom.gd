@@ -48,9 +48,24 @@ static func normalise_3d_embeddings(embeddings: Array) -> Array:
 	var max_z : float = Utils.get_vec_array_max(embeddings, "z")
 	var normalised : Array = []
 	for embedding in embeddings:
-		var norm_x : float = range_lerp(embedding.x, min_x, max_x, 0.0, 1.0)
-		var norm_y : float = range_lerp(embedding.y, min_y, max_y, 0.0, 1.0)
-		var norm_z : float = range_lerp(embedding.z, min_z, max_z, 0.0, 1.0)
+		var norm_x : float
+		if(min_x == max_x):
+			norm_x = embedding.x
+		else:	
+			norm_x = range_lerp(embedding.x, min_x, max_x, 0.0, 1.0)
+			
+		var norm_y : float
+		if(min_y == max_y):
+			norm_y = embedding.y
+		else:	
+			norm_y = range_lerp(embedding.y, min_y, max_y, 0.0, 1.0)			
+			
+		var norm_z : float
+		if(min_z == max_z):
+			norm_z = embedding.z
+		else:	
+			norm_z = range_lerp(embedding.z, min_z, max_z, 0.0, 1.0)		
+
 		normalised.append(Vector3(norm_x, norm_y, norm_z))
 	return normalised
 	
@@ -62,8 +77,18 @@ static func normalise_2d_embeddings(embeddings: Array) -> Array:
 	
 	var normalised : Array = []
 	for embedding in embeddings:
-		var norm_x : float = range_lerp(embedding.x, min_x, max_x, 0.0, 1.0)
-		var norm_y : float = range_lerp(embedding.y, min_y, max_y, 0.0, 1.0)
+		var norm_x : float
+		if(min_x == max_x):
+			norm_x = embedding.x
+		else:	
+			norm_x = range_lerp(embedding.x, min_x, max_x, 0.0, 1.0)
+			
+		var norm_y : float
+		if(min_y == max_y):
+			norm_y = embedding.y
+		else:	
+			norm_y = range_lerp(embedding.y, min_y, max_y, 0.0, 1.0)
+			
 		normalised.append(Vector2(norm_x, norm_y))
 	return normalised	
 	
