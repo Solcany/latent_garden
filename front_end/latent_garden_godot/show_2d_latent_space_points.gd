@@ -5,10 +5,16 @@ const EMBEDDINGS_CSV_PATH = "data/embeddings/random_nums_3d_embeddings.txt"
 const EMBEDDINGS_ROW_SIZE = 3
 const EMBEDDINGS_BOUNDING_BOX_MAX_WIDTH = 5
 const EMBEDDINGS_CSV_SKIP_HEADER = true
+const DEBUG = true
 # Declare member variables here. Examples:
 # var a = 2
 # var b = "text"
 
+func center_self(bounding_vec_min: Vector3, bounding_vec_max: Vector3) -> void: 
+	self.translation.x = bounding_vec_max.x/2
+	self.translation.y = bounding_vec_max.y/2
+	self.translation.z = bounding_vec_max.z/2
+	
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	var embeddings_raw : Array = Utils.load_csv_of_floats(EMBEDDINGS_CSV_PATH, 
@@ -25,4 +31,18 @@ func _ready():
 	embeddings_mesh_instance.set_mesh(embeddings_mesh)
 	Mat.assign_vertex_albedo_color_material(embeddings_mesh_instance)
 	self.add_child(embeddings_mesh_instance)	
+	
+	
+	var bounding_box_coords : Array = Geom.get_3d_bounding_vertices(embeddings_scaled)
+	var bounding_box_min : Vector3 = bounding_box_coords[0]
+	var bounding_box_max : Vector3 = bounding_box_coords[1]	
+	center_self(bounding_box_min, bounding_box_max)
+	
+	if(DEBUG):
 
+		var bounding_box_mesh = Geom.get_cube_mesh(bounding_box_min, bounding_box_max)
+		var bounding_box_mesh_instance = MeshInstance.new()
+		bounding_box_mesh_instance.set_mesh(bounding_box_mesh)
+		self.add_child(bounding_box_mesh_instance)
+		
+		

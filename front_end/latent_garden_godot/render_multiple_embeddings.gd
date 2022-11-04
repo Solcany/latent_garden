@@ -328,53 +328,53 @@ func add_embeddings_groups_meshes_to_scene(grouped_embeddings: Array, groups_col
 				
 ### DEBUG RENDERING ###
 
-func create_cube_mesh(v1: Vector3, v2: Vector3) -> Mesh:
-	#v1 is the back-top-left vertex of the cube
-	#v2 is the front-bottom-right vertex of the cube
+func create_cube_mesh(min_vec: Vector3, max_vec: Vector3) -> Mesh:
+	#min_vec is the back-top-left vertex of the cube
+	#max_vec is the front-bottom-right vertex of the cube
 	
 	var vertices = []
 	##top
 	#line1
-	vertices.append( Vector3( v1.x, v1.y, v1.z ) )	
-	vertices.append( Vector3( v2.x, v1.y, v1.z ) )	
+	vertices.append( Vector3( min_vec.x, min_vec.y, min_vec.z ) )	
+	vertices.append( Vector3( max_vec.x, min_vec.y, min_vec.z ) )	
 	#line2
-	vertices.append( Vector3( v2.x, v1.y, v1.z ) )	
-	vertices.append( Vector3( v2.x, v1.y, v2.z ) )	
+	vertices.append( Vector3( max_vec.x, min_vec.y, min_vec.z ) )	
+	vertices.append( Vector3( max_vec.x, min_vec.y, max_vec.z ) )	
 	#line3
-	vertices.append( Vector3( v2.x, v1.y, v2.z ) )	
-	vertices.append( Vector3( v1.x, v1.y, v2.z ) )	
+	vertices.append( Vector3( max_vec.x, min_vec.y, max_vec.z ) )	
+	vertices.append( Vector3( min_vec.x, min_vec.y, max_vec.z ) )	
 	#line4
-	vertices.append( Vector3( v1.x, v1.y, v2.z ) )	
-	vertices.append( Vector3( v1.x, v1.y, v1.z ) )	
+	vertices.append( Vector3( min_vec.x, min_vec.y, max_vec.z ) )	
+	vertices.append( Vector3( min_vec.x, min_vec.y, min_vec.z ) )	
 	
 	
 	##bottom
 	#line1
-	vertices.append( Vector3( v1.x, v2.y, v1.z ) )	
-	vertices.append( Vector3( v2.x, v2.y, v1.z ) )	
+	vertices.append( Vector3( min_vec.x, max_vec.y, min_vec.z ) )	
+	vertices.append( Vector3( max_vec.x, max_vec.y, min_vec.z ) )	
 	#line2
-	vertices.append( Vector3( v2.x, v2.y, v1.z ) )	
-	vertices.append( Vector3( v2.x, v2.y, v2.z ) )	
+	vertices.append( Vector3( max_vec.x, max_vec.y, min_vec.z ) )	
+	vertices.append( Vector3( max_vec.x, max_vec.y, max_vec.z ) )	
 	#line3
-	vertices.append( Vector3( v2.x, v2.y, v2.z ) )	
-	vertices.append( Vector3( v1.x, v2.y, v2.z ) )	
+	vertices.append( Vector3( max_vec.x, max_vec.y, max_vec.z ) )	
+	vertices.append( Vector3( min_vec.x, max_vec.y, max_vec.z ) )	
 	#line4
-	vertices.append( Vector3( v1.x, v2.y, v2.z ) )	
-	vertices.append( Vector3( v1.x, v2.y, v1.z ) )	
+	vertices.append( Vector3( min_vec.x, max_vec.y, max_vec.z ) )	
+	vertices.append( Vector3( min_vec.x, max_vec.y, min_vec.z ) )	
 	
 	##sides
 	#line1
-	vertices.append( Vector3( v1.x, v1.y, v1.z ) )		
-	vertices.append( Vector3( v1.x, v2.y, v1.z ) )		
+	vertices.append( Vector3( min_vec.x, min_vec.y, min_vec.z ) )		
+	vertices.append( Vector3( min_vec.x, max_vec.y, min_vec.z ) )		
 	#line2			
-	vertices.append( Vector3( v2.x, v1.y, v1.z ) )	
-	vertices.append( Vector3( v2.x, v2.y, v1.z ) )	
+	vertices.append( Vector3( max_vec.x, min_vec.y, min_vec.z ) )	
+	vertices.append( Vector3( max_vec.x, max_vec.y, min_vec.z ) )	
 	#line3		
-	vertices.append( Vector3( v2.x, v1.y, v2.z ) )	
-	vertices.append( Vector3( v2.x, v2.y, v2.z ) )		
+	vertices.append( Vector3( max_vec.x, min_vec.y, max_vec.z ) )	
+	vertices.append( Vector3( max_vec.x, max_vec.y, max_vec.z ) )		
 	#line4
-	vertices.append( Vector3( v1.x, v1.y, v2.z ) )	
-	vertices.append( Vector3( v1.x, v2.y, v2.z ) )	
+	vertices.append( Vector3( min_vec.x, min_vec.y, max_vec.z ) )	
+	vertices.append( Vector3( min_vec.x, max_vec.y, max_vec.z ) )	
 		
 	var mesh = Mesh.new()
 	var surf = SurfaceTool.new()
