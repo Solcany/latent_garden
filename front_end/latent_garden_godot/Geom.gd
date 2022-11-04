@@ -1,6 +1,6 @@
-extends Object
+extends Reference
 
-class_name Geometry
+class_name Geom
 
 static func group_embeddings(embeddings : Array, embeddings_group_indices: Array) -> Array:
 	var n_groups : Array = Utils.get_unique_numbers_of_array(embeddings_group_indices)

@@ -3,20 +3,30 @@ extends Object
 class_name Utils
 
 ### ASSET IMPORTS ###
-static func load_csv_of_floats(path : String, row_size: int) -> Array:
+static func load_csv_of_floats(path : String, row_size: int, skip_header : bool = false) -> Array:
 	# Godot interprets .csv files as game language translation...
 	# ...it breaks when trying to load a regular non translation data .csv
 	# therefore change .csv extension to .txt to load it successfuly
 	var file : File = File.new()
 	file.open(path, file.READ)
+	
 	var data : Array = []
+	
+	var current_row_index : int = 0	
 	while !file.eof_reached():
 		var csv = file.get_csv_line()
 		if(csv.size() == row_size):
 			var data_row : Array = []
 			for num in csv:
 				data_row.append(float(num))
-			data.append(data_row)
+			# skip header, header is the 1st csv line
+			if(skip_header && current_row_index > 0):		
+				data.append(data_row)	
+			# if there's no header, consider the 1st line to be data
+			elif(!skip_header):	
+				data.append(data_row)	
+		current_row_index += 1				
+				
 	file.close()
 	print("csv: ", path, " loaded!")
 	return data

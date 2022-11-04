@@ -9,10 +9,10 @@
 config_version=4
 
 _global_script_classes=[ {
-"base": "Object",
-"class": "Geometry",
+"base": "Reference",
+"class": "Geom",
 "language": "GDScript",
-"path": "res://Geometry.gd"
+"path": "res://Geom.gd"
 }, {
 "base": "Object",
 "class": "Utils",
@@ -20,7 +20,7 @@ _global_script_classes=[ {
 "path": "res://Utils.gd"
 } ]
 _global_script_class_icons={
-"Geometry": "",
+"Geom": "",
 "Utils": ""
 }
 
