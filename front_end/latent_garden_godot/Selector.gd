@@ -21,8 +21,9 @@ func _input(event):
 		print("Mouse Click/Unclick at: ", event.position)
 		var view_width = get_viewport().size.x
 		var view_height = get_viewport().size.y
-		var x : float = range_lerp(event.position.x, 0, view_width, 3, -3)
-		var y : float = range_lerp(event.position.y, 0, view_height, 3, -3)
+		var aspect_ratio = view_height / view_width
+		var x : float = range_lerp(event.position.x, 0, view_width, -3, 3)
+		var y : float = range_lerp(event.position.y, 0, view_height, 3*aspect_ratio, -3*aspect_ratio)
 		self.translation = Vector3(x, y, 0)
    #elif event is InputEventMouseMotion:
    #	    print("Mouse Motion at: ", event.position)

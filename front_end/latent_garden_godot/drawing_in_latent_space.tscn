@@ -12,8 +12,12 @@ ambient_light_color = Color( 1, 1, 1, 1 )
 [node name="App" type="Spatial"]
 
 [node name="Camera" type="Camera" parent="."]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1.29062 )
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1 )
 projection = 1
+current = true
+size = 3.0
+near = 0.01
+far = 3.0
 
 [node name="Selector" type="Area" parent="."]
 script = ExtResource( 2 )
