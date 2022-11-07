@@ -5,7 +5,6 @@ extends Spatial
 const NODE_SCALE = Vector3(0.03, 0.03, 0.03)
 var is_selected = false
 
-
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	$Collider.scale = NODE_SCALE
