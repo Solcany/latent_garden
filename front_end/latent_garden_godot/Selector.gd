@@ -1,47 +1,47 @@
 tool
+extends Node
 
-extends Area
+const SELECTOR_SCALE = Vector3(0.1, 0.1, 0.1)
+onready var selector_gui_size: Vector2
 
-const SELECTOR_SCALE = Vector3(0.5, 0.5, 0.5)
+func unproject_selector_scale(camera_ref: Camera, selector_world_scale: Vector3) -> Vector2: 
+	# relative top left vertex
+	var p1 = camera_ref.unproject_position(Vector3(-selector_world_scale.x, -selector_world_scale.y, selector_world_scale.z))
+	# relative top right vertex
+	var p2 = camera_ref.unproject_position(Vector3(selector_world_scale.x, -selector_world_scale.y, selector_world_scale.z))	
+	# relative bottom left vertex
+	var p3 = camera_ref.unproject_position(Vector3(-selector_world_scale.x, selector_world_scale.y, selector_world_scale.z))	
+	var selector_gui_width = p1.distance_to(p2)
+	var selector_gui_height = p1.distance_to(p3)		
+	return Vector2(selector_gui_width, selector_gui_height)
 
-# Declare member variables here. Examples:
-# var a = 2
-# var b = "text"
-func handle_body_entered():
-	connect("body_entered", self, "_on_body_entered_selector")
+func init_selector():
+	# set world selector scales
+	$Selector_collider/Collider.scale = SELECTOR_SCALE
+	$Selector_collider/Collider_mesh.scale = SELECTOR_SCALE
+	# unproject the scales to create 2d gui overlay
+	selector_gui_size = unproject_selector_scale($Selector_camera, SELECTOR_SCALE)
 
-func _on_body_entered_selector(body):
-	pass
-	#print("body!")
+func handle_mouse_event(event): 
+	var mouse_x : float = event.position.x
+	var mouse_y : float = event.position.y		
+	var left : float = mouse_x - selector_gui_size.x/2
+	var right : float = mouse_x + selector_gui_size.x/2	
+	var top : float = mouse_y - selector_gui_size.y/2
+	var bottom : float = mouse_y + selector_gui_size.y/2
+	# translatet selector gui rectangle on mouse event
+	$Selector_gui/Selector.margin_left = left
+	$Selector_gui/Selector.margin_right = right
+	$Selector_gui/Selector.margin_top	= top
+	$Selector_gui/Selector.margin_bottom = bottom
+	# translate in world selector collider on mouse event
+	var collider_pos : Vector3 = $Selector_camera.project_position(Vector2(mouse_x,mouse_y), 1)
+	$Selector_collider.translation = collider_pos
+			
 
-func _input(event):
-	# Mouse in viewport coordinates.
-	if event is InputEventMouseMotion:
-		print("Mouse Click/Unclick at: ", event.position)
-		var view_width = get_viewport().size.x
-		var view_height = get_viewport().size.y
-		var aspect_ratio = view_height / view_width
-		var x : float = range_lerp(event.position.x, 0, view_width, -1.5, 1.5)
-		var y : float = range_lerp(event.position.y, 0, view_height, 2.8*aspect_ratio, -2.8*aspect_ratio)
-		self.translation = Vector3(x, y, 0)
-   #elif event is InputEventMouseMotion:
-   #	    print("Mouse Motion at: ", event.position)
-
-
-# Called when the node enters the scene tree for the first time.
 func _ready():
-	$CollisionShape.scale = SELECTOR_SCALE
+	init_selector()
 	
-	var bounding_box_coords : Array = Geom.get_bounding_box_from_vec3(SELECTOR_SCALE)
-	Geom.add_debug_box_to_the_scene(self, bounding_box_coords[0], bounding_box_coords[1])
-	
-	handle_body_entered()
-	
-	
-
-
-
-
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-#func _process(delta):
-#	pass
+func _input(event):
+	if event is InputEventMouseMotion:
+		handle_mouse_event(event)

@@ -43,8 +43,8 @@ global_variables="*res://global_variables.gd"
 
 [display]
 
-window/size/width=1920
-window/size/height=1080
+window/size/width=900
+window/size/height=900
 
 [input]
 
