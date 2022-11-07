@@ -18,7 +18,7 @@ func unproject_world_selector_to_gui_representation(camera_ref: Camera, selector
 func init_selector():
 	# set world selector scales
 	$Selector_collider/Collider.scale = SELECTOR_SCALE
-	$Selector_collider/Collider_mesh.scale = SELECTOR_SCALE
+	$Selector_collider/Debug_collider_mesh.scale = SELECTOR_SCALE
 	# unproject the world selector scale for the 2d gui overlay representation
 	selector_gui_size = unproject_world_selector_to_gui_representation($Selector_camera, SELECTOR_SCALE)
 
@@ -38,6 +38,8 @@ func handle_mouse_event(event):
 	var collider_pos : Vector3 = $Selector_camera.project_position(Vector2(mouse_x,mouse_y), 1)
 	$Selector_collider.translation = collider_pos
 			
+func _on_body_entered_selector(item_body):
+	print(item_body)
 
 func _ready():
 	init_selector()
