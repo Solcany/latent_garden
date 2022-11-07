@@ -31,6 +31,9 @@ func add_latent_space_nodes_to_scene(points: Array) -> void:
 		node.translation = point
 		self.add_child(node)
 
+func _on_latent_node_selected(body): 
+	var latent_node_ref = body.get_parent()
+	latent_node_ref.is_selected = !latent_node_ref.is_selected 
 	
 # Called when the node enters the scene tree for the first time.
 func _ready():
