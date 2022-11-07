@@ -4,7 +4,7 @@ extends Node
 const SELECTOR_SCALE = Vector3(0.1, 0.1, 0.1)
 onready var selector_gui_size: Vector2
 
-func unproject_selector_scale(camera_ref: Camera, selector_world_scale: Vector3) -> Vector2: 
+func unproject_world_selector_to_gui_representation(camera_ref: Camera, selector_world_scale: Vector3) -> Vector2: 
 	# relative top left vertex
 	var p1 = camera_ref.unproject_position(Vector3(-selector_world_scale.x, -selector_world_scale.y, selector_world_scale.z))
 	# relative top right vertex
@@ -19,8 +19,8 @@ func init_selector():
 	# set world selector scales
 	$Selector_collider/Collider.scale = SELECTOR_SCALE
 	$Selector_collider/Collider_mesh.scale = SELECTOR_SCALE
-	# unproject the scales to create 2d gui overlay
-	selector_gui_size = unproject_selector_scale($Selector_camera, SELECTOR_SCALE)
+	# unproject the world selector scale for the 2d gui overlay representation
+	selector_gui_size = unproject_world_selector_to_gui_representation($Selector_camera, SELECTOR_SCALE)
 
 func handle_mouse_event(event): 
 	var mouse_x : float = event.position.x
