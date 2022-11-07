@@ -10,7 +10,6 @@ const SELECTOR_SCALE = Vector3(0.5, 0.5, 0.5)
 func handle_body_entered():
 	connect("body_entered", self, "_on_body_entered_selector")
 
-	
 func _on_body_entered_selector(body):
 	pass
 	#print("body!")
@@ -22,8 +21,8 @@ func _input(event):
 		var view_width = get_viewport().size.x
 		var view_height = get_viewport().size.y
 		var aspect_ratio = view_height / view_width
-		var x : float = range_lerp(event.position.x, 0, view_width, -3, 3)
-		var y : float = range_lerp(event.position.y, 0, view_height, 3*aspect_ratio, -3*aspect_ratio)
+		var x : float = range_lerp(event.position.x, 0, view_width, -1.5, 1.5)
+		var y : float = range_lerp(event.position.y, 0, view_height, 2.8*aspect_ratio, -2.8*aspect_ratio)
 		self.translation = Vector3(x, y, 0)
    #elif event is InputEventMouseMotion:
    #	    print("Mouse Motion at: ", event.position)

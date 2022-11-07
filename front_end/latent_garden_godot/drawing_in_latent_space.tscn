@@ -1,7 +1,8 @@
-[gd_scene load_steps=5 format=2]
+[gd_scene load_steps=6 format=2]
 
 [ext_resource path="res://show_2d_latent_space_points.gd" type="Script" id=1]
 [ext_resource path="res://Selector.gd" type="Script" id=2]
+[ext_resource path="res://Selector2.gd" type="Script" id=3]
 
 [sub_resource type="BoxShape" id=2]
 
@@ -11,15 +12,29 @@ ambient_light_color = Color( 1, 1, 1, 1 )
 
 [node name="App" type="Spatial"]
 
-[node name="Camera" type="Camera" parent="."]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1 )
+[node name="Viewport" type="Node" parent="."]
+
+[node name="Control" type="Control" parent="Viewport"]
+margin_right = 40.0
+margin_bottom = 40.0
+
+[node name="Selector" type="ReferenceRect" parent="Viewport/Control"]
+margin_left = 762.368
+margin_top = 375.758
+margin_bottom = 853.758
+editor_only = false
+script = ExtResource( 3 )
+
+[node name="Camera" type="Camera" parent="Viewport"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0.819481 )
 projection = 1
 current = true
-size = 3.0
+size = 2.0
 near = 0.01
 far = 3.0
 
 [node name="Selector" type="Area" parent="."]
+visible = false
 script = ExtResource( 2 )
 
 [node name="CollisionShape" type="CollisionShape" parent="Selector"]
