@@ -3,7 +3,7 @@ import socket
 # import base64
 import sys
 # import errno
-# import PIL
+import PIL
 import os
 # from io import BytesIO
 # import tensorflow as tf
@@ -11,7 +11,7 @@ import os
 
 # imShape = (256,256)
 HOST = "127.0.0.1"  # Standard loopback interface address (localhost)
-PORT = 5000  # Port to listen on (non-privileged ports are > 1023)
+PORT = 5000 # Port to listen on (non-privileged ports are > 1023)
 # G_path = "./data/weights/metfaces_G-e388.h5"
 # latent_vectors_path = "./data/latent_vectors.csv"
 # OF_tcp_stream_delimiter = "[/TCP]"
@@ -48,25 +48,35 @@ PORT = 5000  # Port to listen on (non-privileged ports are > 1023)
 #     image_bytes = base64.b64encode(buffered.getvalue())
 #     return image_bytes
 
+def handle_data_received(data):
+    data.decode().split(',')
+
+#def send_image():
+    #
+
 
 def main():
     # AF_INET is the Internet address family for IPv4
     # SOCK_STREAM is the socket type for TCP
-    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    while True:
         s.bind((HOST, PORT)) # associate the socket with particular network interface and port
         s.listen() # listen to incoming connections
         print("listening for connections")
-        conn, addr = s.accept() # block execution, wait for a connection, on connections returns connection socket object and the address
-        with conn: # this is a new socket used for communication with the client, different from the listening socket
+        while True: 
+            # this is a new socket used for communication with the client, different from the listening socket
+            conn, addr = s.accept() # block execution, wait for a connection, on connections returns connection socket object and the address
             print(f"Connected by {addr}")
             while True:
                 data = conn.recv(1024) # recv blocks execution and reads data from the client
                 # receiving empty bytes b'' signals the client is closing the connection and while loop is exited
                 # The bufsize argument of 1024 used above is the maximum amount of data to be received at once.
-                print("received data")                
-                print(data)
-                if not data:
+                if len(data) == 0: 
                     break
+                else:
+                    handle_data_received(data)
+                # if not data:
+                #     break
                 #conn.sendall(data) 
                 # sendall sends received data back to client
                 # Unlike send(), sendall continues to send data from bytes until either all data has been sent or an error occurs. None is returned on success.
