@@ -3,11 +3,15 @@ extends Node
 const HOST: String = "127.0.0.1"
 const PORT: int = 5000
 const RECONNECT_TIMEOUT: float = 3.0
-const D = [1,2,3]
+const TEST_DATA = [1,2,3,4,5,6,7]
 
 
 const Client = preload("res://Tcp_client.gd")
 var _client: Client = Client.new()
+
+func send_initial_data():
+	var bytes : PoolByteArray = Arr.array_to_csv_string(TEST_DATA).to_utf8()
+	_client.send(bytes)
 
 func _ready() -> void:
 	_client.connect("connected", self, "_handle_client_connected")
@@ -23,9 +27,10 @@ func _connect_after_timeout(timeout: float) -> void:
 
 func _handle_client_connected() -> void:
 	print("Client connected to server.")
-	var message = "hello server"
-	var bytes: PoolByteArray = message.to_utf8()
-	_client.send(bytes)
+	send_initial_data()
+#	var message = "hello server"
+#	var bytes: PoolByteArray = message.to_utf8()
+#	_client.send(bytes)
 
 func _handle_client_data(data: PoolByteArray) -> void:
 	print("Client data: ", data.get_string_from_utf8())
