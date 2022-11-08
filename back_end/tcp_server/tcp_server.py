@@ -1,8 +1,8 @@
 # import numpy as np
 import socket
-import base64
+# import base64
 import sys
-import errno
+# import errno
 # import PIL
 import os
 # from io import BytesIO
@@ -27,13 +27,13 @@ PORT = 5000  # Port to listen on (non-privileged ports are > 1023)
 #     G.load_weights(G_path)
 #     return G
 
-def init_sock_client():
-    sock = socket.socket()
-    sock.connect((tcp_ip, tcp_port))
-    sock.setblocking(0)  
-    return sock
+# def init_sock_client():
+#     sock = socket.socket()
+#     sock.connect((tcp_ip, tcp_port))
+#     sock.setblocking(0)  
+#     return sock
 
-def start_tcp_server():
+# def start_tcp_server():
 
 
 # def generate_img(l_vec_idx):
@@ -55,17 +55,21 @@ def main():
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
         s.bind((HOST, PORT)) # associate the socket with particular network interface and port
         s.listen() # listen to incoming connections
+        print("listening for connections")
         conn, addr = s.accept() # block execution, wait for a connection, on connections returns connection socket object and the address
         with conn: # this is a new socket used for communication with the client, different from the listening socket
             print(f"Connected by {addr}")
             while True:
                 data = conn.recv(1024) # recv blocks execution and reads data from the client
                 # receiving empty bytes b'' signals the client is closing the connection and while loop is exited
+                # The bufsize argument of 1024 used above is the maximum amount of data to be received at once.
                 print("received data")                
                 print(data)
                 if not data:
                     break
-                conn.sendall(data) # sendall sends received data back to client
+                #conn.sendall(data) 
+                # sendall sends received data back to client
+                # Unlike send(), sendall continues to send data from bytes until either all data has been sent or an error occurs. None is returned on success.
 
     #latent_vectors = np.genfromtxt(latent_vectors_path, delimiter=',')
 
