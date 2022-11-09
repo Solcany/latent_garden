@@ -14,8 +14,11 @@ import codecs
 # imShape = (256,256)
 HOST = "127.0.0.1"  # Standard loopback interface address (localhost)
 PORT = 5003 # Port to listen on (non-privileged ports are > 1023)
-MESSAGE_START_TEXT = ">!<"
-MESSAGE_PART_TEXT = ":::"
+HEADER_START_DELIMITER= "***"
+MESSAGE_KEYVAL_DELIMITER = ":"
+MESSAGE_DATA_DELIMITER = ","
+MESSAGE_HEADER_END_DELIMITER = "!!!"
+
 # G_path = "./data/weights/metfaces_G-e388.h5"
 # latent_vectors_path = "./data/latent_vectors.csv"
 # OF_tcp_stream_delimiter = "[/TCP]"
@@ -52,66 +55,47 @@ MESSAGE_PART_TEXT = ":::"
 #     image_bytes = base64.b64encode(buffered.getvalue())
 #     return image_bytes
 
-def image_to_bytes(image_path):
-    #with open(image_path, "rb") as image_file:
-        #txt = "metadata".encode("utf-8").hex()
+def get_encoded_image_bytes(image_path):
         image = Image.open(image_path)
         buff = io.BytesIO()
         image.save(buff, format="JPEG")   
+        encoded_image = base64.b64encode(buff.getvalue())
+        return encoded_image
 
-        header = "&!metadata:::".encode("utf-8")
-        body = base64.b64encode(buff.getvalue())
-        msg = header + body
-
-        return msg
-        #bts = 
-        #print(test)
-        #v = hex(ord('ô'))
-        #v = bytes(hx, "utf-8")
-        #txt = v.decode('utf-8')
-        #print(txt)
-
-       # print(bytes.fromhex(hx))
-
-        #b = bytes.fromhex(hex_val)
-        #print(b)
-        #print(io.BytesIO(txt).getvalue())
-        #txt = txt + image_file.read()
-        #print(image_file.read())
-        #b = base64.b64encode(image_file.read())
-        # msg = txt + b
-        # print(msg)
-        #return b
+def get_encoded_message_header_bytes(metadata):
+    header = HEADER_START_DELIMITER
+    for index, key in enumerate(metadata):
+        value = metadata[key]
+        if(index < len(metadata)-1):
+            header += "{}{}{}{}".format(key, 
+                                        MESSAGE_KEYVAL_DELIMITER, 
+                                        str(value), 
+                                        MESSAGE_DATA_DELIMITER)
+        # avoid adding the MESSAGE_DATA_DELIMITER for the last item
+        else:
+            header += "{}{}{}".format(key, 
+                                        MESSAGE_KEYVAL_DELIMITER, 
+                                        str(value))            
+    header += MESSAGE_HEADER_END_DELIMITER
+    header = header.encode("utf-8")
+    return header
 
 
-
-    #image = Image.open(image_path)
-    #buff = io.BytesIO()
-    #image.save(buff, format="JPEG")
-    #header = bytes("metadata blah blah:::::::::::::::::::", 'utf-8')
-    #body = buff.getvalue()
-    #wrapper = base64.b64encode(image)
-    #message = header + body
-    #print(wrapper.read())
-    # print(wrapper)
-    # print(message.decode())
-    #image_bytes = base64.b64encode(message)
-    #print(image_bytes.decode())
-    #return image_bytes
+def get_image_message(metadata, image_path):
+    header = get_encoded_message_header_bytes(metadata)
+    data = get_encoded_image_bytes("data/image.jpg")
+    message = header + data
+    return message
 
 def handle_data_received(data):
     data.decode().split(',')
 
 def handle_on_client_connected(conn_socket):
-    b = image_to_bytes("./data/image.jpg")
-    conn_socket.sendall(b)
-
-#def send_image():
-    #
+    msg = get_image_message({"type": "image", "index": 0}, "data/image.jpg")
+    conn_socket.sendall(msg)
 
 
 def main():
-    b = image_to_bytes("./data/image.jpg")    
     # AF_INET is the Internet address family for IPv4
     # SOCK_STREAM is the socket type for TCP
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
