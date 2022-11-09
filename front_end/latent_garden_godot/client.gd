@@ -3,14 +3,48 @@ extends Node
 const HOST: String = "127.0.0.1"
 const PORT: int = 5003
 const RECONNECT_TIMEOUT: float = 3.0
-const TEST_DATA = [1,2,3,4,5,6,7]
+const HEADER_START_DELIMITER= "***"
+const MESSAGE_KEYVAL_DELIMITER = ":"
+const MESSAGE_DATA_DELIMITER = ","
+const MESSAGE_HEADER_END_DELIMITER = "!!!"
 
 const Client = preload("res://Tcp_client.gd")
 var _client: Client = Client.new()
 
-func send_initial_data():
-	var bytes : PoolByteArray = Arr.array_to_csv_string(TEST_DATA).to_utf8()
-	_client.send(bytes)
+#func send_initial_data():
+	#var bytes : PoolByteArray = Arr.array_to_csv_string(TEST_DATA).to_utf8()
+	#_client.send(bytes)
+
+func parse_client_data(client_data : String) -> Array:
+	if(client_data.length() > 0  && client_data.begins_with(HEADER_START_DELIMITER)):
+		# get the header substring
+		var header_string : String = client_data.get_slice(MESSAGE_HEADER_END_DELIMITER, 0)
+		# erase HEADER_START_DELIMITER from the header substring
+		header_string.erase(header_string.find(HEADER_START_DELIMITER), HEADER_START_DELIMITER.length())
+		# get key val pairs 
+		var header_keyvals : PoolStringArray = header_string.split(",")
+		var metadata = {}
+		# parse key val pairs from the header
+		for keyval in header_keyvals:
+			var key = keyval.get_slice(":", 0)
+			var val = keyval.get_slice(":", 1)
+			metadata[key] = val
+		
+		# get the actual data of the message
+		var data = client_data.get_slice(MESSAGE_HEADER_END_DELIMITER, 1)
+		
+		# is there any data in the message?
+		if(data.length() > 0):
+			return [metadata, data]
+		# if the server sent only header...			
+		else:
+			push_warning("message contains only metadata")			
+			return [metadata]
+	else:
+		push_warning("received client data is empty string or Header missing, returning empty array ")
+		return []
+
+		
 
 func _ready() -> void:
 	_client.connect("connected", self, "_handle_client_connected")
@@ -31,16 +65,17 @@ func _handle_client_connected() -> void:
 #	var bytes: PoolByteArray = message.to_utf8()
 #	_client.send(bytes)
 
-func _handle_client_data(data: PoolByteArray) -> void:
-	var image : Image = Image.new()
-	#print("Client data: ", data.get_string_from_utf8())
-	var string_data: String = data.get_string_from_utf8()
-	var image_b64 = string_data.get_slice(":::", 1)
-	print(image_b64)
-	var decoded : PoolByteArray = Marshalls.base64_to_raw(image_b64)
+func _handle_client_data(raw_data: PoolByteArray) -> void:
 
+	#print("Client data: ", data.get_string_from_utf8())
+	var string_data: String = raw_data.get_string_from_utf8()
+	var parsed: Array = parse_client_data(string_data)
+	var metadata : Dictionary = parsed[0]
+	var data : String = parsed[1]
+
+	var decoded : PoolByteArray = Marshalls.base64_to_raw(data)
+	var image : Image = Image.new()
 	image.load_jpg_from_buffer(decoded)
-#
 	var texture = ImageTexture.new()
 	texture.create_from_image(image, 0)
 	var mat = SpatialMaterial.new()
