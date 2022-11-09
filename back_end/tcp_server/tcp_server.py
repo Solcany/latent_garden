@@ -4,14 +4,18 @@ import base64
 import sys
 # import errno
 from PIL import Image
+import binascii
 import os
-from io import BytesIO
+import io
+import codecs
 # import tensorflow as tf
 # import sle_gan
 
 # imShape = (256,256)
 HOST = "127.0.0.1"  # Standard loopback interface address (localhost)
-PORT = 5001 # Port to listen on (non-privileged ports are > 1023)
+PORT = 5003 # Port to listen on (non-privileged ports are > 1023)
+MESSAGE_START_TEXT = ">!<"
+MESSAGE_PART_TEXT = ":::"
 # G_path = "./data/weights/metfaces_G-e388.h5"
 # latent_vectors_path = "./data/latent_vectors.csv"
 # OF_tcp_stream_delimiter = "[/TCP]"
@@ -49,11 +53,51 @@ PORT = 5001 # Port to listen on (non-privileged ports are > 1023)
 #     return image_bytes
 
 def image_to_bytes(image_path):
-    image = Image.open(image_path)
-    buff = BytesIO()
-    image.save(buff, format="JPEG")
-    image_bytes = base64.b64encode(buff.getvalue())
-    return image_bytes
+    #with open(image_path, "rb") as image_file:
+        #txt = "metadata".encode("utf-8").hex()
+        image = Image.open(image_path)
+        buff = io.BytesIO()
+        image.save(buff, format="JPEG")   
+
+        header = "&!metadata:::".encode("utf-8")
+        body = base64.b64encode(buff.getvalue())
+        msg = header + body
+
+        return msg
+        #bts = 
+        #print(test)
+        #v = hex(ord('ô'))
+        #v = bytes(hx, "utf-8")
+        #txt = v.decode('utf-8')
+        #print(txt)
+
+       # print(bytes.fromhex(hx))
+
+        #b = bytes.fromhex(hex_val)
+        #print(b)
+        #print(io.BytesIO(txt).getvalue())
+        #txt = txt + image_file.read()
+        #print(image_file.read())
+        #b = base64.b64encode(image_file.read())
+        # msg = txt + b
+        # print(msg)
+        #return b
+
+
+
+    #image = Image.open(image_path)
+    #buff = io.BytesIO()
+    #image.save(buff, format="JPEG")
+    #header = bytes("metadata blah blah:::::::::::::::::::", 'utf-8')
+    #body = buff.getvalue()
+    #wrapper = base64.b64encode(image)
+    #message = header + body
+    #print(wrapper.read())
+    # print(wrapper)
+    # print(message.decode())
+    #image_bytes = base64.b64encode(message)
+    #print(image_bytes.decode())
+    #return image_bytes
 
 def handle_data_received(data):
     data.decode().split(',')
@@ -67,6 +111,7 @@ def handle_on_client_connected(conn_socket):
 
 
 def main():
+    b = image_to_bytes("./data/image.jpg")    
     # AF_INET is the Internet address family for IPv4
     # SOCK_STREAM is the socket type for TCP
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)

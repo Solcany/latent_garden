@@ -1,10 +1,9 @@
 extends Node
 
 const HOST: String = "127.0.0.1"
-const PORT: int = 5001
+const PORT: int = 5003
 const RECONNECT_TIMEOUT: float = 3.0
 const TEST_DATA = [1,2,3,4,5,6,7]
-
 
 const Client = preload("res://Tcp_client.gd")
 var _client: Client = Client.new()
@@ -36,12 +35,14 @@ func _handle_client_data(data: PoolByteArray) -> void:
 	var image : Image = Image.new()
 	#print("Client data: ", data.get_string_from_utf8())
 	var string_data: String = data.get_string_from_utf8()
-	var decoded : PoolByteArray = Marshalls.base64_to_raw(string_data)
+	var image_b64 = string_data.get_slice(":::", 1)
+	print(image_b64)
+	var decoded : PoolByteArray = Marshalls.base64_to_raw(image_b64)
+
 	image.load_jpg_from_buffer(decoded)
-	
+#
 	var texture = ImageTexture.new()
 	texture.create_from_image(image, 0)
-	
 	var mat = SpatialMaterial.new()
 	mat.albedo_texture = texture
 	print("setting image")
