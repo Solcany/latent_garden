@@ -10,6 +10,11 @@ config_version=4
 
 _global_script_classes=[ {
 "base": "Reference",
+"class": "Arr",
+"language": "GDScript",
+"path": "res://Arr.gd"
+}, {
+"base": "Reference",
 "class": "Geom",
 "language": "GDScript",
 "path": "res://Geom.gd"
@@ -25,6 +30,7 @@ _global_script_classes=[ {
 "path": "res://Utils.gd"
 } ]
 _global_script_class_icons={
+"Arr": "",
 "Geom": "",
 "Mat": "",
 "Utils": ""
@@ -33,7 +39,7 @@ _global_script_class_icons={
 [application]
 
 config/name="Latent Garden"
-run/main_scene="res://drawing_in_latent_space.tscn"
+run/main_scene="res://Tcp_client.tscn"
 run/delta_sync_after_draw=true
 config/icon="res://icon.png"
 
