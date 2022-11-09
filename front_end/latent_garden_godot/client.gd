@@ -1,7 +1,7 @@
 extends Node
 
 const HOST: String = "127.0.0.1"
-const PORT: int = 5000
+const PORT: int = 5001
 const RECONNECT_TIMEOUT: float = 3.0
 const TEST_DATA = [1,2,3,4,5,6,7]
 
@@ -27,15 +27,29 @@ func _connect_after_timeout(timeout: float) -> void:
 
 func _handle_client_connected() -> void:
 	print("Client connected to server.")
-	send_initial_data()
+	#send_initial_data()
 #	var message = "hello server"
 #	var bytes: PoolByteArray = message.to_utf8()
 #	_client.send(bytes)
 
 func _handle_client_data(data: PoolByteArray) -> void:
-	print("Client data: ", data.get_string_from_utf8())
-	var message: PoolByteArray = [97, 99, 107] # Bytes for "ack" in ASCII
-	_client.send(message)
+	var image : Image = Image.new()
+	#print("Client data: ", data.get_string_from_utf8())
+	var string_data: String = data.get_string_from_utf8()
+	var decoded : PoolByteArray = Marshalls.base64_to_raw(string_data)
+	image.load_jpg_from_buffer(decoded)
+	
+	var texture = ImageTexture.new()
+	texture.create_from_image(image, 0)
+	
+	var mat = SpatialMaterial.new()
+	mat.albedo_texture = texture
+	print("setting image")
+	$Mesh.set_surface_material(0, mat)
+	
+	
+	#var message: PoolByteArray = [97, 99, 107] # Bytes for "ack" in ASCII
+	#_client.send(message)
 
 func _handle_client_disconnected() -> void:
 	print("Client disconnected from server.")
