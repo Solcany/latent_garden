@@ -2,8 +2,21 @@ tool
 
 extends Spatial
 
-const NODE_SCALE = Vector3(0.03, 0.03, 0.03)
-var is_selected = false
+const NODE_SCALE : Vector3 = Vector3(0.03, 0.03, 0.03)
+var is_selected : bool = false #setget set_is_selected, get_is_selected
+var id : int #setget set_id, get_id
+#
+#func set_is_selected(value : bool) -> void:
+#	is_selected = value
+#
+#func get_is_selected() -> bool:
+#	return is_selected
+#
+#func set_id(value : int) -> void:
+#	id = value
+#
+#func get_id() -> int:
+#	return id
 
 # Called when the node enters the scene tree for the first time.
 func _ready():

@@ -5,8 +5,12 @@ const EMBEDDINGS_CSV_PATH = "data/embeddings/random_nums_3d_embeddings.txt"
 const EMBEDDINGS_ROW_SIZE = 3
 const EMBEDDINGS_BOUNDING_BOX_MAX_WIDTH = 5
 const EMBEDDINGS_CSV_SKIP_HEADER = true
+const LATENT_NODES_GROUP_NAME = "latent_nodes"
 const DEBUG = true
 var Latent_space_node = load("res://Latent_space_node.tscn")
+var Latent_space_size: int
+
+signal set_selected_latent_nodes_ids
 
 func center_self(bounding_vec_min: Vector3, bounding_vec_max: Vector3) -> void: 
 	self.translation.x = -bounding_vec_max.x/2
@@ -21,17 +25,31 @@ func add_points_mesh_to_scene(points: Array) -> void:
 	self.add_child(mesh_instance)		
 		
 func add_latent_space_nodes_to_scene(points: Array) -> void:
-	for point in points:
+	for i in points.size():
 		var node = Latent_space_node.instance()
-		node.translation = point
+		node.translation = points[i]
+		node.id = i
+		node.add_to_group(LATENT_NODES_GROUP_NAME)
 		self.add_child(node)
 
-func _on_latent_node_selected(body): 
+func _on_latent_node_selected(body) -> void: 
 	var latent_node_ref = body.get_parent()
 	latent_node_ref.is_selected = !latent_node_ref.is_selected
-	 
-# Called when the node enters the scene tree for the first time.
+	
+func _on_get_selected_latent_nodes() -> void:
+	var selected : Array = []
+	var nodes = get_tree().get_nodes_in_group(LATENT_NODES_GROUP_NAME)
+	for node in nodes:
+		if(node.is_selected):
+			selected.append(node.id)
+	emit_signal("set_selected_latent_nodes_ids", selected)
+		
 func _ready():
+	# connect signals
+	var app_ref = get_node("/root/App")
+	connect("set_selected_latent_nodes_ids", app_ref, "_on_set_selected_latent_nodes_ids")
+	
+	# process the embeddings csv
 	var embeddings_raw : Array = Utils.load_csv_of_floats(EMBEDDINGS_CSV_PATH, 
 														EMBEDDINGS_ROW_SIZE, 
 														EMBEDDINGS_CSV_SKIP_HEADER)
@@ -41,6 +59,7 @@ func _ready():
 	var embeddings_scaled : Array = Geom.scale_normalised_3d_embeddings(embeddings_normalised, 
 																	embeddings_bounding_box_proportions, 
 																	EMBEDDINGS_BOUNDING_BOX_MAX_WIDTH)
+	Latent_space_size = embeddings_scaled.size()
 	add_points_mesh_to_scene(embeddings_scaled)
 	add_latent_space_nodes_to_scene(embeddings_scaled)
 	

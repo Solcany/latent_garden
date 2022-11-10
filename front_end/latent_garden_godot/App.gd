@@ -1,18 +1,15 @@
 extends Spatial
 
+signal get_selected_latent_nodes
 
-# Declare member variables here. Examples:
-# var a = 2
-# var b = "text"
-
-func _on_submit_button_pressed():
+func _on_submit_button_pressed() -> void:
+	emit_signal("query_selected_latent_nodes")
 	print("pressed")
+	
+func _on_set_selected_latent_nodes_ids(ids) -> void:
+	print(ids)
 
-# Called when the node enters the scene tree for the first time.
 func _ready():
-	pass # Replace with function body.
+	var nodes_container_ref = get_node("Nodes/Nodes_container")
+	connect("get_selected_latent_nodes", nodes_container_ref, "_on_get_selected_latent_nodes")
 
-
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-#func _process(delta):
-#	pass
