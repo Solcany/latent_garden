@@ -7,13 +7,11 @@ const HEADER_START_DELIMITER= "***"
 const MESSAGE_KEYVAL_DELIMITER = ":"
 const MESSAGE_DATA_DELIMITER = ","
 const MESSAGE_HEADER_END_DELIMITER = "!!!"
+const DEBUG_SHOULD_CONNECT = false
 
 const Client = preload("res://Tcp_client.gd")
 var _client: Client = Client.new()
 
-#func send_initial_data():
-	#var bytes : PoolByteArray = Arr.array_to_csv_string(TEST_DATA).to_utf8()
-	#_client.send(bytes)
 
 func parse_client_data(client_data : String) -> Array:
 	if(client_data.length() > 0  && client_data.begins_with(HEADER_START_DELIMITER)):
@@ -47,12 +45,13 @@ func parse_client_data(client_data : String) -> Array:
 		
 
 func _ready() -> void:
-	_client.connect("connected", self, "_handle_client_connected")
-	_client.connect("disconnected", self, "_handle_client_disconnected")
-	_client.connect("error", self, "_handle_client_error")
-	_client.connect("data", self, "_handle_client_data")
-	add_child(_client)
-	_client.connect_to_host(HOST, PORT)
+	if(DEBUG_SHOULD_CONNECT):
+		_client.connect("connected", self, "_handle_client_connected")
+		_client.connect("disconnected", self, "_handle_client_disconnected")
+		_client.connect("error", self, "_handle_client_error")
+		_client.connect("data", self, "_handle_client_data")
+		add_child(_client)
+		_client.connect_to_host(HOST, PORT)
 
 func _connect_after_timeout(timeout: float) -> void:
 	yield(get_tree().create_timer(timeout), "timeout") # Delay for timeout

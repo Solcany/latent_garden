@@ -1,8 +1,11 @@
-[gd_scene load_steps=7 format=2]
+[gd_scene load_steps=10 format=2]
 
 [ext_resource path="res://show_2d_latent_space_points.gd" type="Script" id=1]
 [ext_resource path="res://Selector_collider.gd" type="Script" id=2]
+[ext_resource path="res://latent_garden_tcp_client.gd" type="Script" id=3]
 [ext_resource path="res://Selector.gd" type="Script" id=4]
+[ext_resource path="res://Submit_Selection_button.gd" type="Script" id=5]
+[ext_resource path="res://App.gd" type="Script" id=6]
 
 [sub_resource type="BoxShape" id=2]
 
@@ -13,32 +16,52 @@ background_mode = 1
 ambient_light_color = Color( 1, 1, 1, 1 )
 
 [node name="App" type="Spatial"]
+script = ExtResource( 6 )
 
-[node name="Selector" type="Node" parent="."]
-script = ExtResource( 4 )
-
-[node name="Selector_gui" type="Control" parent="Selector"]
+[node name="Gui" type="Control" parent="."]
 margin_right = 40.0
 margin_bottom = 40.0
 
-[node name="Selector" type="ReferenceRect" parent="Selector/Selector_gui"]
+[node name="Submit_Selection" type="Button" parent="Gui"]
+margin_left = 406.51
+margin_top = 831.639
+margin_right = 502.51
+margin_bottom = 877.639
+text = "Submit"
+script = ExtResource( 5 )
+
+[node name="Tcp_client" type="Node" parent="."]
+script = ExtResource( 3 )
+
+[node name="Nodes" type="Node" parent="."]
+
+[node name="Nodes_Selector" type="Node" parent="Nodes"]
+script = ExtResource( 4 )
+
+[node name="Selector_gui" type="Control" parent="Nodes/Nodes_Selector"]
+margin_right = 40.0
+margin_bottom = 40.0
+mouse_filter = 2
+
+[node name="Selector_rect" type="ReferenceRect" parent="Nodes/Nodes_Selector/Selector_gui"]
 margin_right = 100.0
 margin_bottom = 100.0
+mouse_filter = 2
 editor_only = false
 
-[node name="Selector_collider" type="Area" parent="Selector"]
+[node name="Selector_collider" type="Area" parent="Nodes/Nodes_Selector"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0.347321 )
 script = ExtResource( 2 )
 
-[node name="Collider" type="CollisionShape" parent="Selector/Selector_collider"]
+[node name="Collider" type="CollisionShape" parent="Nodes/Nodes_Selector/Selector_collider"]
 transform = Transform( 0.1, 0, 0, 0, 0.1, 0, 0, 0, 0.1, 0, 0, 0 )
 shape = SubResource( 2 )
 
-[node name="Debug_collider_mesh" type="MeshInstance" parent="Selector/Selector_collider"]
+[node name="Debug_collider_mesh" type="MeshInstance" parent="Nodes/Nodes_Selector/Selector_collider"]
 transform = Transform( 0.1, 0, 0, 0, 0.1, 0, 0, 0, 0.1, 0, 0, 0 )
 mesh = SubResource( 3 )
 
-[node name="Latent_nodes_container" type="Spatial" parent="."]
+[node name="Nodes_container" type="Spatial" parent="Nodes"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -1.85433, -2.5, 0 )
 script = ExtResource( 1 )
 
