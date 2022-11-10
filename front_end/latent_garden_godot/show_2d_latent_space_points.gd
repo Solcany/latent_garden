@@ -8,7 +8,6 @@ const EMBEDDINGS_CSV_SKIP_HEADER = true
 const LATENT_NODES_GROUP_NAME = "latent_nodes"
 const DEBUG = true
 var Latent_space_node = load("res://Latent_space_node.tscn")
-var Latent_space_size: int
 
 signal set_selected_latent_nodes_ids
 
@@ -59,7 +58,6 @@ func _ready():
 	var embeddings_scaled : Array = Geom.scale_normalised_3d_embeddings(embeddings_normalised, 
 																	embeddings_bounding_box_proportions, 
 																	EMBEDDINGS_BOUNDING_BOX_MAX_WIDTH)
-	Latent_space_size = embeddings_scaled.size()
 	add_points_mesh_to_scene(embeddings_scaled)
 	add_latent_space_nodes_to_scene(embeddings_scaled)
 	

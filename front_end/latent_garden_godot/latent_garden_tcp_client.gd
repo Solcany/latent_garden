@@ -12,6 +12,36 @@ const DEBUG_SHOULD_CONNECT = false
 const Client = preload("res://Tcp_client.gd")
 var _client: Client = Client.new()
 
+func compose_encoded_message(metadata: Dictionary, data : Array) -> String:
+	var header : String = HEADER_START_DELIMITER
+	
+	var metadata_size : int = metadata.keys().size()
+	var metadata_keys : Array = metadata.keys()
+	
+	for index in range(metadata_size):
+		var key = metadata_keys[index]
+		var value = str(metadata[key])
+		if(index < metadata_size-1):
+			header += "%s%s%s%s" % [key, 
+									MESSAGE_KEYVAL_DELIMITER,
+									value,
+									MESSAGE_DATA_DELIMITER]
+		else:
+			header += "%s%s%s" % [key,
+									MESSAGE_KEYVAL_DELIMITER,
+									value]
+	
+	header += MESSAGE_HEADER_END_DELIMITER
+	var body : String = Arr.array_to_csv_string(data)
+	
+	var message : String = header + body
+	print(message)
+	
+	return message
+	
+		
+		
+	# message {message: requestImages, data: [1,2,3,4,5,6]}
 
 func parse_client_data(client_data : String) -> Array:
 	if(client_data.length() > 0  && client_data.begins_with(HEADER_START_DELIMITER)):
@@ -42,7 +72,8 @@ func parse_client_data(client_data : String) -> Array:
 		push_warning("received client data is empty string or Header missing, returning empty array ")
 		return []
 
-		
+func _on_request_images_from_gan_server(ids):
+	compose_encoded_message({"message": "get_images"}, ids)
 
 func _ready() -> void:
 	if(DEBUG_SHOULD_CONNECT):
