@@ -6,7 +6,7 @@ const RECONNECT_TIMEOUT: float = 3.0
 const HEADER_START_DELIMITER= "***"
 const MESSAGE_KEYVAL_DELIMITER = ":"
 const MESSAGE_DATA_DELIMITER = ","
-const MESSAGE_HEADER_END_DELIMITER = "!!!"
+const MESSAGE_HEADER_END_DELIMITER = "&&&"
 const DEBUG_SHOULD_CONNECT = false
 
 const Client = preload("res://Tcp_client.gd")
@@ -50,12 +50,12 @@ func parse_client_data(client_data : String) -> Array:
 		# erase HEADER_START_DELIMITER from the header substring
 		header_string.erase(header_string.find(HEADER_START_DELIMITER), HEADER_START_DELIMITER.length())
 		# get key val pairs 
-		var header_keyvals : PoolStringArray = header_string.split(",")
+		var header_keyvals : PoolStringArray = header_string.split(MESSAGE_DATA_DELIMITER)
 		var metadata = {}
 		# parse key val pairs from the header
 		for keyval in header_keyvals:
-			var key = keyval.get_slice(":", 0)
-			var val = keyval.get_slice(":", 1)
+			var key = keyval.get_slice(MESSAGE_KEYVAL_DELIMITER, 0)
+			var val = keyval.get_slice(MESSAGE_KEYVAL_DELIMITER, 1)
 			metadata[key] = val
 		
 		# get the actual data of the message
@@ -73,7 +73,7 @@ func parse_client_data(client_data : String) -> Array:
 		return []
 
 func _on_request_images_from_gan_server(ids):
-	compose_encoded_message({"message": "get_images"}, ids)
+	compose_encoded_message({"request": "get_images", "data_type": "array"}, ids)
 
 func _ready() -> void:
 	if(DEBUG_SHOULD_CONNECT):

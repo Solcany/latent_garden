@@ -1,3 +1,4 @@
+import constants
 # import numpy as np
 import socket
 import base64
@@ -7,17 +8,125 @@ from PIL import Image
 import binascii
 import os
 import io
-import codecs
+import warnings
 # import tensorflow as tf
 # import sle_gan
 
 # imShape = (256,256)
-HOST = "127.0.0.1"  # Standard loopback interface address (localhost)
-PORT = 5003 # Port to listen on (non-privileged ports are > 1023)
-HEADER_START_DELIMITER= "***"
-MESSAGE_KEYVAL_DELIMITER = ":"
-MESSAGE_DATA_DELIMITER = ","
-MESSAGE_HEADER_END_DELIMITER = "!!!"
+
+class Tcp_server:
+    def __init__(self, a):
+        self.a = a
+        #self.onDataReceived = onDataReceived
+        #self.onSendData = onSendData
+
+# func parse_client_data(client_data : String) -> Array:
+#     if(client_data.length() > 0  && client_data.begins_with(HEADER_START_DELIMITER)):
+#         # get the header substring
+#         var header_string : String = client_data.get_slice(MESSAGE_HEADER_END_DELIMITER, 0)
+#         # erase HEADER_START_DELIMITER from the header substring
+#         header_string.erase(header_string.find(HEADER_START_DELIMITER), HEADER_START_DELIMITER.length())
+#         # get key val pairs 
+#         var header_keyvals : PoolStringArray = header_string.split(",")
+#         var metadata = {}
+#         # parse key val pairs from the header
+#         for keyval in header_keyvals:
+#             var key = keyval.get_slice(":", 0)
+#             var val = keyval.get_slice(":", 1)
+#             metadata[key] = val
+        
+#         # get the actual data of the message
+#         var data = client_data.get_slice(MESSAGE_HEADER_END_DELIMITER, 1)
+        
+#         # is there any data in the message?
+#         if(data.length() > 0):
+#             return [metadata, data]
+#         # if the server sent only header...         
+#         else:
+#             push_warning("message contains only metadata")          
+#             return [metadata]
+#     else:
+#         push_warning("received client data is empty string or Header missing, returning empty array ")
+#         return []
+
+    def parse_received_message(self, message):
+        if(len(message) > 0 and message.startswith(constants.MESSAGE_HEADER_START_DELIMITER)):
+            # split the message into header and body
+            header_string, body_string = message.split(constants.MESSAGE_HEADER_END_DELIMITER)
+            # remove the string delimiting the beginning of the message
+            metadata_string = header_string.replace(constants.MESSAGE_HEADER_START_DELIMITER, '')
+            # split the header into metadata key value pairs
+            metadata_keyvals = metadata_string.split(constants.MESSAGE_DATA_DELIMITER)
+            # key value pairs into dict
+            metadata = {}
+            for keyval in metadata_keyvals:
+                key, val = keyval.split(constants.MESSAGE_KEYVAL_DELIMITER)
+                metadata[key] = val
+            # is there any data in the body?
+            if(len(body_string) > 0):
+                # does the received message have data_type key?
+                assert constants.MESSAGE_DATA_TYPE_KEY in metadata
+                # is the data type supported?
+                assert metadata[constants.MESSAGE_DATA_TYPE_KEY] in constants.MESSAGE_SUPPORTED_DATA_TYPES
+
+                data = []
+                # treat different data types accordingly...
+                if(metadata[constants.MESSAGE_DATA_TYPE_KEY] == "int_array"):
+                    data = body_string.split(constants.MESSAGE_DATA_DELIMITER)
+                    data = list(map(lambda v: int(v), data))
+                elif(metadata[constants.MESSAGE_DATA_TYPE_KEY] == "float_array"):
+                    data = body_string.split(constants.MESSAGE_DATA_DELIMITER)
+                    data = list(map(lambda v: float(v), data))
+                return [metadata, data]
+            else:
+                warnings.warn("the message has no body, returning metadata only")
+                return [metadata]
+
+
+
+    #     print("sending")
+    # def send_image_data(data):
+
+
+        # sendall sends received data back to client
+        # Unlike send(), sendall continues to send data from bytes until either all data has been sent or an error occurs. None is returned on success.
+
+    def handle_data_received(self, data):
+        #self.onDataReceived(data)
+        data.decode().split(',')
+
+    def handle_on_client_connected(self, conn_socket):
+        print("client connected")
+        # msg = get_image_message({"type": "image", "index": 0}, "data/image.jpg")
+        # conn_socket.sendall(msg)
+
+    def start(self):
+        if not constants.DEBUG:
+            # AF_INET is the Internet address family for IPv4
+            # SOCK_STREAM is the socket type for TCP
+            s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            while True:
+                s.bind((HOST, PORT)) # associate the socket with particular network interface and port
+                s.listen() # listen to incoming connections
+                print("listening for connections")
+                while True: 
+                    # this is a new socket used for communication with the client, different from the listening socket
+                    conn, addr = s.accept() # block execution, wait for a connection, on connections returns connection socket object and the address
+                    print(f"Connected by {addr}")
+                    while True:
+                        self.handle_on_client_connected(conn)
+                        data = conn.recv(1024) # recv blocks execution and reads data from the client
+                        # receiving empty bytes b'' signals the client is closing the connection and while loop is exited
+                        # The bufsize argument of 1024 used above is the maximum amount of data to be received at once.
+                        if len(data) == 0: 
+                            break
+                        else:
+                            self.handle_data_received(data)
+                        # if not data:
+                        #     break
+                        #conn.sendall(data) 
+
+
 
 # G_path = "./data/weights/metfaces_G-e388.h5"
 # latent_vectors_path = "./data/latent_vectors.csv"
@@ -55,75 +164,46 @@ MESSAGE_HEADER_END_DELIMITER = "!!!"
 #     image_bytes = base64.b64encode(buffered.getvalue())
 #     return image_bytes
 
-def get_encoded_image_bytes(image_path):
-        image = Image.open(image_path)
-        buff = io.BytesIO()
-        image.save(buff, format="JPEG")   
-        encoded_image = base64.b64encode(buff.getvalue())
-        return encoded_image
+# def get_encoded_image_bytes(image_path):
+#         image = Image.open(image_path)
+#         buff = io.BytesIO()
+#         image.save(buff, format="JPEG")   
+#         encoded_image = base64.b64encode(buff.getvalue())
+#         return encoded_image
 
-def get_encoded_message_header_bytes(metadata):
-    header = HEADER_START_DELIMITER
-    for index, key in enumerate(metadata):
-        value = metadata[key]
-        if(index < len(metadata)-1):
-            header += "{}{}{}{}".format(key, 
-                                        MESSAGE_KEYVAL_DELIMITER, 
-                                        str(value), 
-                                        MESSAGE_DATA_DELIMITER)
-        # avoid adding the MESSAGE_DATA_DELIMITER for the last item
-        else:
-            header += "{}{}{}".format(key, 
-                                        MESSAGE_KEYVAL_DELIMITER, 
-                                        str(value))            
-    header += MESSAGE_HEADER_END_DELIMITER
-    header = header.encode("utf-8")
-    return header
-
-
-def get_image_message(metadata, image_path):
-    header = get_encoded_message_header_bytes(metadata)
-    data = get_encoded_image_bytes("data/image.jpg")
-    message = header + data
-    return message
-
-def handle_data_received(data):
-    data.decode().split(',')
-
-def handle_on_client_connected(conn_socket):
-    msg = get_image_message({"type": "image", "index": 0}, "data/image.jpg")
-    conn_socket.sendall(msg)
+# def get_encoded_message_header_bytes(metadata):
+#     header = HEADER_START_DELIMITER
+#     for index, key in enumerate(metadata):
+#         value = metadata[key]
+#         if(index < len(metadata)-1):
+#             header += "{}{}{}{}".format(key, 
+#                                         MESSAGE_KEYVAL_DELIMITER, 
+#                                         str(value), 
+#                                         MESSAGE_DATA_DELIMITER)
+#         # avoid adding the MESSAGE_DATA_DELIMITER for the last item
+#         else:
+#             header += "{}{}{}".format(key, 
+#                                         MESSAGE_KEYVAL_DELIMITER, 
+#                                         str(value))            
+#     header += MESSAGE_HEADER_END_DELIMITER
+#     header = header.encode("utf-8")
+#     return header
 
 
-def main():
-    # AF_INET is the Internet address family for IPv4
-    # SOCK_STREAM is the socket type for TCP
-    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    while True:
-        s.bind((HOST, PORT)) # associate the socket with particular network interface and port
-        s.listen() # listen to incoming connections
-        print("listening for connections")
-        while True: 
-            # this is a new socket used for communication with the client, different from the listening socket
-            conn, addr = s.accept() # block execution, wait for a connection, on connections returns connection socket object and the address
-            print(f"Connected by {addr}")
-            while True:
-                handle_on_client_connected(conn)
-                data = conn.recv(1024) # recv blocks execution and reads data from the client
-                # receiving empty bytes b'' signals the client is closing the connection and while loop is exited
-                # The bufsize argument of 1024 used above is the maximum amount of data to be received at once.
-                if len(data) == 0: 
-                    break
-                else:
-                    handle_data_received(data)
-                # if not data:
-                #     break
-                #conn.sendall(data) 
-                # sendall sends received data back to client
-                # Unlike send(), sendall continues to send data from bytes until either all data has been sent or an error occurs. None is returned on success.
+# def get_image_message(metadata, image_path):
+#     header = get_encoded_message_header_bytes(metadata)
+#     data = get_encoded_image_bytes("data/image.jpg")
+#     message = header + data
+#     return message
+
+# def handle_data_received(data):
+#     data.decode().split(',')
+
+# def handle_on_client_connected(conn_socket):
+#     msg = get_image_message({"type": "image", "index": 0}, "data/image.jpg")
+#     conn_socket.sendall(msg)
 
     #latent_vectors = np.genfromtxt(latent_vectors_path, delimiter=',')
-
     # G = init_g()
     # metadata_sock = init_sock_client()
     # gan_sock = init_sock_client()
@@ -157,7 +237,7 @@ def main():
     #             print(e)
     #             sys.exit(1)
 
-if __name__ == '__main__':
-    main()
+# if __name__ == '__main__':
+#     main()
 
 
