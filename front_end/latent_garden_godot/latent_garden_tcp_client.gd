@@ -3,11 +3,12 @@ extends Node
 const HOST: String = "127.0.0.1"
 const PORT: int = 5003
 const RECONNECT_TIMEOUT: float = 3.0
-const HEADER_START_DELIMITER= "***"
-const MESSAGE_KEYVAL_DELIMITER = ":"
-const MESSAGE_DATA_DELIMITER = ","
-const MESSAGE_HEADER_END_DELIMITER = "&&&"
-const DEBUG_SHOULD_CONNECT = false
+const HEADER_START_DELIMITER : String = "***"
+const MESSAGE_KEYVAL_DELIMITER : String = ":"
+const MESSAGE_DATA_DELIMITER : String = ","
+const MESSAGE_HEADER_END_DELIMITER : String = "&&&"
+const DEBUG_SHOULD_CONNECT : bool = true
+const REQUEST_IMAGES_METADATA : Dictionary = {"request": "get_images", "data_type": "int_array"}
 
 const Client = preload("res://Tcp_client.gd")
 var _client: Client = Client.new()
@@ -38,10 +39,6 @@ func compose_encoded_message(metadata: Dictionary, data : Array) -> String:
 	print(message)
 	
 	return message
-	
-		
-		
-	# message {message: requestImages, data: [1,2,3,4,5,6]}
 
 func parse_client_data(client_data : String) -> Array:
 	if(client_data.length() > 0  && client_data.begins_with(HEADER_START_DELIMITER)):
@@ -73,8 +70,10 @@ func parse_client_data(client_data : String) -> Array:
 		return []
 
 func _on_request_images_from_gan_server(ids):
-	compose_encoded_message({"request": "get_images", "data_type": "array"}, ids)
-
+	var message : String = compose_encoded_message(REQUEST_IMAGES_METADATA, ids)
+	var encoded : PoolByteArray = message.to_utf8()
+	_client.send(encoded)
+	
 func _ready() -> void:
 	if(DEBUG_SHOULD_CONNECT):
 		_client.connect("connected", self, "_handle_client_connected")
@@ -90,14 +89,8 @@ func _connect_after_timeout(timeout: float) -> void:
 
 func _handle_client_connected() -> void:
 	print("Client connected to server.")
-	#send_initial_data()
-#	var message = "hello server"
-#	var bytes: PoolByteArray = message.to_utf8()
-#	_client.send(bytes)
 
 func _handle_client_data(raw_data: PoolByteArray) -> void:
-
-	#print("Client data: ", data.get_string_from_utf8())
 	var string_data: String = raw_data.get_string_from_utf8()
 	var parsed: Array = parse_client_data(string_data)
 	var metadata : Dictionary = parsed[0]
@@ -113,10 +106,6 @@ func _handle_client_data(raw_data: PoolByteArray) -> void:
 	print("setting image")
 	$Mesh.set_surface_material(0, mat)
 	
-	
-	#var message: PoolByteArray = [97, 99, 107] # Bytes for "ack" in ASCII
-	#_client.send(message)
-
 func _handle_client_disconnected() -> void:
 	print("Client disconnected from server.")
 	_connect_after_timeout(RECONNECT_TIMEOUT) # Try to reconnect after 3 seconds

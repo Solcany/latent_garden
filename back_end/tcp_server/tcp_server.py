@@ -49,7 +49,8 @@ class Tcp_server:
 #         push_warning("received client data is empty string or Header missing, returning empty array ")
 #         return []
 
-    def parse_received_message(self, message):
+    def parse_message(self, message):
+        # message has to be a decoded string
         if(len(message) > 0 and message.startswith(constants.MESSAGE_HEADER_START_DELIMITER)):
             # split the message into header and body
             header_string, body_string = message.split(constants.MESSAGE_HEADER_END_DELIMITER)
@@ -91,9 +92,21 @@ class Tcp_server:
         # sendall sends received data back to client
         # Unlike send(), sendall continues to send data from bytes until either all data has been sent or an error occurs. None is returned on success.
 
-    def handle_data_received(self, data):
-        #self.onDataReceived(data)
-        data.decode().split(',')
+    def handle_message_received(self, message):
+        decoded = message.decode("utf-8")
+        parsed = self.parse_message(decoded)
+        print(parsed)
+
+        # the message has only metadata
+        if(len(parsed) == 1): 
+            metadata = parsed[0]
+            # WIP: handle metadata messaged only, if there's any use for them anyway
+
+        # the message has metadata and data
+        elif(len(parsed) == 2 ): 
+            metadata = parsed[0]
+            data = parsed[1]
+
 
     def handle_on_client_connected(self, conn_socket):
         print("client connected")
@@ -101,12 +114,12 @@ class Tcp_server:
         # conn_socket.sendall(msg)
 
     def start(self):
-        if not constants.DEBUG:
+        if True:
             # AF_INET is the Internet address family for IPv4
             # SOCK_STREAM is the socket type for TCP
             s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             while True:
-                s.bind((HOST, PORT)) # associate the socket with particular network interface and port
+                s.bind((constants.HOST, constants.PORT)) # associate the socket with particular network interface and port
                 s.listen() # listen to incoming connections
                 print("listening for connections")
                 while True: 
@@ -115,13 +128,15 @@ class Tcp_server:
                     print(f"Connected by {addr}")
                     while True:
                         self.handle_on_client_connected(conn)
-                        data = conn.recv(1024) # recv blocks execution and reads data from the client
+                        # recv blocks execution and reads data from the client
                         # receiving empty bytes b'' signals the client is closing the connection and while loop is exited
-                        # The bufsize argument of 1024 used above is the maximum amount of data to be received at once.
-                        if len(data) == 0: 
+                        # The bufsize argument of 1024 used above is the maximum amount of data to be received at once.                        
+                        message = conn.recv(1024) 
+                        if len(message) == 0: 
+                            warnings.warn("received empty message")
                             break
                         else:
-                            self.handle_data_received(data)
+                            self.handle_message_received(message)
                         # if not data:
                         #     break
                         #conn.sendall(data) 
