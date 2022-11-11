@@ -1,18 +1,7 @@
 import constants
-# import numpy as np
 import socket
-import base64
-import sys
-# import errno
-from PIL import Image
-import binascii
-import os
-import io
 import warnings
-# import tensorflow as tf
-# import sle_gan
-
-# imShape = (256,256)
+#import sys
 
 class Tcp_server:
     def __init__(self, callbacks):
