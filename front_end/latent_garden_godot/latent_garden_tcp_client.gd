@@ -8,7 +8,7 @@ const MESSAGE_KEYVAL_DELIMITER : String = ":"
 const MESSAGE_DATA_DELIMITER : String = ","
 const MESSAGE_HEADER_END_DELIMITER : String = "&&&"
 const DEBUG_SHOULD_CONNECT : bool = true
-const REQUEST_IMAGES_METADATA : Dictionary = {"request": "get_images", "data_type": "int_array"}
+const REQUEST_IMAGES_METADATA : Dictionary = {"request": "requesting_images", "data_type": "int_array"}
 
 const Client = preload("res://Tcp_client.gd")
 var _client: Client = Client.new()
