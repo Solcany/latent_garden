@@ -92,6 +92,7 @@ class Tcp_server:
             # AF_INET is the Internet address family for IPv4
             # SOCK_STREAM is the socket type for TCP
             s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            # s.setblocking(0)  
             while True:
                 s.bind((constants.HOST, constants.PORT)) # associate the socket with particular network interface and port
                 s.listen() # listen to incoming connections
@@ -132,8 +133,6 @@ class Tcp_server:
 #     sock.setblocking(0)  
 #     return sock
 
-# def start_tcp_server():
-
 
 # def generate_img(l_vec_idx):
 #     n = np.reshape(latent_vectors[l_vec_idx],(1,1,1,imShape[0]))
@@ -172,24 +171,12 @@ class Tcp_server:
 #     header = header.encode("utf-8")
 #     return header
 
-
 # def get_image_message(metadata, image_path):
 #     header = get_encoded_message_header_bytes(metadata)
 #     data = get_encoded_image_bytes("data/image.jpg")
 #     message = header + data
 #     return message
 
-# def handle_data_received(data):
-#     data.decode().split(',')
-
-# def handle_on_client_connected(conn_socket):
-#     msg = get_image_message({"type": "image", "index": 0}, "data/image.jpg")
-#     conn_socket.sendall(msg)
-
-    #latent_vectors = np.genfromtxt(latent_vectors_path, delimiter=',')
-    # G = init_g()
-    # metadata_sock = init_sock_client()
-    # gan_sock = init_sock_client()
 
 
     # while True:
@@ -219,8 +206,5 @@ class Tcp_server:
     #             # a "real" error occurred
     #             print(e)
     #             sys.exit(1)
-
-# if __name__ == '__main__':
-#     main()
 
 
