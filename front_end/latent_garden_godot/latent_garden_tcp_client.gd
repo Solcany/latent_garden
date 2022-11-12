@@ -1,12 +1,13 @@
 extends Node
 
 const HOST: String = "127.0.0.1"
-const PORT: int = 5003
+const PORT: int = 5002
 const RECONNECT_TIMEOUT: float = 3.0
 const HEADER_START_DELIMITER : String = "***"
 const MESSAGE_KEYVAL_DELIMITER : String = ":"
-const MESSAGE_DATA_DELIMITER : String = ","
+const MESSAGE_DATA_DELIMITER : String = "###"
 const MESSAGE_HEADER_END_DELIMITER : String = "&&&"
+const MESSAGE_ARR_DATA_DELIMITER : String = ","
 const DEBUG_SHOULD_CONNECT : bool = true
 const REQUEST_IMAGES_METADATA : Dictionary = {"request": "requesting_images", "data_type": "int_array"}
 
@@ -33,7 +34,7 @@ func compose_encoded_message(metadata: Dictionary, data : Array) -> String:
 									value]
 	
 	header += MESSAGE_HEADER_END_DELIMITER
-	var body : String = Arr.array_to_csv_string(data)
+	var body : String = Arr.array_to_string(data, MESSAGE_ARR_DATA_DELIMITER)
 	
 	var message : String = header + body
 	print(message)
@@ -92,19 +93,21 @@ func _handle_client_connected() -> void:
 
 func _handle_client_data(raw_data: PoolByteArray) -> void:
 	var string_data: String = raw_data.get_string_from_utf8()
-	var parsed: Array = parse_client_data(string_data)
-	var metadata : Dictionary = parsed[0]
-	var data : String = parsed[1]
+#	var parsed: Array = parse_client_data(string_data)
+#	var metadata : Dictionary = parsed[0]
+#	var data : String = parsed[1]
+	
+	print(string_data)
 
-	var decoded : PoolByteArray = Marshalls.base64_to_raw(data)
-	var image : Image = Image.new()
-	image.load_jpg_from_buffer(decoded)
-	var texture = ImageTexture.new()
-	texture.create_from_image(image, 0)
-	var mat = SpatialMaterial.new()
-	mat.albedo_texture = texture
-	print("setting image")
-	$Mesh.set_surface_material(0, mat)
+#	var decoded : PoolByteArray = Marshalls.base64_to_raw(data)
+#	var image : Image = Image.new()
+#	image.load_jpg_from_buffer(decoded)
+#	var texture = ImageTexture.new()
+#	texture.create_from_image(image, 0)
+#	var mat = SpatialMaterial.new()
+#	mat.albedo_texture = texture
+#	print("setting image")
+#	$Mesh.set_surface_material(0, mat)
 	
 func _handle_client_disconnected() -> void:
 	print("Client disconnected from server.")

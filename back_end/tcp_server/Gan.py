@@ -17,15 +17,15 @@ class Gan:
     	images = self.generator(vectors)
     	images = images.numpy()
     	images = ((images * 127.5) + 127.5).astype(np.uint8)
-
     	pil_images = []
 
     	for image in images:
     		pil_image = Image.fromarray(image)
     		pil_images.append(pil_image)
-
     	return pil_images
-    	
+
+    	# continue here, the images need to be encoded and joined together
+
     	#image = np.take(images, 0, 0).reshape((constants.IMAGE_SHAPE, constants.IMAGE_SHAPE))
     	#print(image.shape)
     	#images = images.reshape((3, constants.IMAGE_SHAPE, constants.IMAGE_SHAPE))
@@ -36,7 +36,8 @@ class Gan:
 
     def generate_images_from_selection(self, selection_indices):
     	vectors_selection = np.take(self.vectors, selection_indices, 0)
-    	self.generate_images(vectors_selection)
+    	images = self.generate_images(vectors_selection)
+    	return images
 
 	# def generate_images(self, vectors):
 	# 	n = np.reshape(latent_vectors[l_vec_idx],(1,1,1,imShape[0]))
