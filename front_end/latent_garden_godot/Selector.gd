@@ -47,7 +47,6 @@ func handle_mouse_event(event):
 func _on_body_entered_selector(item_body):
 	emit_signal("latent_node_selected", item_body)
 	
-
 func _ready():
 	init_selector()
 	

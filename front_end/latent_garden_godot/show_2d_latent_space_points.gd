@@ -42,6 +42,12 @@ func _on_get_selected_latent_nodes() -> void:
 		if(node.is_selected):
 			selected.append(node.id)
 	emit_signal("set_selected_latent_nodes_ids", selected)
+	
+func _on_images_received_from_server(data) -> void:
+	var metadata: Dictionary = data[0]
+	var image_data: PoolStringArray = data[1]
+	print("RECEIVED")
+	
 		
 func _ready():
 	# connect signals

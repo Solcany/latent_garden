@@ -1,7 +1,7 @@
 extends Node
 
 const HOST: String = "127.0.0.1"
-const PORT: int = 5002
+const PORT: int = 5003
 const RECONNECT_TIMEOUT: float = 3.0
 const HEADER_START_DELIMITER : String = "***"
 const MESSAGE_KEYVAL_DELIMITER : String = ":"
@@ -11,8 +11,11 @@ const MESSAGE_ARR_DATA_DELIMITER : String = ","
 const DEBUG_SHOULD_CONNECT : bool = true
 const REQUEST_IMAGES_METADATA : Dictionary = {"request": "requesting_images", "data_type": "int_array"}
 
+signal images_received_from_server
+
 const Client = preload("res://Tcp_client.gd")
 var _client: Client = Client.new()
+
 
 func compose_encoded_message(metadata: Dictionary, data : Array) -> String:
 	var header : String = HEADER_START_DELIMITER
@@ -37,7 +40,6 @@ func compose_encoded_message(metadata: Dictionary, data : Array) -> String:
 	var body : String = Arr.array_to_string(data, MESSAGE_ARR_DATA_DELIMITER)
 	
 	var message : String = header + body
-	print(message)
 	
 	return message
 
@@ -55,19 +57,28 @@ func parse_client_data(client_data : String) -> Array:
 			var key = keyval.get_slice(MESSAGE_KEYVAL_DELIMITER, 0)
 			var val = keyval.get_slice(MESSAGE_KEYVAL_DELIMITER, 1)
 			metadata[key] = val
-		
-		# get the actual data of the message
-		var data = client_data.get_slice(MESSAGE_HEADER_END_DELIMITER, 1)
-		
-		# is there any data in the message?
-		if(data.length() > 0):
-			return [metadata, data]
-		# if the server sent only header...			
-		else:
-			push_warning("message contains only metadata")			
-			return [metadata]
+			
+		# continue parsing metadata based on the request kind of the client_data
+		if(metadata.response == "images"):
+			# convert indices from strings to ints
+			metadata.indices = Arr.string_array_to_int_array(Arr.string_to_array(metadata.indices, MESSAGE_ARR_DATA_DELIMITER))
+			
+			var images_string_data : String =  client_data.get_slice(MESSAGE_HEADER_END_DELIMITER, 1)
+			var image_data : PoolStringArray = []
+			# is there a single image or multiple?
+			# occurence of MESSAGE_DATA_DELIMITER suggests there's multiple images
+			if( images_string_data.find(MESSAGE_DATA_DELIMITER) > 0):			
+				image_data = images_string_data.split(MESSAGE_DATA_DELIMITER)
+				return [metadata, image_data]
+			# otherwise it's a single image
+			else:
+				image_data = [images_string_data]
+				return [metadata, image_data] 
+		else: 
+			push_error ("the response type is unknown or the reponse value in metadata is missing")
+			return []
 	else:
-		push_warning("received client data is empty string or Header missing, returning empty array ")
+		push_error("received client data is empty string or the data is incomplete")
 		return []
 
 func _on_request_images_from_gan_server(ids):
@@ -76,13 +87,16 @@ func _on_request_images_from_gan_server(ids):
 	_client.send(encoded)
 	
 func _ready() -> void:
-	if(DEBUG_SHOULD_CONNECT):
-		_client.connect("connected", self, "_handle_client_connected")
-		_client.connect("disconnected", self, "_handle_client_disconnected")
-		_client.connect("error", self, "_handle_client_error")
-		_client.connect("data", self, "_handle_client_data")
-		add_child(_client)
-		_client.connect_to_host(HOST, PORT)
+	_client.connect("connected", self, "_handle_client_connected")
+	_client.connect("disconnected", self, "_handle_client_disconnected")
+	_client.connect("error", self, "_handle_client_error")
+	_client.connect("data", self, "_handle_client_data")
+	add_child(_client)
+	_client.connect_to_host(HOST, PORT)
+	
+	var nodes_container_ref = get_node("/root/App/Nodes/Nodes_container")
+	print(nodes_container_ref)
+	connect("images_received_from_server", nodes_container_ref, "_on_images_received_from_server")
 
 func _connect_after_timeout(timeout: float) -> void:
 	yield(get_tree().create_timer(timeout), "timeout") # Delay for timeout
@@ -93,11 +107,16 @@ func _handle_client_connected() -> void:
 
 func _handle_client_data(raw_data: PoolByteArray) -> void:
 	var string_data: String = raw_data.get_string_from_utf8()
-#	var parsed: Array = parse_client_data(string_data)
-#	var metadata : Dictionary = parsed[0]
-#	var data : String = parsed[1]
+	var parsed: Array = parse_client_data(string_data)
+	var metadata : Dictionary = parsed[0]
+	var data : PoolStringArray = parsed[1]
 	
-	print(string_data)
+	if (metadata.response == "images"):
+		emit_signal("images_received_from_server", [metadata, data])
+	else:
+		push_error ("the response type is unknown or the reponse value in metadata is missing")
+	
+	
 
 #	var decoded : PoolByteArray = Marshalls.base64_to_raw(data)
 #	var image : Image = Image.new()

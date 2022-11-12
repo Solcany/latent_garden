@@ -29,5 +29,21 @@ static func array_to_string(arr: Array, delimiter: String = ',') -> String:
 				s = s + str(el) + delimiter
 	return s
 	
+static func string_to_array(string_array: String, delimiter: String = ',') -> Array:
+	var pool_arr : PoolStringArray = string_array.split(delimiter)
+	var arr : Array = []
+	for v in pool_arr:
+		arr.append(v)
+	return arr
+	
+static func string_array_to_int_array(string_array: Array) -> Array:
+	var int_array = []
+	for string in string_array: 
+		int_array.append(int(string))
+	return int_array
+		
+	
+	
+	
 
 

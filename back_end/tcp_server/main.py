@@ -49,6 +49,7 @@ def on_requesting_images(request_data):
 		metadata, latent_vectors_indices = request_data
 		images = gan.generate_images_from_selection(latent_vectors_indices)
 		response_metadata ={"response": "images", 
+							"data_type": "b64_images",
 							"indices": latent_vectors_indices}
 		header = get_encoded_message_header(response_metadata)
 		body = get_encoded_generated_images(images)
@@ -56,7 +57,7 @@ def on_requesting_images(request_data):
 		tcp_server.send_to_client(message)
 		print("generated images sent to the client")
 
-# needs these in the global scope
+# need these in the global scope 
 gan = Gan()
 tcp_server = Tcp_server(callbacks={"on_requesting_images": on_requesting_images})
 
