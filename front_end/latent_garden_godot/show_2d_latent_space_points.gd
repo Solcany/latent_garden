@@ -46,12 +46,24 @@ func _on_get_selected_latent_nodes() -> void:
 func _on_images_received_from_server(data) -> void:
 	var metadata: Dictionary = data[0]
 	var images_data: PoolStringArray = data[1]
-	# decode images
+	# decode received images
 	for data in images_data:
 		var image : Image = Encode_utils.decode_b64_image_string(data)
 	# find relevant nodes
+	var indices: Array = metadata.indices
+	var nodes : Array = get_tree().get_nodes_in_group(LATENT_NODES_GROUP_NAME)
+	var selected_nodes : Array = []
+	for node in nodes:
+		for index in indices:
+			if(node.id == index):
+				selected_nodes.append(node)
+				break
+	# WIP: continue here
+	#  attach textures to relevant latent space nodes
+	print(selected_nodes.size())
 	
-	# set their textures to the image
+	
+	# set their image textures
 	
 		
 func _ready():
