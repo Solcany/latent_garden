@@ -45,8 +45,13 @@ func _on_get_selected_latent_nodes() -> void:
 	
 func _on_images_received_from_server(data) -> void:
 	var metadata: Dictionary = data[0]
-	var image_data: PoolStringArray = data[1]
-	print("RECEIVED")
+	var images_data: PoolStringArray = data[1]
+	# decode images
+	for data in images_data:
+		var image : Image = Encode_utils.decode_b64_image_string(data)
+	# find relevant nodes
+	
+	# set their textures to the image
 	
 		
 func _ready():
