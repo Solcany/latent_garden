@@ -9,7 +9,7 @@ const LATENT_NODES_GROUP_NAME = "latent_nodes"
 const DEBUG = true
 var Latent_space_node = load("res://Latent_space_node.tscn")
 
-signal set_selected_latent_nodes_ids
+signal return_selected_latent_nodes_ids
 
 func center_self(bounding_vec_min: Vector3, bounding_vec_max: Vector3) -> void: 
 	self.translation.x = -bounding_vec_max.x/2
@@ -43,7 +43,7 @@ func _on_get_selected_latent_nodes() -> void:
 			selected.append(node.id)
 	emit_signal("set_selected_latent_nodes_ids", selected)
 	
-func _on_images_received_from_server(data) -> void:
+func _on_images_returned(data) -> void:
 	var metadata: Dictionary = data[0]
 	var images_data: PoolStringArray = data[1]
 	# decode received images
@@ -68,8 +68,7 @@ func _on_images_received_from_server(data) -> void:
 		
 func _ready():
 	# connect signals
-	var app_ref = get_node("/root/App")
-	connect("set_selected_latent_nodes_ids", app_ref, "_on_set_selected_latent_nodes_ids")
+	connect("return_selected_latent_nodes_ids", get_node("/root/App"), "_on_return_selected_latent_nodes_ids")
 	
 	# process the embeddings csv
 	var embeddings_raw : Array = Utils.load_csv_of_floats(EMBEDDINGS_CSV_PATH, 

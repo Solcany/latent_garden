@@ -11,7 +11,7 @@ const MESSAGE_ARR_DATA_DELIMITER : String = ","
 const DEBUG_SHOULD_CONNECT : bool = true
 const REQUEST_IMAGES_METADATA : Dictionary = {"request": "requesting_images", "data_type": "int_array"}
 
-signal images_received_from_server
+signal server_response_images_returned
 
 const Client = preload("res://Tcp_client.gd")
 var _client: Client = Client.new()
@@ -81,7 +81,7 @@ func parse_client_data(client_data : String) -> Array:
 		push_error("received client data is empty string or the data is incomplete")
 		return []
 
-func _on_request_images_from_gan_server(ids):
+func _on_request_images_from_server(ids):
 	var message : String = compose_encoded_message(REQUEST_IMAGES_METADATA, ids)
 	var encoded : PoolByteArray = message.to_utf8()
 	_client.send(encoded)
@@ -94,9 +94,8 @@ func _ready() -> void:
 	add_child(_client)
 	_client.connect_to_host(HOST, PORT)
 	
-	var nodes_container_ref = get_node("/root/App/Nodes/Nodes_container")
-	print(nodes_container_ref)
-	connect("images_received_from_server", nodes_container_ref, "_on_images_received_from_server")
+	# connect server response signals to the events bus
+	connect("server_response_images_returned", get_node("/root/App/"), "_on_server_response_images_returned")
 
 func _connect_after_timeout(timeout: float) -> void:
 	yield(get_tree().create_timer(timeout), "timeout") # Delay for timeout
