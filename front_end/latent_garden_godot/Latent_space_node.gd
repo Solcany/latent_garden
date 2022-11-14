@@ -1,46 +1,36 @@
 tool
 
 extends Spatial
-
-const NODE_SCALE : Vector3 = Vector3(0.03, 0.03, 0.03)
-var is_selected : bool = false #setget set_is_selected, get_is_selected
-var id : int #setget set_id, get_id
-#
-#func set_is_selected(value : bool) -> void:
-#	is_selected = value
-#
-#func get_is_selected() -> bool:
-#	return is_selected
-#
-#func set_id(value : int) -> void:
-#	id = value
-#
-#func get_id() -> int:
-#	return id
+# WIP: these constants should be moved to a separate constants file
+const RENDERED_POINT_SCALE : Vector3 = Vector3(0.03, 0.03, 0.03)
+const RENDERED_IMAGE_MESH_SCALE : Vector3 = Vector3(0.1, 0.1, 0.1)
+var is_selected : bool = false
+var id : int 
 
 func set_image_texture(texture: ImageTexture) -> void:
-	print("settting tex")
 	var mat = $Image_mesh.get_surface_material(0)
 	mat.albedo_texture = texture
 	$Image_mesh.set_surface_material(0, mat)
 	$Image_mesh.visible = true
+	is_selected = false
 	
-# Called when the node enters the scene tree for the first time.
 func _ready():
-	$Collider.scale = NODE_SCALE
-	var mat = SpatialMaterial.new()
-	mat.albedo_color = Color(1,1,1)
-	$Collider/Mesh.set_surface_material(0, mat)
+	$Image_mesh.scale = RENDERED_IMAGE_MESH_SCALE
+	$Collider.scale = RENDERED_POINT_SCALE	
+	
+	# Create and assign textures manually so they can be edited individually per instance	
+	var image_mesh_mat : SpatialMaterial = SpatialMaterial.new()
+	$Image_mesh.set_surface_material(0, image_mesh_mat)
+	var collider_mesh_mat : SpatialMaterial= SpatialMaterial.new()
+	collider_mesh_mat.albedo_color = Color(1,1,1)
+	$Collider/Mesh.set_surface_material(0, collider_mesh_mat)
 	#var bounding_box : Array = Geom.get_bounding_box_from_vec3(NODE_SCALE)
 	#Geom.add_debug_box_to_the_scene(self, bounding_box[0], bounding_box[1])
 
-# Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta):
 	if(is_selected):
-		var mat = $Collider/Mesh.get_surface_material(0)					
-		mat.albedo_color = Color(1,0,0)
+		$Collider/Mesh.get_surface_material(0).albedo_color = Color(1,0,0)
 	else:
-		var mat = $Collider/Mesh.get_surface_material(0)					
-		mat.albedo_color = Color(1,1,1)
+		$Collider/Mesh.get_surface_material(0).albedo_color = Color(1,1,1)
 
 
