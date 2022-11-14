@@ -41,9 +41,10 @@ func _on_get_selected_latent_nodes() -> void:
 	for node in nodes:
 		if(node.is_selected):
 			selected.append(node.id)
-	emit_signal("set_selected_latent_nodes_ids", selected)
+	emit_signal("return_selected_latent_nodes_ids", selected)
 	
-func _on_images_returned(data) -> void:
+func _on_return_images(data) -> void:
+	print("return images")
 	var metadata: Dictionary = data[0]
 	var images_data: PoolStringArray = data[1]
 	# decode received images
