@@ -2,7 +2,7 @@ extends Reference
 
 class_name Arr
 
-static func array_to_csv_string(arr: Array) -> String:
+static func array_to_string(arr: Array, delimiter: String = ',') -> String:
 	var s : String = ""
 	for i in range(arr.size()):
 		var el = arr[i]
@@ -16,7 +16,7 @@ static func array_to_csv_string(arr: Array) -> String:
 				if(sub_i == el.size()-1):
 					sub_s = sub_s + str(sub_el)
 				else:
-					sub_s = sub_s + str(sub_el) + ","
+					sub_s = sub_s + str(sub_el) + delimiter
 			if(i != arr.size()-1):
 				sub_s = sub_s + "\n" #newline 
 			# add substring to the returned string
@@ -26,8 +26,24 @@ static func array_to_csv_string(arr: Array) -> String:
 			if(i == arr.size()-1):
 				s = s + str(el)
 			else:
-				s = s + str(el) + ","
+				s = s + str(el) + delimiter
 	return s
+	
+static func string_to_array(string_array: String, delimiter: String = ',') -> Array:
+	var pool_arr : PoolStringArray = string_array.split(delimiter)
+	var arr : Array = []
+	for v in pool_arr:
+		arr.append(v)
+	return arr
+	
+static func string_array_to_int_array(string_array: Array) -> Array:
+	var int_array = []
+	for string in string_array: 
+		int_array.append(int(string))
+	return int_array
+		
+	
+	
 	
 
 
