@@ -18,6 +18,13 @@ var id : int #setget set_id, get_id
 #func get_id() -> int:
 #	return id
 
+func set_image_texture(texture: ImageTexture) -> void:
+	print("settting tex")
+	var mat = $Image_mesh.get_surface_material(0)
+	mat.albedo_texture = texture
+	$Image_mesh.set_surface_material(0, mat)
+	$Image_mesh.visible = true
+	
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	$Collider.scale = NODE_SCALE

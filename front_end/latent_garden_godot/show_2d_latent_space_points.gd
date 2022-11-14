@@ -44,24 +44,24 @@ func _on_get_selected_latent_nodes() -> void:
 	emit_signal("return_selected_latent_nodes_ids", selected)
 	
 func _on_return_images(data) -> void:
-	print("return images")
+	print("ims received in container")
 	var metadata: Dictionary = data[0]
-	var images_data: PoolStringArray = data[1]
-	# decode received images
-	for data in images_data:
-		var image : Image = Encode_utils.decode_b64_image_string(data)
-	# find relevant nodes
-	var indices: Array = metadata.indices
-	var nodes : Array = get_tree().get_nodes_in_group(LATENT_NODES_GROUP_NAME)
-	var selected_nodes : Array = []
-	for node in nodes:
-		for index in indices:
-			if(node.id == index):
-				selected_nodes.append(node)
+	var images_data: PoolStringArray = data[1] 
+	var latent_nodes : Array = get_tree().get_nodes_in_group(LATENT_NODES_GROUP_NAME)
+	# pass decoded images to the relevant instances of Latent_space_node node
+	for index in range(images_data.size()):
+		# decode image data to texture
+		var image : Image = Encode_utils.decode_b64_image_string(images_data[index])
+		var texture : ImageTexture = ImageTexture.new()
+		texture.create_from_image(image, 0)
+		# find where does the image belong to in the latent space
+		var latent_space_index : int = metadata.indices[index]
+		# find the relevant latent node 
+		for node in latent_nodes:
+			if(node.id == latent_space_index):
+				node.set_image_texture(texture)
 				break
-	# WIP: continue here
-	#  attach textures to relevant latent space nodes
-	print(selected_nodes.size())
+		
 	
 	
 	# set their image textures
