@@ -5,6 +5,8 @@ extends Spatial
 const RENDERED_POINT_SCALE : Vector3 = Vector3(0.03, 0.03, 0.03)
 const RENDERED_IMAGE_MESH_SCALE : Vector3 = Vector3(0.1, 0.1, 0.1)
 var is_selected : bool = false
+# WIP implement has_image to avoid requesting images for lat nodes that already have image generated
+#var has_image: bool = false
 var id : int 
 
 func set_image_texture(texture: ImageTexture) -> void:
@@ -12,7 +14,9 @@ func set_image_texture(texture: ImageTexture) -> void:
 	mat.albedo_texture = texture
 	$Image_mesh.set_surface_material(0, mat)
 	$Image_mesh.visible = true
+	# unselect the node after image was generated
 	is_selected = false
+	#has_image = true
 	
 func _ready():
 	$Image_mesh.scale = RENDERED_IMAGE_MESH_SCALE
