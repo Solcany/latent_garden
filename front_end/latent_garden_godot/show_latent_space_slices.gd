@@ -1,13 +1,14 @@
 tool
 extends Spatial
 
-const EMBEDDINGS_CSV_PATH = "data/embeddings/random_nums_3d_embeddings.txt"
-const EMBEDDINGS_ROW_SIZE = 3
+const CSV_DATA_PATH = "data/latent_space_slices/frontend_2d_embeddings_slices.txt"
+const CSV_DATA_ROW_SIZE = 5
 const EMBEDDINGS_BOUNDING_BOX_MAX_WIDTH = 5
 const EMBEDDINGS_CSV_SKIP_HEADER = true
 const LATENT_NODES_GROUP_NAME = "latent_nodes"
 const DEBUG = true
 var Latent_space_node = load("res://Latent_space_node.tscn")
+var Latent_space_slice = load("res://Latent_space_slice.tscn")
 
 signal return_selected_latent_nodes_ids
 
@@ -25,12 +26,32 @@ func add_points_mesh_to_scene(points: Array) -> void:
 		
 func add_latent_space_nodes_to_scene(points: Array) -> void:
 	for i in points.size():
-		var node = Latent_space_node.instance()
+		var node : Spatial = Latent_space_node.instance()
 		node.translation = points[i]
 		node.id = i
 		node.add_to_group(LATENT_NODES_GROUP_NAME)
 		self.add_child(node)
 
+func add_latent_space_slices_to_scene(embeddings : Array, slice_ids: Array, ids: Array) -> void:
+	var slices_n = Utils.get_unique_numbers_of_array(slice_ids).size()
+	var z = -1.0
+	for slice_id in slices_n:
+		var slice_container : Spatial = Latent_space_slice.instance()
+		slice_container.id = slice_id
+		slice_container.translation = Vector3(0,0,z)
+		z -= 1.0
+		for point_index in range(embeddings.size()):
+			var point_slice_id =  slice_ids[point_index]
+			if(point_slice_id == slice_id):
+				var point_embeddings =  embeddings[point_index]
+				var point_id = ids[point_index]
+				var latent_node : Spatial = Latent_space_node.instance()
+				latent_node.translation = point_embeddings
+				latent_node.id = point_id
+				slice_container.add_child(latent_node)
+				
+		self.add_child(slice_container)
+			
 func _on_latent_node_selected(body) -> void: 
 	var latent_node_ref = body.get_parent()
 	latent_node_ref.is_selected = !latent_node_ref.is_selected
@@ -62,31 +83,33 @@ func _on_return_images(data) -> void:
 				node.set_image_texture(texture)
 				break
 		
-	
-	
-	# set their image textures
-	
-		
+
 func _ready():
 	# connect signals
 	connect("return_selected_latent_nodes_ids", get_node("/root/App"), "_on_return_selected_latent_nodes_ids")
 	
-	# process the embeddings csv
-	var embeddings_raw : Array = Utils.load_csv_of_floats(EMBEDDINGS_CSV_PATH, 
-														  EMBEDDINGS_ROW_SIZE, 
-														  EMBEDDINGS_CSV_SKIP_HEADER)
-	var embeddings_vectors = Utils.array_to_Vector3(embeddings_raw)
+	# process the csv data
+	var data = Utils.load_csv_to_dicts(CSV_DATA_PATH, CSV_DATA_ROW_SIZE)
+	var embeddings_raw : Array = Utils.filter_dicts_array_to_array(data, ["x", "y", "z"])
+	var embeddings_numbers : Array = Utils.string_array_to_num_array(embeddings_raw, "float")
+	var embeddings_vectors : Array = Utils.numbers_array_to_Vector3_array(embeddings_numbers)
 	var embeddings_normalised : Array = Geom.normalise_3d_embeddings(embeddings_vectors)
 	var embeddings_bounding_box_proportions : Vector3 = Geom.get_3d_embeddings_bounding_box_proportions(embeddings_vectors)
 	var embeddings_scaled : Array = Geom.scale_normalised_3d_embeddings(embeddings_normalised, 
-																	embeddings_bounding_box_proportions, 
-																	EMBEDDINGS_BOUNDING_BOX_MAX_WIDTH)
-	add_points_mesh_to_scene(embeddings_scaled)
-	add_latent_space_nodes_to_scene(embeddings_scaled)
+																		embeddings_bounding_box_proportions, 
+																		EMBEDDINGS_BOUNDING_BOX_MAX_WIDTH)	
+	#add_points_mesh_to_scene(embeddings_scaled)
+	#add_latent_space_nodes_to_scene(embeddings_scaled)
+	
+	var slice_ids : Array = Utils.filter_dicts_array_to_array(data, ["slice_id"])
+	slice_ids = Utils.string_array_to_num_array(slice_ids, "int")
+	var ids : Array = Utils.filter_dicts_array_to_array(data, ["id"])
+	ids = Utils.string_array_to_num_array(ids, "int")
+	add_latent_space_slices_to_scene(embeddings_scaled, slice_ids, ids)
 	
 	var bounding_box_coords : Array = Geom.get_3d_bounding_box_from_vertices(embeddings_scaled)
 	center_self(bounding_box_coords[0], bounding_box_coords[1])
-	if(DEBUG):
-		Geom.add_debug_box_to_the_scene(self, bounding_box_coords[0], bounding_box_coords[1])
-		
-		
+#	if(DEBUG):
+#		Geom.add_debug_box_to_the_scene(self, bounding_box_coords[0], bounding_box_coords[1])
+#
+#

@@ -10,11 +10,6 @@ config_version=4
 
 _global_script_classes=[ {
 "base": "Reference",
-"class": "Arr",
-"language": "GDScript",
-"path": "res://Arr.gd"
-}, {
-"base": "Reference",
 "class": "Encode_utils",
 "language": "GDScript",
 "path": "res://encode_utils.gd"
@@ -35,7 +30,6 @@ _global_script_classes=[ {
 "path": "res://Utils.gd"
 } ]
 _global_script_class_icons={
-"Arr": "",
 "Encode_utils": "",
 "Geom": "",
 "Mat": "",
