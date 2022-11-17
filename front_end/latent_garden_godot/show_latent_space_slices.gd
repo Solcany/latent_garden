@@ -7,10 +7,7 @@ const EMBEDDINGS_BOUNDING_BOX_MAX_WIDTH = 5
 const EMBEDDINGS_CSV_SKIP_HEADER = true
 const LATENT_NODES_GROUP_NAME = "latent_nodes"
 const DEBUG = true
-var Latent_space_node = load("res://Latent_space_node.tscn")
 var Latent_space_slice = load("res://Latent_space_slice.tscn")
-
-signal return_selected_latent_nodes_ids
 
 func center_self(bounding_vec_min: Vector3, bounding_vec_max: Vector3) -> void: 
 	self.translation.x = -bounding_vec_max.x/2
@@ -23,34 +20,49 @@ func add_points_mesh_to_scene(points: Array) -> void:
 	mesh_instance.set_mesh(points_mesh)
 	Mat.assign_vertex_albedo_color_material(mesh_instance)
 	self.add_child(mesh_instance)		
-		
-func add_latent_space_nodes_to_scene(points: Array) -> void:
-	for i in points.size():
-		var node : Spatial = Latent_space_node.instance()
-		node.translation = points[i]
-		node.id = i
-		node.add_to_group(LATENT_NODES_GROUP_NAME)
-		self.add_child(node)
+#
+#func add_latent_space_nodes_to_scene(points: Array) -> void:
+#	for i in points.size():
+#		var node : Spatial = Latent_space_node.instance()
+#		node.translation = points[i]
+#		node.id = i
+#		node.add_to_group(LATENT_NODES_GROUP_NAME)
+#		self.add_child(node)
 
 func add_latent_space_slices_to_scene(embeddings : Array, slice_ids: Array, ids: Array) -> void:
-	var slices_n = Utils.get_unique_numbers_of_array(slice_ids).size()
+	var slices_ids = Utils.get_unique_numbers_of_array(slice_ids)
 	var z = -1.0
-	for slice_id in slices_n:
-		var slice_container : Spatial = Latent_space_slice.instance()
-		slice_container.id = slice_id
-		slice_container.translation = Vector3(0,0,z)
-		z -= 1.0
+	for slice_id in slices_ids:
+		var slice : Spatial = Latent_space_slice.instance()
+		slice.id = slice_id
+		slice.translation = Vector3(0,0,z)
+		slice.camera_ref = get_node("/root/App/Camera")
+		#slice.add_to_group("latent_space_slices")
+		
+		# filter relevant latent nodes data
+		var points_data : Array = []
 		for point_index in range(embeddings.size()):
 			var point_slice_id =  slice_ids[point_index]
 			if(point_slice_id == slice_id):
 				var point_embeddings =  embeddings[point_index]
 				var point_id = ids[point_index]
-				var latent_node : Spatial = Latent_space_node.instance()
-				latent_node.translation = point_embeddings
-				latent_node.id = point_id
-				slice_container.add_child(latent_node)
+				points_data.append({"pos": point_embeddings, "id": point_id})
+
+				#var latent_node : Spatial = Latent_space_node.instance()
+				#latent_node.translation = point_embeddings
+				#latent_node.id = point_id
+		slice.initiate_latent_nodes(points_data)
+				#slice.add_child(latent_node)
 				
-		self.add_child(slice_container)
+		z -= 1
+		self.add_child(slice)
+
+func handle_slice_camera_distance_update(slice_ref) -> void:
+	var cam_pos = get_node("/root/App/Camera").global_transform.origin
+	var slice_pos = slice_ref.global_transform.origin
+	var dist = cam_pos.distance_to(slice_pos)
+	emit_signal("update_slice_camera_distance", dist)
+
 			
 func _on_latent_node_selected(body) -> void: 
 	var latent_node_ref = body.get_parent()
@@ -112,4 +124,7 @@ func _ready():
 #	if(DEBUG):
 #		Geom.add_debug_box_to_the_scene(self, bounding_box_coords[0], bounding_box_coords[1])
 #
-#
+#func _process(delta):
+#	pass
+	#for slice in get_tree().get_nodes_in_group("latent_space_slices"):
+		#handle_slice_camera_distance_update(slice)
