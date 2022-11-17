@@ -24,7 +24,7 @@ func handle_slice_to_camera_distance_update() -> void:
 		var slice_pos = self.global_transform.origin
 		var dist = camera_pos.distance_to(slice_pos)
 		if(dist != current_dist_from_camera):
-			var new_scale = range_lerp(dist, 10.56, 3.53, 0.3, 0.1)
+			var new_scale = range_lerp(dist, 10.56, 3.53, 0.01, 1.0)
 			emit_signal("update_latent_node_scale", Vector3(new_scale, new_scale,new_scale))
 			current_dist_from_camera = dist
 
