@@ -17,7 +17,7 @@ func _on_server_response_images_returned(data) -> void:
 
 func _ready():
 	
-	$Camera2.current = true
+	#$Camera2.current = true
 	
 	# query currently selected latent nodes from the Nodes container
 	connect("get_selected_latent_nodes", get_node("Nodes/Nodes_container"), "_on_get_selected_latent_nodes")

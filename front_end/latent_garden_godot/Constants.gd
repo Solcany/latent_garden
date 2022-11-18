@@ -10,4 +10,4 @@ const LATENT_NODES_GROUP_NAME : String = "latent_nodes"
 const SLICE_Z_MIN : float = 0.5
 const SLICE_Z_MAX : float = 5.0
 const LATENT_NODE_SCALE_MIN : float = 0.01
-const LATENT_NODE_SCALE_MAX : float= 0.1
+const LATENT_NODE_SCALE_MAX : float= 0.2
