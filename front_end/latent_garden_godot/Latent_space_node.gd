@@ -23,8 +23,8 @@ func _on_update_latent_node_scale(scale: Vector3) -> void:
 	
 func _ready():
 	$Image_mesh.scale = RENDERED_IMAGE_MESH_SCALE
-	#$Collider.scale = RENDERED_POINT_SCALE
-	#$Collider/Mesh.scale = Vector3(0.2, 0.2, 0.2)
+	$Collider.scale = RENDERED_POINT_SCALE
+
 		
 	# Create and assign textures manually so they can be edited individually per instance	
 	var image_mesh_mat : SpatialMaterial = SpatialMaterial.new()

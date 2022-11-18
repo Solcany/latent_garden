@@ -201,18 +201,30 @@ static func numbers_array_to_Vector3_array(array: Array) -> Array:
 		var vec = Vector3(numbers[0], numbers[1], numbers[2])
 		vectors.append(vec)
 	return vectors
-	
+
+static func get_array_max(array : Array, max_val_init : int = -100000000 ):
+	# find the highest value in array	
+	var max_val = max_val_init
+	for val in array:
+		max_val = max(val, max_val)
+	return max_val
+
+static func get_array_min(array : Array, min_val_init : int = 100000000 ):
+	# find the lowest value in array
+	var min_val = min_val_init
+	for val in array:
+		min_val = min(val, min_val)
+	return min_val
+
 static func get_vec_array_max(array : Array, pos : String, max_val_init : int = -100000000 ) -> float:
-	# find the highest float value in array
-	# assumes array of arrays if dimension >= 0
+	# find the highest float value in array of vectors
 	var max_val = max_val_init
 	for vec in array:
 		max_val = max(vec[pos], max_val)
 	return max_val
 	
 static func get_vec_array_min(array : Array, vec_coord : String, min_val_init : int = 100000000 ) -> float:
-	# find the highest float value in array
-	# assumes array of arrays if dimension >= 0
+	# find the lowest float value in array of vectors
 	var min_val = min_val_init
 	for vec in array:
 		min_val = min(vec[vec_coord], min_val)

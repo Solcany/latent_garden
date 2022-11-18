@@ -14,9 +14,11 @@ func _on_return_selected_latent_nodes_ids(ids) -> void:
 # when the tcp client receives images from the server
 func _on_server_response_images_returned(data) -> void:
 	emit_signal("return_images", data)
-	
 
 func _ready():
+	
+	$Camera2.current = true
+	
 	# query currently selected latent nodes from the Nodes container
 	connect("get_selected_latent_nodes", get_node("Nodes/Nodes_container"), "_on_get_selected_latent_nodes")
 

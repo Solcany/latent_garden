@@ -6,7 +6,7 @@ const SELECTOR_SCALE = Vector3(0.1, 0.1, 0.1)
 onready var selector_gui_size: Vector2
 onready var camera_ref = get_node("/root/App/Camera")
 
-func unproject_in_world_selector_to_gui_representation(selector_world_scale: Vector3) -> Vector2: 
+func unproject_inworld_selector_to_gui_representation(selector_world_scale: Vector3) -> Vector2: 
 	# relative top left vertex
 	var p1 = camera_ref.unproject_position(Vector3(-selector_world_scale.x, -selector_world_scale.y, selector_world_scale.z))
 	# relative top right vertex
@@ -22,7 +22,7 @@ func init_selector():
 	$Selector_collider/Collider.scale = SELECTOR_SCALE
 	$Selector_collider/Debug_collider_mesh.scale = SELECTOR_SCALE
 	# unproject the world selector scale for the 2d gui overlay representation
-	selector_gui_size = unproject_in_world_selector_to_gui_representation(SELECTOR_SCALE)
+	selector_gui_size = unproject_inworld_selector_to_gui_representation(SELECTOR_SCALE)
 	
 	# pass signals when a node is selected to the container containing the nodes
 	var latent_nodes_container_ref = get_node("/root/App/Nodes/Nodes_container")
