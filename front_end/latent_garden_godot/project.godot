@@ -10,9 +10,9 @@ config_version=4
 
 _global_script_classes=[ {
 "base": "Reference",
-"class": "Arr",
+"class": "Constants",
 "language": "GDScript",
-"path": "res://Arr.gd"
+"path": "res://Constants.gd"
 }, {
 "base": "Reference",
 "class": "Encode_utils",
@@ -35,7 +35,7 @@ _global_script_classes=[ {
 "path": "res://Utils.gd"
 } ]
 _global_script_class_icons={
-"Arr": "",
+"Constants": "",
 "Encode_utils": "",
 "Geom": "",
 "Mat": "",

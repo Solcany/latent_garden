@@ -73,8 +73,8 @@ func _ready():
 	
 	# process the embeddings csv
 	var embeddings_raw : Array = Utils.load_csv_of_floats(EMBEDDINGS_CSV_PATH, 
-														EMBEDDINGS_ROW_SIZE, 
-														EMBEDDINGS_CSV_SKIP_HEADER)
+														  EMBEDDINGS_ROW_SIZE, 
+														  EMBEDDINGS_CSV_SKIP_HEADER)
 	var embeddings_vectors = Utils.array_to_Vector3(embeddings_raw)
 	var embeddings_normalised : Array = Geom.normalise_3d_embeddings(embeddings_vectors)
 	var embeddings_bounding_box_proportions : Vector3 = Geom.get_3d_embeddings_bounding_box_proportions(embeddings_vectors)

@@ -37,7 +37,7 @@ func compose_encoded_message(metadata: Dictionary, data : Array) -> String:
 									value]
 	
 	header += MESSAGE_HEADER_END_DELIMITER
-	var body : String = Arr.array_to_string(data, MESSAGE_ARR_DATA_DELIMITER)
+	var body : String = Utils.array_to_string(data, MESSAGE_ARR_DATA_DELIMITER)
 	
 	var message : String = header + body
 	
@@ -61,7 +61,7 @@ func parse_client_data(client_data : String) -> Array:
 		# continue parsing metadata based on the request kind of the client_data
 		if(metadata.response == "images"):
 			# convert indices from strings to ints
-			metadata.indices = Arr.string_array_to_int_array(Arr.string_to_array(metadata.indices, MESSAGE_ARR_DATA_DELIMITER))
+			metadata.indices = Utils.string_array_to_num_array(Utils.string_to_array(metadata.indices, MESSAGE_ARR_DATA_DELIMITER), "int")
 			
 			var images_string_data : String =  client_data.get_slice(MESSAGE_HEADER_END_DELIMITER, 1)
 			var image_data : PoolStringArray = []

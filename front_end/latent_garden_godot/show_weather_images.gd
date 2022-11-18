@@ -12,7 +12,6 @@ func _ready():
 		var texture : Texture = load(texture_path)
 		textures.append(texture)
 
-
 func _on_Timer_timeout():
 #	pass
 	var mat = SpatialMaterial.new()

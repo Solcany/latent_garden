@@ -4,17 +4,17 @@ import os
 import umap
 import numpy as np
 
-TOTAL_SAMPLE_SIZE = 100
-SLICE_SIZE = 10
-SAMPLE_SIZE_PER_SLICE = TOTAL_SAMPLE_SIZE / SLICE_SIZE
+TOTAL_SAMPLE_SIZE = 500
+SLICE_SIZE = 50
+SLICES_N = int(TOTAL_SAMPLE_SIZE / SLICE_SIZE)
 LATENT_VECTOR_SIZE = 128
 UMAP_NEIGHBOURS = 50
 UMAP_MIN_DISTATNCE = 0.1
 UMAP_DIMENSIONS = 2
 OUTPUT_PATH = "./output/"
 FRONT_END_CSV_FILENAME = "frontend_2d_embeddings_slices"
-FRONT_END_CSV_HEADER = "id, slice_id, x, y"
-FRONT_END_CSV_COLUMNS = 4
+FRONT_END_CSV_HEADER = "id,slice_id,x,y,z"
+FRONT_END_CSV_COLUMNS = 5 # id, slice_id, x, y, z
 BACK_END_CSV_FILENAME = "backend_latent_vectors_slices"
 BACK_END_CSV_HEADER = "id,{}".format(','.join([str(x) for x in range(LATENT_VECTOR_SIZE)]))
 BACK_END_CSV_COLUMNS = LATENT_VECTOR_SIZE + 1 
@@ -36,25 +36,30 @@ def main():
 
 	# get empty arr to store the slices AKA the slice
 	# to be used on the frontend of the latent garden app
-	embeddings_slices = np.zeros((SLICE_SIZE, SLICE_SIZE, FRONT_END_CSV_COLUMNS)) # x, y, slice id, vector id
+	embeddings_slices = np.zeros((SLICES_N, SLICE_SIZE, FRONT_END_CSV_COLUMNS)) # x, y, slice id, vector id
 
 	# slices of latent vectors
 	# to be used on the backend
-	latent_vectors_slices = np.zeros((SLICE_SIZE, SLICE_SIZE, BACK_END_CSV_COLUMNS)) # id, LATENT_VECTOR_SIZE vector
+	latent_vectors_slices = np.zeros((SLICES_N, SLICE_SIZE, BACK_END_CSV_COLUMNS)) # id, LATENT_VECTOR_SIZE vector
 
-	for slice_index in range(int(TOTAL_SAMPLE_SIZE/SLICE_SIZE)):
+	for slice_index in range(SLICES_N):
 		# get random indexes from the pool 
 		indexes_selection = np.random.choice(indexes_pool, size=SLICE_SIZE, replace=False)
 		# What is position of the randomly chosen indexes in the indexes pool?
 		selected_indexes_positions = np.flatnonzero(np.isin(indexes_pool, indexes_selection))
 		# what is the id of each individual embedding and latent vector?
-		ids = np.arange(slice_index*SLICE_SIZE, slice_index*SLICE_SIZE+SLICE_SIZE)
+		first_id = slice_index * SLICE_SIZE
+		last_id = first_id + SLICE_SIZE
+		ids = np.arange(first_id, last_id)
 		# append the individual ids to the slice
 		embeddings_slices[slice_index, :, 0] = ids
 		# append slice index column to the slice, to which slice does the slice belong to?
 		embeddings_slices[slice_index, :, 1] = slice_index				
-		# get embeddings at the randomly chosen indexes
-		embeddings_slices[slice_index, :, 2:FRONT_END_CSV_COLUMNS] = embeddings[indexes_selection]
+		# get randomly selected x,y embeddings 
+		embeddings_slices[slice_index, :, 2:4] = embeddings[indexes_selection]
+		# manually set z coordinate to be 0
+		embeddings_slices[slice_index, :, 4] = 0
+
 		# set the slice to the slices array
 		# get latent vectors
 		latent_vectors_slices[slice_index, :, 0] = ids
