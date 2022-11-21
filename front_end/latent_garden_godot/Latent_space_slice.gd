@@ -10,6 +10,7 @@ func initiate_latent_nodes(nodes_data: Array) -> void:
 		var pos: Vector3 = node_data.pos
 		var id: int = node_data.id
 		var latent_node : Spatial = Latent_space_node.instance()
+		latent_node.add_to_group(Constants.LATENT_NODES_GROUP_NAME)
 		latent_node.translation = pos
 		latent_node.id = id
 		connect("update_latent_node_scale", latent_node, "_on_update_latent_node_scale")

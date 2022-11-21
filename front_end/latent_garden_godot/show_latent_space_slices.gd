@@ -2,7 +2,6 @@ tool
 extends Spatial
 
 var Latent_space_slice = load("res://Latent_space_slice.tscn")
-
 signal return_selected_latent_nodes_ids
 
 func center_self(bounding_vec_min: Vector3, bounding_vec_max: Vector3) -> void: 
@@ -24,6 +23,7 @@ func add_latent_space_slices_to_scene(embeddings : Array, slice_ids: Array, ids:
 	var highest_id = slices_ids[-1]
 	for slice_id in slices_ids:
 		var slice : Spatial = Latent_space_slice.instance()
+		slice.add_to_group(Constants.LATENT_SLICES_GROUP_NAME)		
 		var slice_z_pos = range_lerp(slice_id, lowest_id, highest_id, Constants.NODES_CONTAINER_SCALE_Z_MIN, Constants.NODES_CONTAINER_SCALE_Z_MAX)
 		slice.id = slice_id
 		slice.translation = Vector3(0,0,-slice_z_pos)
@@ -51,8 +51,12 @@ func _on_get_selected_latent_nodes() -> void:
 			selected.append(node.id)
 	emit_signal("return_selected_latent_nodes_ids", selected)
 	
-func _on_nodes_container_z_scale_changed(value) -> void:
-	print(value)
+func _on_nodes_container_z_scale_changed(z_scale_value) -> void:
+	var latent_slices = get_tree().get_nodes_in_group(Constants.LATENT_SLICES_GROUP_NAME)
+	
+	for slice_idx in range(latent_slices.size()):
+		var slice_z_pos = range_lerp(slice_idx, 0, latent_slices.size()-1, Constants.NODES_CONTAINER_SCALE_Z_MIN, z_scale_value)
+		latent_slices[slice_idx].translation.z = slice_z_pos
 	
 func _on_return_images(data) -> void:
 	print("ims received in container")

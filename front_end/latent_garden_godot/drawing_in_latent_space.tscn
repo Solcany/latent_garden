@@ -59,7 +59,6 @@ editor_only = false
 
 [node name="Selector_collider" type="Area" parent="Nodes/Nodes_Selector"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0.347321 )
-visible = false
 script = ExtResource( 2 )
 
 [node name="Collider" type="CollisionShape" parent="Nodes/Nodes_Selector/Selector_collider"]
