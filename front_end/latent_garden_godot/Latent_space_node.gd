@@ -18,8 +18,8 @@ func set_image_texture(texture: ImageTexture) -> void:
 	is_selected = false
 	#has_image = true
 
-func _on_update_latent_node_scale(scale: Vector3) -> void:
-	$Collider/Mesh.scale = scale
+func _on_update_latent_node_scale(scale: float) -> void:
+	$Collider/Mesh.scale = Vector3(scale, scale, scale)
 	
 func _ready():
 	$Image_mesh.scale = RENDERED_IMAGE_MESH_SCALE
