@@ -16,7 +16,7 @@ func initiate_latent_nodes(nodes_data: Array) -> void:
 		self.add_child(latent_node)
 		
 func handle_update_latent_nodes_scale() -> void:
-	var new_scale = range_lerp(self.translation.z, -Constants.SLICE_Z_MIN, -Constants.SLICE_Z_MAX, Constants.LATENT_NODE_SCALE_MAX, Constants.LATENT_NODE_SCALE_MIN)
+	var new_scale = range_lerp(self.translation.z, -Constants.NODES_CONTAINER_SCALE_Z_MIN, -Constants.NODES_CONTAINER_SCALE_Z_MAX, Constants.LATENT_NODE_SCALE_MAX, Constants.LATENT_NODE_SCALE_MIN)
 	emit_signal("update_latent_node_scale", Vector3(new_scale, new_scale, new_scale))
 
 func _ready():
