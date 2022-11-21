@@ -1,4 +1,4 @@
-[gd_scene load_steps=11 format=2]
+[gd_scene load_steps=13 format=2]
 
 [ext_resource path="res://show_latent_space_slices.gd" type="Script" id=1]
 [ext_resource path="res://Selector_collider.gd" type="Script" id=2]
@@ -7,6 +7,7 @@
 [ext_resource path="res://Submit_Selection_button.gd" type="Script" id=5]
 [ext_resource path="res://App.gd" type="Script" id=6]
 [ext_resource path="res://Z_zoom_slider.gd" type="Script" id=7]
+[ext_resource path="res://Latent_space_camera.gd" type="Script" id=8]
 
 [sub_resource type="BoxShape" id=2]
 
@@ -15,6 +16,8 @@
 [sub_resource type="Environment" id=1]
 background_mode = 1
 ambient_light_color = Color( 1, 1, 1, 1 )
+
+[sub_resource type="CubeMesh" id=4]
 
 [node name="App" type="Spatial"]
 script = ExtResource( 6 )
@@ -85,4 +88,9 @@ projection = 1
 current = true
 size = 3.0
 near = 0.01
-far = 10.0
+far = 3.0
+script = ExtResource( 8 )
+
+[node name="MeshInstance" type="MeshInstance" parent="Camera"]
+transform = Transform( 0.2, 0, 0, 0, 0.2, 0, 0, 0, 0.2, 0, 0, 0 )
+mesh = SubResource( 4 )
