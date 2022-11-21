@@ -2,7 +2,6 @@ tool
 
 extends Spatial
 # WIP: these constants should be moved to a separate constants file
-const RENDERED_POINT_SCALE : Vector3 = Vector3(0.1, 0.1, 0.1)
 const RENDERED_IMAGE_MESH_SCALE : Vector3 = Vector3(0.1, 0.1, 0.1)
 var is_selected : bool = false
 # WIP implement has_image to avoid requesting images for lat nodes that already have image generated
@@ -23,7 +22,7 @@ func _on_update_latent_node_scale(scale: float) -> void:
 	
 func _ready():
 	$Image_mesh.scale = RENDERED_IMAGE_MESH_SCALE
-	$Collider.scale = RENDERED_POINT_SCALE
+	$Collider.scale = Constants.LATENT_NODE_COLLIDER_SCALE
 
 		
 	# Create and assign textures manually so they can be edited individually per instance	
