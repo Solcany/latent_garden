@@ -63,7 +63,6 @@ mouse_filter = 2
 editor_only = false
 
 [node name="Selector_collider" type="Area" parent="Nodes/Nodes_Selector"]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0.347321 )
 script = ExtResource( 2 )
 
 [node name="Collider" type="CollisionShape" parent="Nodes/Nodes_Selector/Selector_collider"]
@@ -82,7 +81,7 @@ script = ExtResource( 1 )
 environment = SubResource( 1 )
 
 [node name="Debug_camera" type="Camera" parent="."]
-transform = Transform( -0.0887027, -0.411083, 0.907272, -0.0295837, 0.911548, 0.410128, -0.995619, 0.00953901, -0.0930181, 6.76375, 2.44934, -3.21528 )
+transform = Transform( 0.250701, -0.331098, 0.909683, 0, 0.939693, 0.34202, -0.968065, -0.0857448, 0.235582, 6.764, 2.449, -0.440424 )
 
 [node name="Camera" type="Camera" parent="."]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1 )

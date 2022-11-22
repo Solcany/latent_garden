@@ -19,4 +19,4 @@ const LATENT_NODE_COLLIDER_SCALE : Vector3 = Vector3(0.1, 0.1, 0.1)
 # WIP: collider scale probably should scale with latent space density...
 const SELECTOR_COLLIDER_SCALE : Vector3 = Vector3(LATENT_NODE_COLLIDER_SCALE.x, 
 													LATENT_NODE_COLLIDER_SCALE.y,
-													NODES_CONTAINER_SCALE_Z_MAX)
+													NODES_CONTAINER_SCALE_Z_MAX/2)
