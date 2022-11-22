@@ -24,14 +24,15 @@ func _on_update_latent_node_scale(scale: float) -> void:
 func _on_update_latent_node_visibility(is_visible: bool) -> void:
 	if(is_visible):
 		is_selectable = true
+		$Collider/Collision_shape.disabled = false
 	else:
 		is_selectable = false
+		$Collider/Collision_shape.disabled = true		
 		
 func _ready():
 	$Image_mesh.scale = RENDERED_IMAGE_MESH_SCALE
 	$Collider.scale = Constants.LATENT_NODE_COLLIDER_SCALE
 
-		
 	# Create and assign textures manually so they can be edited individually per instance	
 	var image_mesh_mat : SpatialMaterial = SpatialMaterial.new()
 	$Image_mesh.set_surface_material(0, image_mesh_mat)
@@ -45,7 +46,7 @@ func _process(delta):
 	if(is_selected):
 		$Collider/Mesh.get_surface_material(0).albedo_color = Color(1,0,0)
 	elif(!is_selected && !is_selectable):
-		$Collider/Mesh.get_surface_material(0).albedo_color = Color(0,1,0)		
+		$Collider/Mesh.get_surface_material(0).albedo_color = Color(0,1,0)
 	else:
 		$Collider/Mesh.get_surface_material(0).albedo_color = Color(1,1,1)
 
