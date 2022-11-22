@@ -8,4 +8,4 @@ func _on_nodes_container_z_scale_changed(value : float) -> void:
 	self.size = projection_size
 
 func _ready():
-	pass
+	self.far = Constants.CAMERA_FAR
