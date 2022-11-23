@@ -3,7 +3,7 @@ extends Node
 
 signal latent_node_selected
 var selector_gui_size: Vector2
-onready var camera_ref = get_node("/root/App/Camera")
+onready var camera_ref = get_node("/root/App/Camera_controller/Camera")
 
 func unproject_inworld_selector_to_gui_representation(selector_world_scale: Vector3) -> Vector2: 
 	# relative top left vertex
