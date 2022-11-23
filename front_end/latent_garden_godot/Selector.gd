@@ -2,8 +2,7 @@ tool
 extends Node
 
 signal latent_node_selected
-const SELECTOR_SCALE = Vector3(0.1, 0.1, 0.1)
-onready var selector_gui_size: Vector2
+var selector_gui_size: Vector2
 onready var camera_ref = get_node("/root/App/Camera")
 
 func unproject_inworld_selector_to_gui_representation(selector_world_scale: Vector3) -> Vector2: 
@@ -17,18 +16,23 @@ func unproject_inworld_selector_to_gui_representation(selector_world_scale: Vect
 	var selector_gui_height = p1.distance_to(p3)		
 	return Vector2(selector_gui_width, selector_gui_height)
 
-func init_selector():
-	# set world selector scales
-	$Selector_collider/Collider.scale = SELECTOR_SCALE
-	$Selector_collider/Debug_collider_mesh.scale = SELECTOR_SCALE
+func init_selector_collider():
+	
+	var collider_scale : Vector3 = Vector3(Constants.SELECTOR_COLLIDER_XY_SCALE,
+											Constants.SELECTOR_COLLIDER_XY_SCALE,
+											Constants.SELECTOR_COLLIDER_Z_SCALE)
+	$Selector_collider/Collider.scale = collider_scale
+	$Selector_collider/Debug_collider_mesh.scale = collider_scale
+	$Selector_collider.translation.z = -Constants.SELECTOR_COLLIDER_Z_SCALE
+
 	# unproject the world selector scale for the 2d gui overlay representation
-	selector_gui_size = unproject_inworld_selector_to_gui_representation(SELECTOR_SCALE)
+	selector_gui_size = unproject_inworld_selector_to_gui_representation(collider_scale)
 	
 	# pass signals when a node is selected to the container containing the nodes
 	var latent_nodes_container_ref = get_node("/root/App/Nodes/Nodes_container")
 	connect("latent_node_selected", latent_nodes_container_ref ,"_on_latent_node_selected")
 
-func handle_mouse_event(event): 
+func _on_mouse_event(event): 
 	var mouse_x : float = event.position.x
 	var mouse_y : float = event.position.y
 	var left : float = mouse_x - selector_gui_size.x/2
@@ -42,14 +46,18 @@ func handle_mouse_event(event):
 	$Selector_gui/Selector_rect.margin_bottom = bottom
 	# translate in world selector collider on mouse event
 	var collider_pos : Vector3 = camera_ref.project_position(Vector2(mouse_x,mouse_y), 1)
+	collider_pos.z = -Constants.SELECTOR_COLLIDER_Z_SCALE
 	$Selector_collider.translation = collider_pos
-			
+
+func _on_z_scale_changed():
+	pass
+
 func _on_body_entered_selector(item_body):
 	emit_signal("latent_node_selected", item_body)
 	
 func _ready():
-	init_selector()
+	init_selector_collider()
 	
 func _input(event):
 	if event is InputEventMouseMotion:
-		handle_mouse_event(event)
+		_on_mouse_event(event)
