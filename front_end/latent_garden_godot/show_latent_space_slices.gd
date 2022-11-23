@@ -28,6 +28,7 @@ func add_latent_space_slices_to_scene(embeddings : Array, slice_ids: Array, ids:
 		var slice_z_pos = range_lerp(slice_id, lowest_id, highest_id, Constants.NODES_CONTAINER_SCALE_Z_MIN, Constants.NODES_CONTAINER_SCALE_Z_MAX)
 		slice.id = slice_id
 		slice.translation.z = -slice_z_pos
+		slice.all_slices_amount = slices_ids.size()
 		connect("z_scale_changed", slice, "_on_z_scale_changed")
 		
 		# filter relevant latent nodes data
@@ -53,12 +54,8 @@ func _on_get_selected_latent_nodes() -> void:
 			selected.append(node.id)
 	emit_signal("return_selected_latent_nodes_ids", selected)
 	
-func _on_nodes_container_z_scale_changed(z_scale_value) -> void:
-	var latent_slices = get_tree().get_nodes_in_group(Constants.LATENT_SLICES_GROUP_NAME)
-	for slice_idx in range(latent_slices.size()):
-		var slice_z_pos = range_lerp(slice_idx, 0, latent_slices.size()-1, Constants.NODES_CONTAINER_SCALE_Z_MIN, z_scale_value)
-		latent_slices[slice_idx].translation.z = -slice_z_pos
-	emit_signal("z_scale_changed", z_scale_value)
+func _on_z_scale_changed(z_scalar: float) -> void:
+	emit_signal("z_scale_changed", z_scalar)
 
 	
 func _on_return_images(data) -> void:

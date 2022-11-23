@@ -18,10 +18,13 @@ func set_image_texture(texture: ImageTexture) -> void:
 	is_selected = false
 	#has_image = true
 
-func _on_update_latent_node_scale(scale: float) -> void:
-	$Collider/Mesh.scale = Vector3(scale, scale, scale)
+func _on_z_scale_changed(scalar: float) -> void:
+	var collider_mesh_scale = range_lerp(scalar, 0.0, 1.0, Constants.LATENT_NODE_COLLISION_SHAPE_SCALE_MIN, Constants.LATENT_NODE_COLLISION_SHAPE_SCALE_MAX)
+	var collision_shape_scale = range_lerp(scalar, 0.0, 1.0, Constants.LATENT_NODE_MESH_SCALE_MIN, Constants.LATENT_NODE_MESH_SCALE_MAX)
+	$Collider/Collision_shape.scale = Vector3(collider_mesh_scale, collider_mesh_scale, collider_mesh_scale)
+	$Collider/Mesh.scale = Vector3(collision_shape_scale, collision_shape_scale, collision_shape_scale)
 	
-func _on_update_latent_node_visibility(is_visible: bool) -> void:
+func _on_slice_visibility_changed(is_visible: bool) -> void:
 	if(is_visible):
 		is_selectable = true
 		$Collider/Collision_shape.disabled = false
@@ -31,7 +34,6 @@ func _on_update_latent_node_visibility(is_visible: bool) -> void:
 		
 func _ready():
 	$Image_mesh.scale = RENDERED_IMAGE_MESH_SCALE
-	$Collider.scale = Constants.LATENT_NODE_COLLIDER_SCALE
 
 	# Create and assign textures manually so they can be edited individually per instance	
 	var image_mesh_mat : SpatialMaterial = SpatialMaterial.new()

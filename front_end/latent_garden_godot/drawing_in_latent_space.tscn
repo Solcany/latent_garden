@@ -1,4 +1,4 @@
-[gd_scene load_steps=12 format=2]
+[gd_scene load_steps=13 format=2]
 
 [ext_resource path="res://show_latent_space_slices.gd" type="Script" id=1]
 [ext_resource path="res://Selector_collider.gd" type="Script" id=2]
@@ -8,6 +8,7 @@
 [ext_resource path="res://App.gd" type="Script" id=6]
 [ext_resource path="res://Z_zoom_slider.gd" type="Script" id=7]
 [ext_resource path="res://Latent_space_camera.gd" type="Script" id=8]
+[ext_resource path="res://Nodes.gd" type="Script" id=9]
 
 [sub_resource type="BoxShape" id=2]
 
@@ -37,7 +38,6 @@ margin_left = 856.0
 margin_top = 160.0
 margin_right = 876.0
 margin_bottom = 368.0
-min_value = 0.5
 max_value = 5.0
 step = 0.1
 value = 5.0
@@ -47,6 +47,7 @@ script = ExtResource( 7 )
 script = ExtResource( 3 )
 
 [node name="Nodes" type="Node" parent="."]
+script = ExtResource( 9 )
 
 [node name="Nodes_Selector" type="Node" parent="Nodes"]
 script = ExtResource( 4 )
@@ -63,14 +64,15 @@ mouse_filter = 2
 editor_only = false
 
 [node name="Selector_collider" type="Area" parent="Nodes/Nodes_Selector"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -2.5 )
 script = ExtResource( 2 )
 
 [node name="Collider" type="CollisionShape" parent="Nodes/Nodes_Selector/Selector_collider"]
-transform = Transform( 0.1, 0, 0, 0, 0.1, 0, 0, 0, 0.1, 0, 0, 0 )
+transform = Transform( 0.1, 0, 0, 0, 0.1, 0, 0, 0, 2.5, 0, 0, 0 )
 shape = SubResource( 2 )
 
 [node name="Debug_collider_mesh" type="MeshInstance" parent="Nodes/Nodes_Selector/Selector_collider"]
-transform = Transform( 0.1, 0, 0, 0, 0.1, 0, 0, 0, 0.1, 0, 0, 0 )
+transform = Transform( 0.1, 0, 0, 0, 0.1, 0, 0, 0, 2.5, 0, 0, 0 )
 mesh = SubResource( 3 )
 
 [node name="Nodes_container" type="Spatial" parent="Nodes"]

@@ -2,7 +2,7 @@ tool
 extends Node
 
 signal latent_node_selected
-onready var selector_gui_size: Vector2
+var selector_gui_size: Vector2
 onready var camera_ref = get_node("/root/App/Camera")
 
 func unproject_inworld_selector_to_gui_representation(selector_world_scale: Vector3) -> Vector2: 
@@ -16,11 +16,11 @@ func unproject_inworld_selector_to_gui_representation(selector_world_scale: Vect
 	var selector_gui_height = p1.distance_to(p3)		
 	return Vector2(selector_gui_width, selector_gui_height)
 
-func init_selector():
-	# set world selector scales
-	#$Selector_collider.translation.z = -10
+func init_selector_collider():
 	$Selector_collider/Collider.scale = Constants.SELECTOR_COLLIDER_SCALE
-	$Selector_collider/Debug_collider_mesh.scale = Constants.SELECTOR_COLLIDER_SCALE
+	$Selector_collider/Debug_collider_mesh.scale = Constants.SELECTOR_COLLIDER_SCALE	
+	$Selector_collider/.translation.z = -Constants.SELECTOR_COLLIDER_SCALE.z	
+
 	# unproject the world selector scale for the 2d gui overlay representation
 	selector_gui_size = unproject_inworld_selector_to_gui_representation(Constants.SELECTOR_COLLIDER_SCALE)
 	
@@ -28,7 +28,7 @@ func init_selector():
 	var latent_nodes_container_ref = get_node("/root/App/Nodes/Nodes_container")
 	connect("latent_node_selected", latent_nodes_container_ref ,"_on_latent_node_selected")
 
-func handle_mouse_event(event): 
+func _on_mouse_event(event): 
 	var mouse_x : float = event.position.x
 	var mouse_y : float = event.position.y
 	var left : float = mouse_x - selector_gui_size.x/2
@@ -44,13 +44,16 @@ func handle_mouse_event(event):
 	var collider_pos : Vector3 = camera_ref.project_position(Vector2(mouse_x,mouse_y), 1)
 	collider_pos.z = -Constants.SELECTOR_COLLIDER_SCALE.z
 	$Selector_collider.translation = collider_pos
-			
+
+func _on_z_scale_changed():
+	pass
+
 func _on_body_entered_selector(item_body):
 	emit_signal("latent_node_selected", item_body)
 	
 func _ready():
-	init_selector()
+	init_selector_collider()
 	
 func _input(event):
 	if event is InputEventMouseMotion:
-		handle_mouse_event(event)
+		_on_mouse_event(event)
