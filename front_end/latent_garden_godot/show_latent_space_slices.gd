@@ -29,8 +29,8 @@ func add_latent_space_slices_to_scene(embeddings : Array, slice_ids: Array, ids:
 		slice.id = slice_id
 		slice.translation.z = -slice_z_pos
 		slice.all_slices_amount = slices_ids.size()
-		connect("z_scale_changed", slice, "_on_z_scale_changed")
 		
+		connect("z_scale_changed", slice, "_on_z_scale_changed")
 		# filter relevant latent nodes data
 		var points_data : Array = []
 		for point_index in range(embeddings.size()):

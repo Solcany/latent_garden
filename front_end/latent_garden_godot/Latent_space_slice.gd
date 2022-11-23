@@ -8,7 +8,6 @@ signal z_scale_changed
 signal slice_visibility_changed
 
 func initiate_latent_nodes(nodes_data: Array) -> void:
-	var node_mesh_scalar : float = range_lerp(self.translation.z, Constants.NODES_CONTAINER_SCALE_Z_MIN, -Constants.NODES_CONTAINER_SCALE_Z_MAX, 1.0, 0.0)
 	for node_data in nodes_data:
 		var pos: Vector3 = node_data.pos
 		var id: int = node_data.id
@@ -19,6 +18,7 @@ func initiate_latent_nodes(nodes_data: Array) -> void:
 		connect("slice_visibility_changed", latent_node, "_on_slice_visibility_changed")		
 		connect("z_scale_changed", latent_node, "_on_z_scale_changed")
 		self.add_child(latent_node)
+	var node_mesh_scalar : float = range_lerp(self.translation.z, -Constants.NODES_CONTAINER_SCALE_Z_MIN, -Constants.NODES_CONTAINER_SCALE_Z_MAX, 1.0, 0.0)		
 	emit_signal("z_scale_changed", node_mesh_scalar)
 
 func signal_own_visibility() -> void:
@@ -35,7 +35,8 @@ func update_own_z_position(z_scalar: float) -> void:
 func _on_z_scale_changed(z_scalar : float) -> void:
 	update_own_z_position(z_scalar)
 	signal_own_visibility()
-	emit_signal("z_scale_changed", z_scalar)	
+	var node_mesh_scalar : float = range_lerp(self.translation.z, -Constants.NODES_CONTAINER_SCALE_Z_MIN, -Constants.NODES_CONTAINER_SCALE_Z_MAX, 1.0, 0.0)			
+	emit_signal("z_scale_changed", node_mesh_scalar)	
 	
 func _ready():
 	signal_own_visibility()
