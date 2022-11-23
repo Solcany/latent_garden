@@ -42,9 +42,13 @@ func _on_slice_visibility_changed(is_visible: bool) -> void:
 func _ready():
 	$Image_mesh.scale = RENDERED_IMAGE_MESH_SCALE
 	
-	$Collider/Mesh.scale = Vector3(Constants.LATENT_NODE_MESH_SCALE_MIN, 
-									Constants.LATENT_NODE_MESH_SCALE_MIN, 
-									Constants.LATENT_NODE_MESH_SCALE_MIN)
+#	$Collider/Mesh.scale = Vector3(Constants.LATENT_NODE_MESH_SCALE_MIN, 
+#									Constants.LATENT_NODE_MESH_SCALE_MIN, 
+#									Constants.LATENT_NODE_MESH_SCALE_MIN)
+	$Collider/Mesh.scale = Vector3(Constants.LATENT_NODE_COLLISION_SHAPE_SCALE_MIN, 
+												Constants.LATENT_NODE_COLLISION_SHAPE_SCALE_MIN, 
+												Constants.LATENT_NODE_COLLISION_SHAPE_SCALE_MIN)
+												
 	$Collider/Collision_shape.scale = Vector3(Constants.LATENT_NODE_COLLISION_SHAPE_SCALE_MIN, 
 												Constants.LATENT_NODE_COLLISION_SHAPE_SCALE_MIN, 
 												Constants.LATENT_NODE_COLLISION_SHAPE_SCALE_MIN)
