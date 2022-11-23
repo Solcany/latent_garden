@@ -19,10 +19,17 @@ func set_image_texture(texture: ImageTexture) -> void:
 	#has_image = true
 
 func _on_z_scale_changed(scalar: float) -> void:
-	var collider_mesh_scale = range_lerp(scalar, 0.0, 1.0, Constants.LATENT_NODE_COLLISION_SHAPE_SCALE_MIN, Constants.LATENT_NODE_COLLISION_SHAPE_SCALE_MAX)
-	var collision_shape_scale = range_lerp(scalar, 0.0, 1.0, Constants.LATENT_NODE_MESH_SCALE_MIN, Constants.LATENT_NODE_MESH_SCALE_MAX)
-	$Collider/Collision_shape.scale = Vector3(collider_mesh_scale, collider_mesh_scale, collider_mesh_scale)
-	$Collider/Mesh.scale = Vector3(collision_shape_scale, collision_shape_scale, collision_shape_scale)
+	pass
+	# WIP: disabled for now, is scaling of each node even necessary?
+	#var collider_mesh_scale = range_lerp(scalar, 0.0, 1.0, Constants.LATENT_NODE_COLLISION_SHAPE_SCALE_MIN, Constants.LATENT_NODE_COLLISION_SHAPE_SCALE_MAX)
+	#var collision_shape_scale = range_lerp(scalar, 0.0, 1.0, Constants.LATENT_NODE_MESH_SCALE_MIN, Constants.LATENT_NODE_MESH_SCALE_MAX)
+	# DEBUG, mesh has same scale as collision shape
+	#$Collider/Mesh.scale = Vector3(collision_shape_scale, collision_shape_scale, collision_shape_scale)
+	
+	# NOT DEBUG
+	#$Collider/Mesh.scale = Vector3(collision_shape_scale, collision_shape_scale, collision_shape_scale)	
+	#$Collider/Collision_shape.scale = Vector3(collision_shape_scale, collision_shape_scale, collision_shape_scale)
+
 	
 func _on_slice_visibility_changed(is_visible: bool) -> void:
 	if(is_visible):
@@ -34,7 +41,13 @@ func _on_slice_visibility_changed(is_visible: bool) -> void:
 		
 func _ready():
 	$Image_mesh.scale = RENDERED_IMAGE_MESH_SCALE
-
+	
+	$Collider/Mesh.scale = Vector3(Constants.LATENT_NODE_MESH_SCALE_MIN, 
+									Constants.LATENT_NODE_MESH_SCALE_MIN, 
+									Constants.LATENT_NODE_MESH_SCALE_MIN)
+	$Collider/Collision_shape.scale = Vector3(Constants.LATENT_NODE_COLLISION_SHAPE_SCALE_MIN, 
+												Constants.LATENT_NODE_COLLISION_SHAPE_SCALE_MIN, 
+												Constants.LATENT_NODE_COLLISION_SHAPE_SCALE_MIN)
 	# Create and assign textures manually so they can be edited individually per instance	
 	var image_mesh_mat : SpatialMaterial = SpatialMaterial.new()
 	$Image_mesh.set_surface_material(0, image_mesh_mat)

@@ -17,12 +17,16 @@ func unproject_inworld_selector_to_gui_representation(selector_world_scale: Vect
 	return Vector2(selector_gui_width, selector_gui_height)
 
 func init_selector_collider():
-	$Selector_collider/Collider.scale = Constants.SELECTOR_COLLIDER_SCALE
-	$Selector_collider/Debug_collider_mesh.scale = Constants.SELECTOR_COLLIDER_SCALE	
-	$Selector_collider/.translation.z = -Constants.SELECTOR_COLLIDER_SCALE.z	
+	
+	var collider_scale : Vector3 = Vector3(Constants.SELECTOR_COLLIDER_XY_SCALE,
+											Constants.SELECTOR_COLLIDER_XY_SCALE,
+											Constants.SELECTOR_COLLIDER_Z_SCALE)
+	$Selector_collider/Collider.scale = collider_scale
+	$Selector_collider/Debug_collider_mesh.scale = collider_scale
+	$Selector_collider.translation.z = -Constants.SELECTOR_COLLIDER_Z_SCALE
 
 	# unproject the world selector scale for the 2d gui overlay representation
-	selector_gui_size = unproject_inworld_selector_to_gui_representation(Constants.SELECTOR_COLLIDER_SCALE)
+	selector_gui_size = unproject_inworld_selector_to_gui_representation(collider_scale)
 	
 	# pass signals when a node is selected to the container containing the nodes
 	var latent_nodes_container_ref = get_node("/root/App/Nodes/Nodes_container")
@@ -42,7 +46,7 @@ func _on_mouse_event(event):
 	$Selector_gui/Selector_rect.margin_bottom = bottom
 	# translate in world selector collider on mouse event
 	var collider_pos : Vector3 = camera_ref.project_position(Vector2(mouse_x,mouse_y), 1)
-	collider_pos.z = -Constants.SELECTOR_COLLIDER_SCALE.z
+	collider_pos.z = -Constants.SELECTOR_COLLIDER_Z_SCALE
 	$Selector_collider.translation = collider_pos
 
 func _on_z_scale_changed():
