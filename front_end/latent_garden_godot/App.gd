@@ -26,7 +26,7 @@ func _ready():
 	
 	### Person input
 	connect("nodes_container_z_scale_changed", get_node("Nodes"), "_on_nodes_container_z_scale_changed")
-	connect("nodes_container_z_scale_changed", get_node("Camera"), "_on_nodes_container_z_scale_changed")
+	connect("nodes_container_z_scale_changed", get_node("Camera_controller/Camera"), "_on_nodes_container_z_scale_changed")
 		
 	### Server IO
 	# query currently selected latent nodes from the Nodes container

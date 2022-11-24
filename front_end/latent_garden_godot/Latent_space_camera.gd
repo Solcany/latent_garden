@@ -9,3 +9,4 @@ func _on_nodes_container_z_scale_changed(value : float) -> void:
 
 func _ready():
 	self.far = Constants.CAMERA_FAR
+
