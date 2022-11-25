@@ -4,10 +4,10 @@ import os
 import umap
 import numpy as np
 
-TOTAL_SAMPLE_SIZE = 500
-SLICE_SIZE = 50
+TOTAL_SAMPLE_SIZE = 1000
+SLICE_SIZE = 100
 SLICES_N = int(TOTAL_SAMPLE_SIZE / SLICE_SIZE)
-LATENT_VECTOR_SIZE = 128
+LATENT_VECTOR_SIZE = 256
 UMAP_NEIGHBOURS = 50
 UMAP_MIN_DISTATNCE = 0.1
 UMAP_DIMENSIONS = 2
@@ -90,8 +90,9 @@ def main():
 				latent_vectors_slices, 
 				delimiter=",", 
 				header=BACK_END_CSV_HEADER, 
-				comments=CSV_COMMENTS,				
-				fmt=CSV_FMT) 
+				comments=CSV_COMMENTS,		
+				fmt=CSV_FMT
+				) 
 
 	print("backend data saved at: " + backend_csv_path)	
 
