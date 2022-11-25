@@ -2,18 +2,25 @@ extends Spatial
 
 ### Person input signals
 signal get_selected_latent_nodes
-func _on_submit_button_pressed() -> void:
-	emit_signal("get_selected_latent_nodes")
-
+func _on_submit_generate_button_pressed() -> void:
+	emit_signal("get_selected_latent_nodes", "generate")
+func _on_submit_add_button_pressed() -> void:
+	emit_signal("get_selected_latent_nodes", "add")
+	
 signal nodes_container_z_scale_changed
 func _on_slider_nodes_container_z_scale_value_changed(value) -> void:
 	emit_signal("nodes_container_z_scale_changed", value)
 
 ### Server IO
 # when the Nodes container returns selected latent nodes
-signal request_images_from_server
-func _on_return_selected_latent_nodes_ids(ids) -> void:
-	emit_signal("request_images_from_server", ids)
+signal request_generate_images
+signal request_add_images
+
+func _on_return_selected_latent_nodes_ids(ids : Array, request_kind : String) -> void:
+	if(request_kind == "generate"):
+		emit_signal("request_generate_images", ids)
+	elif(request_kind == "add"):
+		emit_signal("request_add_images", ids)		
 	
 # when the tcp client receives images from the server
 signal return_images
@@ -36,4 +43,5 @@ func _ready():
 	connect("return_images", get_node("Latent_space_viewport_container/Latent_space_viewport/Nodes/Nodes_container"), "_on_return_images")
 	
 	# request images from the server
-	connect("request_images_from_server", get_node("Tcp_client"), "_on_request_images_from_server")
+	connect("request_generate_images", get_node("Tcp_client"), "_on_request_generate_images")
+	connect("request_add_images", get_node("Tcp_client"), "_on_request_add_images")
