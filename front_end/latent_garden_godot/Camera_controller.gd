@@ -9,10 +9,10 @@ func _on_mouse_movement(event) -> void:
 	var mouse_x : float = event.position.x
 	var mouse_y : float = event.position.y
 	
-	if(mouse_x <= Constants.CAMERA_LATERAL_MOVEMENT_MOUSE_TRIGGER_AREA or
-		mouse_x >= viewport_size.x - Constants.CAMERA_LATERAL_MOVEMENT_MOUSE_TRIGGER_AREA or
-		mouse_y <=  Constants.CAMERA_LATERAL_MOVEMENT_MOUSE_TRIGGER_AREA or
-		mouse_y >= viewport_size.y - Constants.CAMERA_LATERAL_MOVEMENT_MOUSE_TRIGGER_AREA):
+	if(mouse_x <= Constants.CAMERA_LATERAL_MOVEMENT_MOUSE_TRIGGER_AREA and mouse_x > 0 or
+		mouse_x >= viewport_size.x - Constants.CAMERA_LATERAL_MOVEMENT_MOUSE_TRIGGER_AREA and mouse_x < viewport_size.x or
+		mouse_y <=  Constants.CAMERA_LATERAL_MOVEMENT_MOUSE_TRIGGER_AREA and mouse_y > 0 or
+		mouse_y >= viewport_size.y - Constants.CAMERA_LATERAL_MOVEMENT_MOUSE_TRIGGER_AREA and mouse_y < viewport_size.y):
 		is_camera_moving = true
 	else:
 		is_camera_moving = false
