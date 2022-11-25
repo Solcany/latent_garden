@@ -38,7 +38,15 @@ margin_left = 116.854
 margin_top = 630.273
 margin_right = 212.854
 margin_bottom = 676.273
-text = "Submit"
+text = "Generate"
+script = ExtResource( 5 )
+
+[node name="Button_submit_combine_selection" type="Button" parent="Gui"]
+margin_left = 116.854
+margin_top = 560.57
+margin_right = 212.854
+margin_bottom = 606.57
+text = "Combine"
 script = ExtResource( 5 )
 
 [node name="Slider_nodes_container_z_scale" type="VSlider" parent="Gui"]
