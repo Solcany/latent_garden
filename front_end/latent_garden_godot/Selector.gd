@@ -3,7 +3,7 @@ extends Node
 
 signal latent_node_selected
 var selector_gui_size: Vector2
-onready var camera_ref = get_node("/root/App/Camera_controller/Camera")
+onready var camera_ref = get_node("/root/App/Latent_space_viewport_container/Latent_space_viewport/Camera_controller/Camera")
 
 func unproject_inworld_selector_to_gui_representation(selector_world_scale: Vector3) -> Vector2: 
 	# relative top left vertex
@@ -29,7 +29,7 @@ func init_selector_collider():
 	selector_gui_size = unproject_inworld_selector_to_gui_representation(collider_scale)
 	
 	# pass signals when a node is selected to the container containing the nodes
-	var latent_nodes_container_ref = get_node("/root/App/Nodes/Nodes_container")
+	var latent_nodes_container_ref = get_node("/root/App/Latent_space_viewport_container/Latent_space_viewport/Nodes/Nodes_container")
 	connect("latent_node_selected", latent_nodes_container_ref ,"_on_latent_node_selected")
 
 func _on_mouse_event(event): 
