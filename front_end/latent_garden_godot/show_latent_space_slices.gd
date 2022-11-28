@@ -44,15 +44,15 @@ func add_latent_space_slices_to_scene(embeddings : Array, slice_ids: Array, ids:
 			
 func _on_latent_node_selected(body) -> void: 
 	var latent_node_ref = body.get_parent()
-	latent_node_ref.is_selected = !latent_node_ref.is_selected
+	latent_node_ref.update_on_selected()
 	
-func _on_get_selected_latent_nodes() -> void:
+func _on_get_selected_latent_nodes(request_kind : String) -> void:
 	var selected : Array = []
 	var nodes = get_tree().get_nodes_in_group(Constants.LATENT_NODES_GROUP_NAME)
 	for node in nodes:
 		if(node.is_selected):
 			selected.append(node.id)
-	emit_signal("return_selected_latent_nodes_ids", selected)
+	emit_signal("return_selected_latent_nodes_ids", selected, request_kind)
 	
 func _on_z_scale_changed(z_scalar: float) -> void:
 	emit_signal("z_scale_changed", z_scalar)

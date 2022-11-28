@@ -7,8 +7,13 @@ class Gan:
     #def __init__(self):
 
     def init_sle_gan(self):
-    	self.vectors = np.genfromtxt(constants.LATENT_VECTORS_PATH, delimiter=',')
-    	self.vectors = np.reshape(self.vectors, constants.SLE_GAN_VECTOR_SHAPE)
+    	csv = np.genfromtxt(constants.LATENT_VECTORS_PATH, delimiter=',', skip_header=constants.LATENT_VECTORS_SKIP_HEADER)
+    	ids = csv[:,0]
+    	vectors = csv[:,1:]
+    	vectors = np.reshape(vectors, constants.SLE_GAN_VECTOR_SHAPE)
+    	print(vectors.shape)
+    	self.ids = ids # WIP: this isn't used for now, is it needed?
+    	self.vectors = vectors
     	self.generator = sle_gan.Generator(constants.IMAGE_SHAPE)
     	self.generator.build((1, 1, 1, constants.IMAGE_SHAPE))
     	self.generator.load_weights(constants.GAN_WEIGHTS_PATH)

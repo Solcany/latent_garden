@@ -1,16 +1,22 @@
-[gd_scene load_steps=7 format=2]
+[gd_scene load_steps=9 format=2]
 
 [ext_resource path="res://Latent_space_node.gd" type="Script" id=1]
 
 [sub_resource type="BoxShape" id=1]
 
-[sub_resource type="CubeMesh" id=2]
+[sub_resource type="CubeMesh" id=7]
 
-[sub_resource type="SpatialMaterial" id=5]
+[sub_resource type="SpatialMaterial" id=8]
+albedo_color = Color( 0.5, 0.5, 1, 1 )
 
-[sub_resource type="PlaneMesh" id=4]
+[sub_resource type="QuadMesh" id=11]
 
-[sub_resource type="SpatialMaterial" id=6]
+[sub_resource type="SpatialMaterial" id=12]
+
+[sub_resource type="QuadMesh" id=13]
+
+[sub_resource type="SpatialMaterial" id=14]
+albedo_color = Color( 0.980392, 0.168627, 0.168627, 1 )
 
 [node name="Latent_space_node" type="Spatial"]
 script = ExtResource( 1 )
@@ -22,13 +28,19 @@ transform = Transform( 0.02, 0, 0, 0, 0.02, 0, 0, 0, 0.02, 0, 0, 0 )
 shape = SubResource( 1 )
 
 [node name="Mesh" type="MeshInstance" parent="Collider"]
-transform = Transform( 0.02, 0, 0, 0, 0.02, 0, 0, 0, 0.02, 0, 0, 0 )
-mesh = SubResource( 2 )
+transform = Transform( 0.005, 0, 0, 0, -2.18557e-10, 0.005, 0, -0.005, -2.18557e-10, 0, 0, 0 )
+mesh = SubResource( 7 )
 software_skinning_transform_normals = false
-material/0 = SubResource( 5 )
+material/0 = SubResource( 8 )
 
 [node name="Image_mesh" type="MeshInstance" parent="."]
-transform = Transform( 0.1, 0, 0, 0, -4.37114e-09, -0.1, 0, 0.1, -4.37114e-09, 0, 0, 0 )
+transform = Transform( 0.1, 0, 0, 0, 0.1, 0, 0, 0, 0.1, 0, 0, 0 )
 visible = false
-mesh = SubResource( 4 )
-material/0 = SubResource( 6 )
+mesh = SubResource( 11 )
+material/0 = SubResource( 12 )
+
+[node name="Outline_mesh" type="MeshInstance" parent="Image_mesh"]
+transform = Transform( -1.1, 1.66095e-07, 0, -1.66095e-07, -1.1, 0, 0, 0, 1, 0, 0, -0.01 )
+visible = false
+mesh = SubResource( 13 )
+material/0 = SubResource( 14 )
