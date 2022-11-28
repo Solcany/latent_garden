@@ -49,7 +49,7 @@ func _on_mouse_event(event):
 	collider_pos.z = -Constants.SELECTOR_COLLIDER_Z_SCALE
 	$Selector_collider.translation = collider_pos
 
-func _on_z_scale_changed():
+func _on_z_scale_changed(scalar: float):
 	pass
 
 func _on_body_entered_selector(item_body):

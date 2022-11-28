@@ -44,7 +44,7 @@ func add_latent_space_slices_to_scene(embeddings : Array, slice_ids: Array, ids:
 			
 func _on_latent_node_selected(body) -> void: 
 	var latent_node_ref = body.get_parent()
-	latent_node_ref.is_selected = !latent_node_ref.is_selected
+	latent_node_ref.update_on_selected()
 	
 func _on_get_selected_latent_nodes(request_kind : String) -> void:
 	var selected : Array = []
