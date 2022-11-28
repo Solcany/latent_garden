@@ -2,7 +2,7 @@ extends Reference
 
 class_name Constants
 
-const CSV_DATA_PATH : String= "data/latent_space_slices/frontend_2d_embeddings_slices.txt"
+const CSV_DATA_PATH : String = "data/latent_space_slices/frontend_2d_embeddings_slices.txt"
 const CSV_DATA_ROW_SIZE : int = 5
 const EMBEDDINGS_BOUNDING_BOX_MAX_WIDTH : int = 5
 const EMBEDDINGS_CSV_SKIP_HEADER : bool = true

@@ -20,9 +20,9 @@ func set_image_texture(texture: ImageTexture) -> void:
 	make_image_selectable()
 
 func make_image_selectable() -> void:
-	$Collider/Collision_shape.scale = Vector3(Constants.LATENT_NODE_IMAGE_MESH_SCALE, 
-											Constants.LATENT_NODE_IMAGE_MESH_SCALE, 
-											Constants.LATENT_NODE_IMAGE_MESH_SCALE)
+	$Collider/Collision_shape.scale = Vector3(Constants.LATENT_NODE_IMAGE_MESH_SCALE/2, 
+											Constants.LATENT_NODE_IMAGE_MESH_SCALE/2, 
+											Constants.LATENT_NODE_IMAGE_MESH_SCALE/2)
 
 func update_on_selected() -> void:
 	is_selected = !is_selected
@@ -35,7 +35,7 @@ func update_on_selected() -> void:
 	elif(!is_selected && !is_selectable):
 		$Collider/Mesh.get_surface_material(0).albedo_color = Color(0,1,0)
 	else:
-		$Collider/Mesh.get_surface_material(0).albedo_color = Color(0.5,0.5,1)
+		$Collider/Mesh.get_surface_material(0).albedo_color = Color(1.0,1.0,1.0)
 	
 func _on_z_scale_changed(scalar: float) -> void:
 	pass
