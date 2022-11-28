@@ -20,7 +20,7 @@ func _on_return_selected_latent_nodes_ids(ids : Array, request_kind : String) ->
 	if(request_kind == "generate"):
 		emit_signal("request_generate_images", ids)
 	elif(request_kind == "add"):
-		emit_signal("request_add_images", ids)		
+		emit_signal("request_add_images", ids)
 	
 # when the tcp client receives images from the server
 signal return_images

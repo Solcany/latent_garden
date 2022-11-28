@@ -117,7 +117,6 @@ script = ExtResource( 8 )
 
 [node name="Debug_camera" type="Camera" parent="Latent_space_viewport_container/Latent_space_viewport"]
 transform = Transform( 0.250701, -0.331098, 0.909683, 0, 0.939692, 0.34202, -0.968065, -0.0857448, 0.235582, 6.764, 2.449, -0.440424 )
-visible = false
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="Latent_space_viewport_container/Latent_space_viewport"]
 environment = SubResource( 1 )

@@ -45,7 +45,7 @@ def get_images_message(metadata, images):
     message = header + data
     return message
 
-def _on_generate_images(request_data):
+def on_generate_images(request_data):
 		metadata, latent_vectors_indices = request_data
 		images = gan.generate_images_from_selection(latent_vectors_indices)
 		response_metadata ={"response": "images", 
@@ -59,7 +59,7 @@ def _on_generate_images(request_data):
 
 # need these in the global scope 
 gan = Gan()
-tcp_server = Tcp_server(callbacks={"_on_generate_images": _on_generate_images})
+tcp_server = Tcp_server(callbacks={"on_generate_images": on_generate_images})
 
 def main():
 	gan.init_sle_gan()
