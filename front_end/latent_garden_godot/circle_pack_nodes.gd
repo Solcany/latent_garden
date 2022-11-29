@@ -2,35 +2,20 @@ tool
 extends Spatial
 var Circle = load("res://Circle.tscn")
 
-var max_speed : float = 1;
-var max_force : float = 1;
+var max_speed : float = 0.01;
+var max_force : float = 0.1;
 var circles : Array
+var rng = RandomNumberGenerator.new()
 
 func init_circles() -> void:
-	var c1 = Circle.instance()
-	c1.init(Vector3(0,0,0), 1)
-	var c2 = Circle.instance()
-	c2.init(Vector3(0.2,0.2,0), 1)
-	var c3 = Circle.instance()
-	c3.init(Vector3(-0.2,0.3,0), 1)
-	c1.add_to_group("circles")
-	self.add_child(c1)
-	self.add_child(c2)
-	c2.add_to_group("circles")	
-	self.add_child(c3)
-	c3.add_to_group("circles")
+	rng.randomize()
+	for i in range(50):
+		var c = Circle.instance()
+		var pos: Vector3 = Vector3(rng.randf_range(-0.4, 0.4), rng.randf_range(-0.4, 0.4), 0)
+		c.init(pos, 0.2)
+		c.add_to_group("circles")
+		self.add_child(c)	
 	
-#func check_borders(circle):
-#	if (circle.translation.x-circle.radius/2.0 < 0 || circle.position.x+circle.radius/2.0 > width)
-#	{
-#	  circle_i.velocity.x*=-1;
-#	  circle_i.update();
-#	}
-#	if (circle_i.position.y-circle_i.radius/2 < 0 || circle_i.position.y+circle_i.radius/2 > height)
-#	{
-#	  circle_i.velocity.y*=-1;
-#	  circle_i.update();
-
 func set_vec_length(vec : Vector3 , new_length: float) -> Vector3:
 	return vec * new_length / vec.length()
 
@@ -40,10 +25,8 @@ func check_circle_position(circle_i : int, circles : Array) -> void:
 		var count = 0
 		var other_circle = circles[i]
 		var dist = circle.translation.distance_to(other_circle.translation)
-		
-		if(dist < circle.radius/2.0 + other_circle.radius/2.0):
+		if(dist < circle.radius + other_circle.radius):
 			count += 1
-		
 		if(count == 0):
 			circle.velocity.x = 0.0
 			circle.velocity.y = 0.0
@@ -51,13 +34,11 @@ func check_circle_position(circle_i : int, circles : Array) -> void:
 func get_separation_forces(circle1, circle2) -> Vector3:
 	var steer: Vector3 = Vector3(0,0,0)
 	var dist : float = circle1.translation.distance_to(circle2.translation)
-	
-	if( dist > 0 and dist < circle1.radius/2.0 + circle2.radius/2.0):
+	if( dist > 0 and dist < circle1.radius + circle2.radius):
 		var diff : Vector3 = circle1.translation - circle2.translation
 		diff = diff.normalized()
 		diff /= dist
 		steer += diff
-	
 	return steer
 	
 func apply_separation_forces_to_circle(i: int, circles : Array) -> void:
@@ -85,39 +66,8 @@ func apply_separation_forces_to_circle(i: int, circles : Array) -> void:
 		 separate_forces[i].limit_length(max_force)
 		
 	var separation_force = separate_forces[i]
-	the_circle.apply_force(separation_force);
-	the_circle.update();
-
-
-
-#  void applySeparationForcesToCircle(int i, PVector[] separate_forces, int[] near_circles) {
-#	if (separate_forces[i]==null)
-#	  separate_forces[i]=new PVector();
-#	Circle circle_i=circles.get(i);
-#	for (int j=i+1; j<circles.size(); j++) {
-#	  if (separate_forces[j] == null) 
-#		separate_forces[j]=new PVector();
-#	  Circle circle_j=circles.get(j);
-#	  PVector forceij = getSeparationForce(circle_i, circle_j);
-#	  if (forceij.mag()>0) {
-#		separate_forces[i].add(forceij);        
-#		separate_forces[j].sub(forceij);
-#		near_circles[i]++;
-#		near_circles[j]++;
-#	  }
-#	}
-#	if (near_circles[i]>0) {
-#	  separate_forces[i].div((float)near_circles[i]);
-#	}
-#	if (separate_forces[i].mag() >0) {
-#	  separate_forces[i].setMag(max_speed);
-#	  separate_forces[i].sub(circles.get(i).velocity);
-#	  separate_forces[i].limit(max_force);
-#	}
-#	PVector separation = separate_forces[i];
-#	circles.get(i).applyForce(separation);
-#	circles.get(i).update();
-#  }
+	the_circle.apply_force(separation_force)
+	the_circle.update()
 
 func _ready():
 	init_circles()
@@ -125,7 +75,5 @@ func _ready():
 
 func _process(delta):
   for i in range(circles.size()):
-	  #checkBorders(i);
 	  check_circle_position(i, circles)
 	  apply_separation_forces_to_circle(i, circles);
-	  #displayCircle(i);
