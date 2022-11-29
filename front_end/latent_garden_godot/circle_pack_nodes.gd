@@ -8,6 +8,9 @@ func _ready():
 	c1.init(Vector3(0,0,0), 1)
 	var c2 = Circle.instance()
 	c2.init(Vector3(0.2,0.2,0), 1)
-
+	var c3 = Circle.instance()
+	c3.init(Vector3(-0.2,0.3,0), 1)
+	
 	self.add_child(c1)
 	self.add_child(c2)
+	self.add_child(c3)
