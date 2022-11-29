@@ -50,7 +50,7 @@ func check_circle_position(circle_i : int, circles : Array) -> void:
 
 func get_separation_forces(circle1, circle2) -> Vector3:
 	var steer: Vector3 = Vector3(0,0,0)
-	var dist : float = circle1.distance_to(circle2)
+	var dist : float = circle1.translation.distance_to(circle2.translation)
 	
 	if( dist > 0 and dist < circle1.radius/2.0 + circle2.radius/2.0):
 		var diff : Vector3 = circle1.translation - circle2.translation
@@ -68,6 +68,7 @@ func apply_separation_forces_to_circle(i: int, circles : Array) -> void:
 		near_circles.append(0)
 		
 	var the_circle = circles[i]
+
 	for j in range(i+1, circles.size()):
 		var other_circle = circles[j]
 		var force_ij : Vector3 = get_separation_forces(the_circle, other_circle)
@@ -84,7 +85,7 @@ func apply_separation_forces_to_circle(i: int, circles : Array) -> void:
 		 separate_forces[i].limit_length(max_force)
 		
 	var separation_force = separate_forces[i]
-	the_circle.applyForce(separation_force);
+	the_circle.apply_force(separation_force);
 	the_circle.update();
 
 
