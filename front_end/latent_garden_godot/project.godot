@@ -29,6 +29,11 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://Mat.gd"
 }, {
+"base": "Reference",
+"class": "Shapes",
+"language": "GDScript",
+"path": "res://Shapes.gd"
+}, {
 "base": "Object",
 "class": "Utils",
 "language": "GDScript",
@@ -39,13 +44,14 @@ _global_script_class_icons={
 "Encode_utils": "",
 "Geom": "",
 "Mat": "",
+"Shapes": "",
 "Utils": ""
 }
 
 [application]
 
 config/name="Latent Garden"
-run/main_scene="res://drawing_in_latent_space.tscn"
+run/main_scene="res://circle_pack_nodes.tscn"
 run/delta_sync_after_draw=true
 config/icon="res://icon.png"
 
