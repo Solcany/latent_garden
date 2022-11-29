@@ -1,7 +1,13 @@
 tool
 extends Spatial
+var Circle = load("res://Circle.tscn")
+
 
 func _ready():
-	#var mesh : MeshInstance = Shapes.get_square_mesh()
-	#self.add_child(mesh)
-	self.add_child(Shapes.create_circle_mesh_z_normal())
+	var c1 = Circle.instance()
+	c1.init(Vector3(0,0,0), 1)
+	var c2 = Circle.instance()
+	c2.init(Vector3(0.2,0.2,0), 1)
+
+	self.add_child(c1)
+	self.add_child(c2)
