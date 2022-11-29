@@ -6,10 +6,11 @@ var max_speed : float = 0.01;
 var max_force : float = 0.01;
 var circles : Array
 var rng = RandomNumberGenerator.new()
+var packing_finished : bool = false
 
 func init_circles() -> void:
 	rng.randomize()
-	for i in range(50):
+	for i in range(100):
 		var c = Circle.instance()
 		var pos: Vector3 = Vector3(rng.randf_range(-0.2, 0.2), rng.randf_range(-0.2, 0.2), 0)
 		c.init(pos, 0.1)
@@ -32,7 +33,7 @@ func check_borders(i : int, circles: Array) -> void:
 
 
 func check_circle_position(i : int, circles : Array) -> void:
-	var circle = circles[i]
+	var the_circle = circles[i]
 	for j in range(i+1, circles.size()+1):
 		var count = 0
 		var other_circle : Spatial
@@ -40,12 +41,12 @@ func check_circle_position(i : int, circles : Array) -> void:
 			other_circle = circles[0]
 		else:
 			other_circle = circles[j]
-		var dist = circle.translation.distance_to(other_circle.translation)
-		if(dist < circle.radius + other_circle.radius):
+		var dist = the_circle.translation.distance_to(other_circle.translation)
+		if(dist < the_circle.radius + other_circle.radius):
 			count += 1
 		if(count == 0):
-			circle.velocity.x = 0.0
-			circle.velocity.y = 0.0
+			the_circle.velocity.x = 0.0
+			the_circle.velocity.y = 0.0
 
 func get_separation_forces(circle1, circle2) -> Vector3:
 	var steer: Vector3 = Vector3(0,0,0)
@@ -56,6 +57,20 @@ func get_separation_forces(circle1, circle2) -> Vector3:
 		diff /= dist
 		steer += diff
 	return steer
+	
+func are_circles_stabilised(circles) -> bool:
+	var total_velocity: float = 0.0
+	for circle in circles:
+		total_velocity += abs(circle.velocity.x + circle.velocity.y)
+	if(total_velocity == 0):
+		return true
+	else:
+		return false
+	
+func monitor_circle(i, circles) -> void:
+	var the_circle = circles[i]
+	print("X vel: ", the_circle.velocity.x)
+	print("Y vel: ", the_circle.velocity.y)
 	
 func apply_separation_forces_to_circle(separate_forces: Array, near_circles: Array, i: int, circles : Array) -> void:
 	var the_circle = circles[i]
@@ -83,12 +98,16 @@ func _ready():
 	circles = get_tree().get_nodes_in_group("circles")
 
 func _process(delta):
-	var separate_forces : Array = []
-	var near_circles : Array = []
-	for _i in range(circles.size()):
-		separate_forces.append(Vector3(0,0,0))
-		near_circles.append(0)
-	for i in range(circles.size()):
-		check_borders(i, circles)
-		check_circle_position(i, circles)
-		apply_separation_forces_to_circle(separate_forces, near_circles, i, circles)
+	if(!packing_finished):
+		var separate_forces : Array = []
+		var near_circles : Array = []
+		for _i in range(circles.size()):
+			separate_forces.append(Vector3(0,0,0))
+			near_circles.append(0)
+		for i in range(circles.size()):
+			#check_borders(i, circles)
+			check_circle_position(i, circles)
+			apply_separation_forces_to_circle(separate_forces, near_circles, i, circles)
+		packing_finished = are_circles_stabilised(circles)
+	else: 
+		print("DONE!")

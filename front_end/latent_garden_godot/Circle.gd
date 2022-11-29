@@ -3,6 +3,7 @@ extends Spatial
 var radius : float
 var velocity: Vector3
 var acceleration: Vector3
+var has_neighbours: bool = true
 
 func init(position: Vector3, radius : float) -> void:
 	var circle_mesh : MeshInstance = Shapes.create_circle_mesh_z_normal(Vector3(0,0,0), radius, 50)
