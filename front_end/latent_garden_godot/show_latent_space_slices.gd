@@ -16,7 +16,18 @@ func add_points_mesh_to_scene(points: Array) -> void:
 	mesh_instance.set_mesh(points_mesh)
 	Mat.assign_vertex_albedo_color_material(mesh_instance)
 	self.add_child(mesh_instance)
-
+	
+func circle_pack_embeddings_slices(embeddings: Array, slice_ids: Array, ids : Array, circle_radius : float) -> Array:
+	var slices_ids = Utils.get_unique_numbers_of_array(slice_ids)	
+	slices_ids.sort()
+	var lowest_id = slices_ids[0]
+	var highest_id = slices_ids[-1]
+	
+	for slice_id in slices_ids:
+		var slice_points : Array = []
+		
+		
+		
 func add_latent_space_slices_to_scene(embeddings : Array, slice_ids: Array, ids: Array) -> void:
 	var slices_ids = Utils.get_unique_numbers_of_array(slice_ids)
 	slices_ids.sort()
@@ -93,6 +104,9 @@ func _ready():
 																		Constants.EMBEDDINGS_BOUNDING_BOX_MAX_WIDTH)	
 	#add_points_mesh_to_scene(embeddings_scaled)
 	#add_latent_space_nodes_to_scene(embeddings_scaled)
+	var circles : Array = Packer.vec3s_to_circles(embeddings_scaled, 0.03)
+	circles = Packer.pack_circles(circles)
+	var embeddings : Array = Packer.circles_to_vec3s(circles)
 	
 	var slice_ids : Array = Utils.filter_dicts_array_to_array(data, ["slice_id"])
 	slice_ids = Utils.string_array_to_num_array(slice_ids, "int")
