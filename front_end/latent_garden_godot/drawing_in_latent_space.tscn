@@ -12,15 +12,16 @@
 [ext_resource path="res://Camera_controller.gd" type="Script" id=10]
 [ext_resource path="res://Button_submit_add_selection.gd" type="Script" id=11]
 
+[sub_resource type="Environment" id=1]
+background_mode = 1
+ambient_light_color = Color( 1, 1, 1, 1 )
+
 [sub_resource type="World" id=4]
+environment = SubResource( 1 )
 
 [sub_resource type="BoxShape" id=2]
 
 [sub_resource type="CubeMesh" id=3]
-
-[sub_resource type="Environment" id=1]
-background_mode = 1
-ambient_light_color = Color( 1, 1, 1, 1 )
 
 [node name="App" type="Spatial"]
 script = ExtResource( 6 )

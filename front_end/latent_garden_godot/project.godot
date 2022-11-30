@@ -29,6 +29,16 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://Mat.gd"
 }, {
+"base": "Reference",
+"class": "Packer",
+"language": "GDScript",
+"path": "res://Packer.gd"
+}, {
+"base": "Reference",
+"class": "Shapes",
+"language": "GDScript",
+"path": "res://Shapes.gd"
+}, {
 "base": "Object",
 "class": "Utils",
 "language": "GDScript",
@@ -39,6 +49,8 @@ _global_script_class_icons={
 "Encode_utils": "",
 "Geom": "",
 "Mat": "",
+"Packer": "",
+"Shapes": "",
 "Utils": ""
 }
 

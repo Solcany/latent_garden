@@ -72,6 +72,9 @@ func _ready():
 	var collider_mesh_mat : SpatialMaterial= SpatialMaterial.new()
 	collider_mesh_mat.albedo_color = Color(1,1,1)
 	$Collider/Mesh.set_surface_material(0, collider_mesh_mat)
+	
+	var circle_mesh : MeshInstance = Shapes.create_circle_mesh_z_normal(Vector3(0,0,0), Constants.LATENT_NODES_CIRCLE_MESH_RADIUS, Constants.LATENT_NODES_CIRCLE_MESH_SEGMENTS)
+	self.add_child(circle_mesh)	
 	#var bounding_box : Array = Geom.get_bounding_box_from_vec3(NODE_SCALE)
 	#Geom.add_debug_box_to_the_scene(self, bounding_box[0], bounding_box[1])
 
