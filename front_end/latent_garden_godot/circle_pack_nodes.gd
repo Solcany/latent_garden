@@ -109,5 +109,3 @@ func _process(delta):
 			check_circle_position(i, circles)
 			apply_separation_forces_to_circle(separate_forces, near_circles, i, circles)
 		packing_finished = are_circles_stabilised(circles)
-	else: 
-		print("DONE!")
