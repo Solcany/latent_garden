@@ -23,10 +23,34 @@ func circle_pack_embeddings_slices(embeddings: Array, slice_ids: Array, ids : Ar
 	var lowest_id = slices_ids[0]
 	var highest_id = slices_ids[-1]
 	
+	var packed_embeddings : Array = range(embeddings.size())
+	
 	for slice_id in slices_ids:
 		var slice_points : Array = []
+		var slice_points_ids : Array = []
+		# get points and their ids belonging to a slice
+		for idx in range(embeddings.size()):
+			var point = embeddings[idx]
+			var point_slice_id =  slice_ids[idx]
+			var point_id = ids[idx]
+			if(slice_id == point_slice_id):
+				slice_points.append(point)
+				slice_points_ids.append(point_id)
+		# circle pack the points of the slice
+		var circles : Array = Packer.vec3s_to_circles(slice_points, circle_radius)
+		circles = Packer.pack_circles(circles)
+		# restore circles to points
+		var packed_points : Array = Packer.circles_to_vec3s(circles)
 		
+		# add the newly packed points to array containing all points
+		# while preserving the initial order of the points
+		for idx in range(packed_points.size()):
+			var point_id : int = slice_points_ids[idx]
+			var point : Vector3 = packed_points[idx]
+			packed_embeddings[point_id] = point
 		
+	return packed_embeddings
+	
 		
 func add_latent_space_slices_to_scene(embeddings : Array, slice_ids: Array, ids: Array) -> void:
 	var slices_ids = Utils.get_unique_numbers_of_array(slice_ids)
@@ -102,17 +126,13 @@ func _ready():
 	var embeddings_scaled : Array = Geom.scale_normalised_3d_embeddings(embeddings_normalised, 
 																		embeddings_bounding_box_proportions, 
 																		Constants.EMBEDDINGS_BOUNDING_BOX_MAX_WIDTH)	
-	#add_points_mesh_to_scene(embeddings_scaled)
-	#add_latent_space_nodes_to_scene(embeddings_scaled)
-	var circles : Array = Packer.vec3s_to_circles(embeddings_scaled, 0.03)
-	circles = Packer.pack_circles(circles)
-	var embeddings : Array = Packer.circles_to_vec3s(circles)
-	
+
 	var slice_ids : Array = Utils.filter_dicts_array_to_array(data, ["slice_id"])
 	slice_ids = Utils.string_array_to_num_array(slice_ids, "int")
 	var ids : Array = Utils.filter_dicts_array_to_array(data, ["id"])
 	ids = Utils.string_array_to_num_array(ids, "int")
-	add_latent_space_slices_to_scene(embeddings_scaled, slice_ids, ids)
+	var packed_embeddings : Array = circle_pack_embeddings_slices(embeddings_scaled, slice_ids, ids, Constants.LATENT_NODES_CIRCLE_MESH_RADIUS)
+	add_latent_space_slices_to_scene(packed_embeddings, slice_ids, ids)
 	
 	var bounding_box_coords : Array = Geom.get_3d_bounding_box_from_vertices(embeddings_scaled)
 	center_self(bounding_box_coords[0], bounding_box_coords[1])
