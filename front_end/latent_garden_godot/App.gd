@@ -32,15 +32,15 @@ func _ready():
 	# get_node("Debug_camera").current = true
 	
 	### Person input
-	connect("nodes_container_z_scale_changed", get_node("Latent_space_viewport_container/Latent_space_viewport/Nodes"), "_on_nodes_container_z_scale_changed")
-	connect("nodes_container_z_scale_changed", get_node("Latent_space_viewport_container/Latent_space_viewport/Camera_controller/Camera"), "_on_nodes_container_z_scale_changed")
+	connect("nodes_container_z_scale_changed", get_node("Nodes"), "_on_nodes_container_z_scale_changed")
+	connect("nodes_container_z_scale_changed", get_node("Camera_controller/Camera"), "_on_nodes_container_z_scale_changed")
 		
 	### Server IO
 	# query currently selected latent nodes from the Nodes container
-	connect("get_selected_latent_nodes", get_node("Latent_space_viewport_container/Latent_space_viewport/Nodes/Nodes_container"), "_on_get_selected_latent_nodes")
+	connect("get_selected_latent_nodes", get_node("Nodes/Nodes_container"), "_on_get_selected_latent_nodes")
 
 	# pass image data to the Nodes container
-	connect("return_images", get_node("Latent_space_viewport_container/Latent_space_viewport/Nodes/Nodes_container"), "_on_return_images")
+	connect("return_images", get_node("Nodes/Nodes_container"), "_on_return_images")
 	
 	# request images from the server
 	connect("request_generate_images", get_node("Tcp_client"), "_on_request_generate_images")

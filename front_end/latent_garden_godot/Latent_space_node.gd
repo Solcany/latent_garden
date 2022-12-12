@@ -8,11 +8,14 @@ var has_image: bool = false
 var is_selectable : bool = true
 # WIP implement has_image to avoid requesting images for lat nodes that already have image generated#var has_image: bool = false
 var id : int 
-	
+
+var fade_image_shader = preload("res://shader/fade_image.gdshader")
+var solid_shader = preload("res://shader/solid.gdshader")
+
 func set_image_texture(texture: ImageTexture) -> void:
 	var mat = $Image_mesh.get_surface_material(0)
-	mat.albedo_texture = texture
-	$Image_mesh.set_surface_material(0, mat)
+	mat.set_shader_param("image", texture)
+	#$Image_mesh.set_surface_material(0, mat)
 	$Image_mesh.visible = true
 	$Collider/Mesh.visible = false
 	is_selected = false
@@ -67,14 +70,15 @@ func _ready():
 	$Collider/Mesh.scale = Vector3(Constants.LATENT_NODE_MESH_SCALE_MIN, Constants.LATENT_NODE_MESH_SCALE_MIN, Constants.LATENT_NODE_MESH_SCALE_MIN)
 	$Collider/Collision_shape.scale = Vector3(Constants.LATENT_NODE_COLLISION_SHAPE_SCALE_MIN, Constants.LATENT_NODE_COLLISION_SHAPE_SCALE_MIN, Constants.LATENT_NODE_COLLISION_SHAPE_SCALE_MIN)
 	# Create and assign textures manually so they can be edited individually per instance	
-	var image_mesh_mat : SpatialMaterial = SpatialMaterial.new()
+	var image_mesh_mat : ShaderMaterial = ShaderMaterial.new()
+	image_mesh_mat.shader = fade_image_shader
 	$Image_mesh.set_surface_material(0, image_mesh_mat)
 	var collider_mesh_mat : SpatialMaterial= SpatialMaterial.new()
 	collider_mesh_mat.albedo_color = Color(1,1,1)
 	$Collider/Mesh.set_surface_material(0, collider_mesh_mat)
 	
-	var circle_mesh : MeshInstance = Shapes.create_circle_mesh_z_normal(Vector3(0,0,0), Constants.LATENT_NODES_CIRCLE_MESH_RADIUS, Constants.LATENT_NODES_CIRCLE_MESH_SEGMENTS)
-	self.add_child(circle_mesh)	
+	#var circle_mesh : MeshInstance = Shapes.create_circle_mesh_z_normal(Vector3(0,0,0), Constants.LATENT_NODES_CIRCLE_MESH_RADIUS, Constants.LATENT_NODES_CIRCLE_MESH_SEGMENTS)
+	#self.add_child(circle_mesh)	
 	#var bounding_box : Array = Geom.get_bounding_box_from_vec3(NODE_SCALE)
 	#Geom.add_debug_box_to_the_scene(self, bounding_box[0], bounding_box[1])
 

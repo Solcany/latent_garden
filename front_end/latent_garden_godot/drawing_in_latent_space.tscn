@@ -1,4 +1,4 @@
-[gd_scene load_steps=16 format=2]
+[gd_scene load_steps=15 format=2]
 
 [ext_resource path="res://show_latent_space_slices.gd" type="Script" id=1]
 [ext_resource path="res://Selector_collider.gd" type="Script" id=2]
@@ -12,16 +12,14 @@
 [ext_resource path="res://Camera_controller.gd" type="Script" id=10]
 [ext_resource path="res://Button_submit_add_selection.gd" type="Script" id=11]
 
-[sub_resource type="Environment" id=1]
-background_mode = 1
-ambient_light_color = Color( 1, 1, 1, 1 )
-
-[sub_resource type="World" id=4]
-environment = SubResource( 1 )
-
 [sub_resource type="BoxShape" id=2]
 
 [sub_resource type="CubeMesh" id=3]
+
+[sub_resource type="Environment" id=1]
+background_mode = 1
+ambient_light_color = Color( 1, 1, 1, 1 )
+fog_sun_amount = 0.4
 
 [node name="App" type="Spatial"]
 script = ExtResource( 6 )
@@ -55,58 +53,51 @@ margin_left = 22.657
 margin_top = 239.772
 margin_right = 42.657
 margin_bottom = 447.772
-max_value = 6.0
+max_value = 12.0
 step = 0.1
-value = 6.0
+value = 12.0
 script = ExtResource( 7 )
 
-[node name="Latent_space_viewport_container" type="ViewportContainer" parent="."]
-margin_right = 950.0
-margin_bottom = 720.0
-
-[node name="Latent_space_viewport" type="Viewport" parent="Latent_space_viewport_container"]
-size = Vector2( 950, 720 )
-world = SubResource( 4 )
-handle_input_locally = false
-render_target_update_mode = 3
-
-[node name="Nodes" type="Node" parent="Latent_space_viewport_container/Latent_space_viewport"]
+[node name="Nodes" type="Node" parent="."]
 script = ExtResource( 9 )
 
-[node name="Nodes_Selector" type="Node" parent="Latent_space_viewport_container/Latent_space_viewport/Nodes"]
+[node name="Nodes_Selector" type="Node" parent="Nodes"]
 script = ExtResource( 4 )
 
-[node name="Selector_gui" type="Control" parent="Latent_space_viewport_container/Latent_space_viewport/Nodes/Nodes_Selector"]
+[node name="Selector_gui" type="Control" parent="Nodes/Nodes_Selector"]
 margin_right = 40.0
 margin_bottom = 40.0
 mouse_filter = 2
 
-[node name="Selector_rect" type="ReferenceRect" parent="Latent_space_viewport_container/Latent_space_viewport/Nodes/Nodes_Selector/Selector_gui"]
+[node name="Selector_rect" type="ReferenceRect" parent="Nodes/Nodes_Selector/Selector_gui"]
 margin_right = 100.0
 margin_bottom = 100.0
 mouse_filter = 2
 editor_only = false
 
-[node name="Selector_collider" type="Area" parent="Latent_space_viewport_container/Latent_space_viewport/Nodes/Nodes_Selector"]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -3 )
+[node name="Selector_collider" type="Area" parent="Nodes/Nodes_Selector"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -6 )
 script = ExtResource( 2 )
 
-[node name="Collider" type="CollisionShape" parent="Latent_space_viewport_container/Latent_space_viewport/Nodes/Nodes_Selector/Selector_collider"]
-transform = Transform( 0.02, 0, 0, 0, 0.02, 0, 0, 0, 3, 0, 0, 0 )
+[node name="Collider" type="CollisionShape" parent="Nodes/Nodes_Selector/Selector_collider"]
+transform = Transform( 0.02, 0, 0, 0, 0.02, 0, 0, 0, 6, 0, 0, 0 )
 shape = SubResource( 2 )
 
-[node name="Debug_collider_mesh" type="MeshInstance" parent="Latent_space_viewport_container/Latent_space_viewport/Nodes/Nodes_Selector/Selector_collider"]
-transform = Transform( 0.02, 0, 0, 0, 0.02, 0, 0, 0, 3, 0, 0, 0 )
+[node name="Debug_collider_mesh" type="MeshInstance" parent="Nodes/Nodes_Selector/Selector_collider"]
+transform = Transform( 0.02, 0, 0, 0, 0.02, 0, 0, 0, 6, 0, 0, 0 )
 mesh = SubResource( 3 )
 
-[node name="Nodes_container" type="Spatial" parent="Latent_space_viewport_container/Latent_space_viewport/Nodes"]
+[node name="Nodes_container" type="Spatial" parent="Nodes"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -1.6495, -2.5, 0 )
 script = ExtResource( 1 )
 
-[node name="Camera_controller" type="Node" parent="Latent_space_viewport_container/Latent_space_viewport"]
+[node name="Debug_camera" type="Camera" parent="."]
+transform = Transform( 0.250701, -0.331098, 0.909683, 0, 0.939692, 0.342021, -0.968065, -0.0857449, 0.235582, 6.764, 2.449, -0.440424 )
+
+[node name="Camera_controller" type="Node" parent="."]
 script = ExtResource( 10 )
 
-[node name="Camera" type="Camera" parent="Latent_space_viewport_container/Latent_space_viewport/Camera_controller"]
+[node name="Camera" type="Camera" parent="Camera_controller"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1 )
 projection = 1
 current = true
@@ -115,8 +106,5 @@ near = 0.01
 far = 3.0
 script = ExtResource( 8 )
 
-[node name="Debug_camera" type="Camera" parent="Latent_space_viewport_container/Latent_space_viewport"]
-transform = Transform( 0.250701, -0.331098, 0.909683, 0, 0.939692, 0.34202, -0.968065, -0.0857448, 0.235582, 6.764, 2.449, -0.440424 )
-
-[node name="WorldEnvironment" type="WorldEnvironment" parent="Latent_space_viewport_container/Latent_space_viewport"]
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource( 1 )
