@@ -29,7 +29,7 @@ func _on_server_response_images_returned(data) -> void:
 
 func _ready():
 	# debug camera
-	# get_node("Debug_camera").current = true
+	get_node("Debug_camera").current = true
 	
 	### Person input
 	connect("nodes_container_z_scale_changed", get_node("Nodes"), "_on_nodes_container_z_scale_changed")

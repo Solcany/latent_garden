@@ -4,6 +4,7 @@ extends Spatial
 # WIP: these constants should be moved to a separate constants file
 const RENDERED_IMAGE_MESH_SCALE : Vector3 = Vector3(0.1, 0.1, 0.1)
 var is_selected : bool = false
+var color : Color = Color(1,1,1)
 var has_image: bool = false
 var is_selectable : bool = true
 # WIP implement has_image to avoid requesting images for lat nodes that already have image generated#var has_image: bool = false
@@ -74,7 +75,7 @@ func _ready():
 	image_mesh_mat.shader = fade_image_shader
 	$Image_mesh.set_surface_material(0, image_mesh_mat)
 	var collider_mesh_mat : SpatialMaterial= SpatialMaterial.new()
-	collider_mesh_mat.albedo_color = Color(1,1,1)
+	collider_mesh_mat.albedo_color = color
 	$Collider/Mesh.set_surface_material(0, collider_mesh_mat)
 	
 	#var circle_mesh : MeshInstance = Shapes.create_circle_mesh_z_normal(Vector3(0,0,0), Constants.LATENT_NODES_CIRCLE_MESH_RADIUS, Constants.LATENT_NODES_CIRCLE_MESH_SEGMENTS)
