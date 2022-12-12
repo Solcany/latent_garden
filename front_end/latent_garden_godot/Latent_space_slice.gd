@@ -10,7 +10,7 @@ var rng = RandomNumberGenerator.new()
 	
 func initiate_latent_nodes(nodes_data: Array) -> void:
 	rng.randomize()
-	var color: Color = Color(rng.randf(), rng.randf(), rng.randf())
+	var color: Color = Color(rng.randf_range(0.5, 1.0), rng.randf_range(0.5, 1.0), rng.randf_range(0.5, 1.0))
 
 	for node_data in nodes_data:
 		var pos: Vector3 = node_data.pos
@@ -36,7 +36,7 @@ func update_own_z_position(z_scalar: float) -> void:
 	var z_max = range_lerp(z_scalar, 0.0, 1.0, Constants.NODES_CONTAINER_SCALE_Z_MIN, Constants.NODES_CONTAINER_SCALE_Z_MAX)
 	var slice_z_pos = range_lerp(self.id, 0, all_slices_amount-1, Constants.NODES_CONTAINER_SCALE_Z_MIN, z_max)
 	self.translation.z = -slice_z_pos
-
+	
 func _on_z_scale_changed(z_scalar : float) -> void:
 	update_own_z_position(z_scalar)
 	signal_own_visibility()
