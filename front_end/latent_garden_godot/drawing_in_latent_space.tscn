@@ -1,4 +1,4 @@
-[gd_scene load_steps=15 format=2]
+[gd_scene load_steps=14 format=2]
 
 [ext_resource path="res://show_latent_space_slices.gd" type="Script" id=1]
 [ext_resource path="res://Selector_collider.gd" type="Script" id=2]
@@ -7,7 +7,6 @@
 [ext_resource path="res://Button_submit_generate_selection.gd" type="Script" id=5]
 [ext_resource path="res://App.gd" type="Script" id=6]
 [ext_resource path="res://Z_zoom_slider.gd" type="Script" id=7]
-[ext_resource path="res://Latent_space_camera.gd" type="Script" id=8]
 [ext_resource path="res://Nodes.gd" type="Script" id=9]
 [ext_resource path="res://Camera_controller.gd" type="Script" id=10]
 [ext_resource path="res://Button_submit_add_selection.gd" type="Script" id=11]
@@ -104,7 +103,6 @@ current = true
 size = 3.0
 near = 0.01
 far = 3.0
-script = ExtResource( 8 )
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource( 1 )

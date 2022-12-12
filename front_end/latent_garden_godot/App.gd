@@ -29,11 +29,11 @@ func _on_server_response_images_returned(data) -> void:
 
 func _ready():
 	# debug camera
-	get_node("Debug_camera").current = true
+	get_node("Debug_camera").current = false
 	
 	### Person input
 	connect("nodes_container_z_scale_changed", get_node("Nodes"), "_on_nodes_container_z_scale_changed")
-	connect("nodes_container_z_scale_changed", get_node("Camera_controller/Camera"), "_on_nodes_container_z_scale_changed")
+	connect("nodes_container_z_scale_changed", get_node("Camera_controller"), "_on_nodes_container_z_scale_changed")
 		
 	### Server IO
 	# query currently selected latent nodes from the Nodes container
