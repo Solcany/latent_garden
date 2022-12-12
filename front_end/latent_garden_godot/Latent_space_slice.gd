@@ -6,8 +6,12 @@ var id : int
 var all_slices_amount : int
 signal z_scale_changed
 signal slice_visibility_changed
-
+var rng = RandomNumberGenerator.new()
+	
 func initiate_latent_nodes(nodes_data: Array) -> void:
+	rng.randomize()
+	var color: Color = Color(rng.randf(), rng.randf(), rng.randf())
+
 	for node_data in nodes_data:
 		var pos: Vector3 = node_data.pos
 		var id: int = node_data.id
@@ -15,6 +19,7 @@ func initiate_latent_nodes(nodes_data: Array) -> void:
 		latent_node.add_to_group(Constants.LATENT_NODES_GROUP_NAME)
 		latent_node.translation = pos
 		latent_node.id = id
+		latent_node.color = color
 		connect("slice_visibility_changed", latent_node, "_on_slice_visibility_changed")		
 		connect("z_scale_changed", latent_node, "_on_z_scale_changed")
 		self.add_child(latent_node)
