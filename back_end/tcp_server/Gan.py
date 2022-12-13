@@ -44,6 +44,19 @@ class Gan:
     	images = self.generate_images(vectors_selection)
     	return images
 
+	# spherical linear interpolation (slerp)
+	def slerp(val, low, high):
+		omega = np.arccos(np.clip(np.dot(low/np.linalg.norm(low), high/np.linalg.norm(high)), -1, 1))
+		so = np.sin(omega)
+		if so == 0:
+			# L'Hopital's rule/LERP
+			return (1.0-val) * low + val * high
+		return np.sin((1.0-val)*omega) / so * low + np.sin(val*omega) / so * high
+
+
+    def interpolate_vector_pair(self, v1, v2):
+
+
 	# def generate_images(self, vectors):
 	# 	n = np.reshape(latent_vectors[l_vec_idx],(1,1,1,imShape[0]))
 	# 	generated_image = G(n)
