@@ -18,6 +18,7 @@ SERVER_STATUSES = [SERVER_STATUS_ONLINE, SERVER_STATUS_ONLINE_WITH_CLIENT, SERVE
 
 # Gan
 IMAGE_SHAPE = 256 # assuming it's a square
+SLERP_STEPS = 4
 GAN_WEIGHTS_PATH = "./data/gan/metfaces_G-e388.h5"
 LATENT_VECTORS_PATH = "./data/gan/backend_latent_vectors_slices.csv"
 LATENT_VECTORS_SKIP_HEADER = 1

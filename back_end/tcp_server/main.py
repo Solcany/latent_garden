@@ -57,9 +57,22 @@ def on_generate_images(request_data):
 		tcp_server.send_to_client(message)
 		print("generated images sent to the client")
 
+def on_generate_slerped_images(request_data):
+		metadata, latent_vectors_indices = request_data
+		images = gan.generate_images_from_slerped_selection(latent_vectors_indices)
+		response_metadata ={"response": "slerped_images", 
+							"data_type": "b64_images",
+							"indices": latent_vectors_indices}		
+		header = get_encoded_message_header(response_metadata)
+		body = get_encoded_generated_images(images)
+		message = header + body
+		tcp_server.send_to_client(message)
+		print("slerped generated images sent to the client")
+
 # need these in the global scope 
 gan = Gan()
-tcp_server = Tcp_server(callbacks={"on_generate_images": on_generate_images})
+tcp_server = Tcp_server(callbacks={"on_generate_images": on_generate_images,
+									"on_generate_slerped_images": on_generate_slerped_images})
 
 def main():
 	gan.init_sle_gan()
