@@ -9,15 +9,6 @@ def slerp(val, low, high):
 		return (1.0-val) * low + val * high
 	return np.sin((1.0-val)*omega) / so * low + np.sin(val*omega) / so * high
 
-def get_points():
-	latent_dim = 2
-	n_samples = 2
-	# generate points in the latent space
-	x_input = np.random.randn(latent_dim * n_samples)
-	# reshape into a batch of inputs for the network
-	z_input = x_input.reshape(n_samples, latent_dim)
-	return z_input
-
 def slerp_list(vectors, steps):
 	slerped_vectors = []
 	ratios = np.linspace(0, 1, num=steps)
@@ -31,24 +22,14 @@ def slerp_list(vectors, steps):
 			slerped_vectors.append(new_vec)
 	# add the very last point
 	slerped_vectors.append(vectors[-1])
-	print(slerped_vectors)
+	return slerped_vectors
 
 def main():
-	data = [np.array([1.0, 1.0]), 
-			np.array([2.0, 2.0]), 
-			np.array([3.0, 3.0])]
-	#ratios = np.linspace(0, 1, num=4)
+	data = [np.array([1.0, 1.0, 1.0]), 
+			np.array([2.0, 2.0, 2.0]), 
+			np.array([3.0, 3.0, 3.0])]
 
-	#points = get_points()	
-
-	slerp_list(data, 4)
-
-	# for ratio in ratios:
-	# 	print(slerp(ratio, data[0], data[1]))
-
-
-
-	#slerp_list(data, 3)
+	slerp_list(vectors=data, steps=4)
 
 if __name__ == '__main__':
     main()
