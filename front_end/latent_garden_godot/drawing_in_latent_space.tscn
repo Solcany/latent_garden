@@ -39,7 +39,7 @@ margin_bottom = 676.273
 text = "Generate"
 script = ExtResource( 5 )
 
-[node name="Button_submit_add_selection" type="Button" parent="Gui"]
+[node name="Button_submit_generate_slerped_selection" type="Button" parent="Gui"]
 margin_left = 116.854
 margin_top = 560.57
 margin_right = 212.854

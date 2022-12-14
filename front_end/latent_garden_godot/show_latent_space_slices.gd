@@ -112,6 +112,9 @@ func _on_return_images(data) -> void:
 				node.set_image_texture(texture)
 				break
 
+func _on_return_slerped_imagees(data) -> void:
+	print("slerped images len :")
+
 func _ready():
 	# connect signals
 	connect("return_selected_latent_nodes_ids", get_node("/root/App"), "_on_return_selected_latent_nodes_ids")

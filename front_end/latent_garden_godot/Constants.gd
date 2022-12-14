@@ -36,4 +36,5 @@ const MESSAGE_HEADER_END_DELIMITER : String = "&&&"
 const MESSAGE_ARR_DATA_DELIMITER : String = ","
 const DEBUG_SHOULD_CONNECT : bool = true
 const REQUEST_GENERATE_IMAGES_METADATA : Dictionary = {"request": "generate_images", "data_type": "int_array"}
+const REQUEST_GENERATE_SLERPED_IMAGES_METADATA : Dictionary = {"request": "generate_slerped_images", "data_type": "int_array", "slerp_steps": "3"}
 const REQUEST_ADD_IMAGES_METADATA : Dictionary = {"request": "add_images", "data_type": "int_array"}

@@ -2,6 +2,7 @@ extends Node
 const Client = preload("res://Tcp_client.gd")
 var _client: Client = Client.new()
 signal server_response_images_returned
+signal server_response_slerped_images_returned
 
 func compose_encoded_message(metadata: Dictionary, data : Array) -> String:
 	var header : String = Constants.MESSAGE_HEADER_START_DELIMITER
@@ -45,7 +46,7 @@ func parse_client_data(client_data : String) -> Array:
 			metadata[key] = val
 			
 		# continue parsing metadata based on the request kind of the client_data
-		if(metadata.response == "images"):
+		if(metadata.response == "images" or metadata.response == "slerped_images"):
 			# convert indices from strings to ints
 			metadata.indices = Utils.string_array_to_num_array(Utils.string_to_array(metadata.indices, Constants.MESSAGE_ARR_DATA_DELIMITER), "int")
 			
@@ -72,8 +73,8 @@ func _on_request_generate_images(ids):
 	var encoded : PoolByteArray = message.to_utf8()
 	_client.send(encoded)
 	
-func _on_request_add_images(ids):
-	var message : String = compose_encoded_message(Constants.REQUEST_ADD_IMAGES_METADATA, ids)
+func _on_request_generate_slerped_images(ids):
+	var message : String = compose_encoded_message(Constants.REQUEST_GENERATE_SLERPED_IMAGES_METADATA, ids)
 	var encoded : PoolByteArray = message.to_utf8()
 	_client.send(encoded)
 		
@@ -87,7 +88,8 @@ func _ready() -> void:
 	
 	# connect server response signals to the events bus
 	connect("server_response_images_returned", get_node("/root/App/"), "_on_server_response_images_returned")
-
+	connect("server_response_slerped_images_returned", get_node("/root/App/"), "_on_server_response_slerped_images_returned")
+	
 func _connect_after_timeout(timeout: float) -> void:
 	yield(get_tree().create_timer(timeout), "timeout") # Delay for timeout
 	_client.connect_to_host(Constants.HOST_IP, Constants.HOST_PORT)
@@ -103,6 +105,9 @@ func _handle_client_data(raw_data: PoolByteArray) -> void:
 	
 	if (metadata.response == "images"):
 		emit_signal("server_response_images_returned", [metadata, data])
+	elif (metadata.response == "slerped_images"):
+		print("got slerped")
+		emit_signal("server_response_slerped_images_returned", [metadata, data])		
 	else:
 		push_error ("the response type is unknown or the reponse value in metadata is missing")
 	
