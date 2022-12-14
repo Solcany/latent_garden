@@ -1,7 +1,7 @@
 import numpy as np
 
 # spherical linear interpolation (slerp)
-def slerp(self, val, low, high):
+def slerp(val, low, high):
 	omega = np.arccos(np.clip(np.dot(low/np.linalg.norm(low), high/np.linalg.norm(high)), -1, 1))
 	so = np.sin(omega)
 	if so == 0:
@@ -9,9 +9,7 @@ def slerp(self, val, low, high):
 		return (1.0-val) * low + val * high
 	return np.sin((1.0-val)*omega) / so * low + np.sin(val*omega) / so * high
 
-def slerp_list(self, vectors, steps):
-	print("vecs rcvd")	
-	print(vectors)
+def slerp_list(vectors, steps):
 	slerped_vectors = []
 	ratios = np.linspace(0, 1, num=steps)
 	# remove the last ratio = 1.0 to avoid duplicate vectors
@@ -24,4 +22,4 @@ def slerp_list(self, vectors, steps):
 			slerped_vectors.append(new_vec)
 	# add the very last point
 	slerped_vectors.append(vectors[-1])
-	return slerped_vectors
+	return np.array(slerped_vectors)
