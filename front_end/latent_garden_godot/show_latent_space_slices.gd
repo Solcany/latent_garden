@@ -56,7 +56,7 @@ func initiate_latent_space_slices(embeddings : Array, slice_ids: Array, ids: Arr
 	slices_ids.sort()
 	var lowest_id = slices_ids[0]
 	var highest_id = slices_ids[-1]
-	for slice_id in slices_ids:
+	for slice_id in range(1): #slices_ids:
 		var slice : Spatial = Latent_space_slice.instance()
 		slice.add_to_group(Constants.LATENT_SLICES_GROUP_NAME)		
 		var slice_z_pos = range_lerp(slice_id, lowest_id, highest_id, Constants.NODES_CONTAINER_SCALE_Z_MIN, Constants.NODES_CONTAINER_SCALE_Z_MAX)
@@ -76,7 +76,7 @@ func initiate_latent_space_slices(embeddings : Array, slice_ids: Array, ids: Arr
 		slice.initiate_latent_nodes(points_data)
 		self.add_child(slice)
 		
-func add_lerped_latent_nodes(selected_nodes_ids, lerp_steps) -> void:
+func add_lerped_latent_nodes(selected_nodes_ids, slerp_steps) -> void:
 	# WIP: Are slices a good idea?
 	# WIP: add new slices to the top most slice for now
 	var slices = get_tree().get_nodes_in_group(Constants.LATENT_SLICES_GROUP_NAME)
@@ -94,17 +94,21 @@ func add_lerped_latent_nodes(selected_nodes_ids, lerp_steps) -> void:
 			if (node.id == id):
 				selected_latent_nodes.append(node)
 	# lerp the nodes
-	var lerp_weights : Array = Utils.get_lerp_weights(lerp_steps)
+	var lerp_weights : Array = Utils.get_lerp_weights(slerp_steps)
+	# WIP: continue here, bug: lerp weights function creates more weights than expected
+	print(lerp_weights)
 	# remove the first weight = 0.0 to avoid duplicate nodes
 	lerp_weights.pop_front()
 	# remove the last weight = 1.0 to avoid duplicate nodes
 	lerp_weights.pop_back()
-	for node_i in range(selected_latent_nodes.size()-2):
+
+	for node_i in range(selected_latent_nodes.size()-1):
 		var first_node : Spatial= selected_latent_nodes[node_i]
 		var last_node : Spatial = selected_latent_nodes[node_i+1]
 		var first_pos : Vector3= first_node.translation
 		var last_pos : Vector3 = last_node.translation
 		for weight in lerp_weights:
+			print(weight)
 			# WIP: are float ids a good idea?
 			var new_id = lerp(first_node.id, last_node.id, weight)
 			var new_pos = Utils.lerp_vec3(first_pos, last_pos, weight)
