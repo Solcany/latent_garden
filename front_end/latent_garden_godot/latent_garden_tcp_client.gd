@@ -106,7 +106,6 @@ func _handle_client_data(raw_data: PoolByteArray) -> void:
 	if (metadata.response == "images"):
 		emit_signal("server_response_images_returned", [metadata, data])
 	elif (metadata.response == "slerped_images"):
-		print("got slerped")
 		emit_signal("server_response_slerped_images_returned", [metadata, data])		
 	else:
 		push_error ("the response type is unknown or the reponse value in metadata is missing")

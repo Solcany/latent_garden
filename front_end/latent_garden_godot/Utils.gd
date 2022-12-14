@@ -251,3 +251,19 @@ static func get_normalised_colors(colors: Array) -> Array:
 		normalised_colors.append(Color(normalised[0], normalised[1], normalised[2]))
 	return normalised_colors
 
+
+### LERPING ###
+
+### Lerping
+static func get_lerp_weights(steps: int) -> Array:
+	var weights : Array = []
+	for step in range(steps):
+		weights.append(float(step)/float(steps))
+	weights.append(1.0)
+	return weights
+	
+static func lerp_vec3(pos1 : Vector3, pos2 : Vector3, weight: float) -> Vector3:
+	var x : float = lerp(pos1.x, pos2.x, weight)
+	var y : float = lerp(pos1.y, pos2.y, weight)
+	var z : float = lerp(pos1.z, pos2.z, weight)
+	return Vector3(x,y,z)

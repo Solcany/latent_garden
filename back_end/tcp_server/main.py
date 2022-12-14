@@ -78,9 +78,5 @@ def main():
 	gan.init_sle_gan()
 	tcp_server.start()
 
-
-
-
-
 if __name__ == '__main__':
     main()

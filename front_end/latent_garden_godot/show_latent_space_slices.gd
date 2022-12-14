@@ -51,8 +51,7 @@ func circle_pack_embeddings_slices(embeddings: Array, slice_ids: Array, ids : Ar
 		
 	return packed_embeddings
 	
-		
-func add_latent_space_slices_to_scene(embeddings : Array, slice_ids: Array, ids: Array) -> void:
+func initiate_latent_space_slices(embeddings : Array, slice_ids: Array, ids: Array) -> void:
 	var slices_ids = Utils.get_unique_numbers_of_array(slice_ids)
 	slices_ids.sort()
 	var lowest_id = slices_ids[0]
@@ -76,6 +75,43 @@ func add_latent_space_slices_to_scene(embeddings : Array, slice_ids: Array, ids:
 				points_data.append({"pos": point_embeddings, "id": point_id})
 		slice.initiate_latent_nodes(points_data)
 		self.add_child(slice)
+		
+func add_lerped_latent_nodes(selected_nodes_ids, lerp_steps) -> void:
+	# WIP: Are slices a good idea?
+	# WIP: add new slices to the top most slice for now
+	var slices = get_tree().get_nodes_in_group(Constants.LATENT_SLICES_GROUP_NAME)
+	var top_slice : Spatial 
+	# find the top most slice
+	for slice in slices:
+		if(slice.id == 0):
+			top_slice = slice
+	
+	var all_latent_nodes : Array = get_tree().get_nodes_in_group(Constants.LATENT_NODES_GROUP_NAME)	
+	var selected_latent_nodes : Array = []
+	# get nodes that will be lerped
+	for node in all_latent_nodes:
+		for id in selected_nodes_ids:
+			if (node.id == id):
+				selected_latent_nodes.append(node)
+	# lerp the nodes
+	var lerp_weights : Array = Utils.get_lerp_weights(lerp_steps)
+	# remove the first weight = 0.0 to avoid duplicate nodes
+	lerp_weights.pop_front()
+	# remove the last weight = 1.0 to avoid duplicate nodes
+	lerp_weights.pop_back()
+	for node_i in range(selected_latent_nodes.size()-2):
+		var first_node : Spatial= selected_latent_nodes[node_i]
+		var last_node : Spatial = selected_latent_nodes[node_i+1]
+		var first_pos : Vector3= first_node.translation
+		var last_pos : Vector3 = last_node.translation
+		for weight in lerp_weights:
+			# WIP: are float ids a good idea?
+			var new_id = lerp(first_node.id, last_node.id, weight)
+			var new_pos = Utils.lerp_vec3(first_pos, last_pos, weight)
+			top_slice.add_latent_node(new_id, new_pos, Color(0, 1, 0))
+	
+		
+
 			
 func _on_latent_node_selected(body) -> void: 
 	var latent_node_ref = body.get_parent()
@@ -92,7 +128,6 @@ func _on_get_selected_latent_nodes(request_kind : String) -> void:
 func _on_z_scale_changed(z_scalar: float) -> void:
 	emit_signal("z_scale_changed", z_scalar)
 
-	
 func _on_return_images(data) -> void:
 	print("ims received in container")
 	var metadata: Dictionary = data[0]
@@ -112,9 +147,11 @@ func _on_return_images(data) -> void:
 				node.set_image_texture(texture)
 				break
 
-func _on_return_slerped_imagees(data) -> void:
-	print("slerped images len :")
-
+func _on_return_slerped_images(data) -> void:
+	var metadata: Dictionary = data[0]
+	#var images_data: PoolStringArray = data[1] 
+	add_lerped_latent_nodes(metadata.indices, Constants.LATENT_NODE_SLERP_STEPS)
+	
 func _ready():
 	# connect signals
 	connect("return_selected_latent_nodes_ids", get_node("/root/App"), "_on_return_selected_latent_nodes_ids")
@@ -135,7 +172,7 @@ func _ready():
 	var ids : Array = Utils.filter_dicts_array_to_array(data, ["id"])
 	ids = Utils.string_array_to_num_array(ids, "int")
 	var packed_embeddings : Array = circle_pack_embeddings_slices(embeddings_scaled, slice_ids, ids, Constants.LATENT_NODES_CIRCLE_MESH_RADIUS)
-	add_latent_space_slices_to_scene(packed_embeddings, slice_ids, ids)
+	initiate_latent_space_slices(packed_embeddings, slice_ids, ids)
 	
 	var bounding_box_coords : Array = Geom.get_3d_bounding_box_from_vertices(embeddings_scaled)
 	center_self(bounding_box_coords[0], bounding_box_coords[1])

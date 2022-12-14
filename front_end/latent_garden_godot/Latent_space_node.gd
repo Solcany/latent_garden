@@ -8,7 +8,7 @@ var color : Color = Color(1,1,1)
 var has_image: bool = false
 var is_selectable : bool = true
 # WIP implement has_image to avoid requesting images for lat nodes that already have image generated#var has_image: bool = false
-var id : int 
+var id : float 
 
 var fade_image_shader = preload("res://shader/fade_image.gdshader")
 var solid_shader = preload("res://shader/solid.gdshader")

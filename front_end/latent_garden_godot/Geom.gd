@@ -129,7 +129,6 @@ static func scale_normalised_2d_embeddings(embeddings : Array, bounding_box_prop
 		var scaled_y : float = embedding.y * y_scalar
 		scaled.append(Vector2(scaled_x, scaled_y))
 	return scaled	
-		
 	
 ### Mesh
 static func get_points_mesh_from_vectors_arr(vertices : Array, vertex_color: Color = Color(255,255,255)) -> Mesh:
