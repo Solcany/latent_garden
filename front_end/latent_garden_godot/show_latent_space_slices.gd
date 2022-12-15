@@ -2,6 +2,7 @@ tool
 extends Spatial
 
 var Latent_space_slice = load("res://Latent_space_slice.tscn")
+var selected_nodes_ids : Array = []
 signal return_selected_latent_nodes_ids
 signal z_scale_changed
 
@@ -113,20 +114,22 @@ func add_lerped_latent_nodes(selected_nodes_ids, slerp_steps) -> void:
 			var new_pos = Utils.lerp_vec3(first_pos, last_pos, weight)
 			top_slice.add_latent_node(new_id, new_pos, Color(0, 1, 0))
 	
-		
-
-			
 func _on_latent_node_selected(body) -> void: 
 	var latent_node_ref = body.get_parent()
+	# if the node is being deselected remove it frorm the selected ids array
+	if(latent_node_ref.is_selected):
+		var remove_index = selected_nodes_ids.find(latent_node_ref.id)
+		if(remove_index >= 0):
+			selected_nodes_ids.remove(remove_index)
+	# otherwise add it to the ids array
+	else: 
+		selected_nodes_ids.append(latent_node_ref.id)
+	# update the selected state of the node itself
 	latent_node_ref.update_on_selected()
-	
+
 func _on_get_selected_latent_nodes(request_kind : String) -> void:
-	var selected : Array = []
-	var nodes = get_tree().get_nodes_in_group(Constants.LATENT_NODES_GROUP_NAME)
-	for node in nodes:
-		if(node.is_selected):
-			selected.append(node.id)
-	emit_signal("return_selected_latent_nodes_ids", selected, request_kind)
+	# emit ids of the selected nodes
+	emit_signal("return_selected_latent_nodes_ids", selected_nodes_ids, request_kind)
 	
 func _on_z_scale_changed(z_scalar: float) -> void:
 	emit_signal("z_scale_changed", z_scalar)
