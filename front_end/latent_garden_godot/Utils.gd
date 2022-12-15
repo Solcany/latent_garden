@@ -255,12 +255,21 @@ static func get_normalised_colors(colors: Array) -> Array:
 ### LERPING ###
 
 ### Lerping
-static func get_lerp_weights(steps: int) -> Array:
-	var weights : Array = []
-	for step in range(steps):
-		weights.append(float(step)/float(steps))
-	weights.append(1.0)
-	return weights
+static func get_linear_space(start, stop, steps, endpoint : bool = true) -> Array:
+	if steps == 1:
+		return [stop]
+
+	var step : float
+	if(endpoint):
+		step = float(stop - start) / (int(steps)-1)
+	else:
+		step = float(stop - start) / int(steps)
+	
+	var ratios : Array = []	
+	for i in range(steps):
+		var ratio = start + step * i
+		ratios.append(ratio)
+	return ratios
 	
 static func lerp_vec3(pos1 : Vector3, pos2 : Vector3, weight: float) -> Vector3:
 	var x : float = lerp(pos1.x, pos2.x, weight)
