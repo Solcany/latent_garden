@@ -6,7 +6,7 @@ def lerp(ratio, p1, p2):
 	# linear interpolate vectors
 	return (1.0 - ratio) * p1 + ratio * p2
 
-def lerp_list(vectors, steps=3):
+def lerp_list(vectors, steps):
 	lerped_vectors = []
 	ratios = np.linspace(0., 1., num=steps)
 	# remove the last ratio = 1.0 to avoid duplicate vectors
@@ -19,7 +19,7 @@ def lerp_list(vectors, steps=3):
 			lerped_vectors.append(new_vec)
 	# add the very last point
 	lerped_vectors.append(vectors[-1])
-	return lerped_vectors	
+	return np.asarray(lerped_vectors)
 
 # spherical linear interpolation (slerp)
 def slerp(ratio, p1, p2):
@@ -43,7 +43,7 @@ def slerp_list(vectors, steps):
 			slerped_vectors.append(new_vec)
 	# add the very last point
 	slerped_vectors.append(vectors[-1])
-	return slerped_vectors
+	return np.array(slerped_vectors)
 
 def main():
 	# data = [np.array([1.0, 1.0, 1.0]), 
@@ -76,9 +76,18 @@ def main():
 
 
 	final_data = np.vstack((data, new_data))
-	print(final_data)
+	#print(final_data[:, 0])
 
-
+	to_find = [2.0]
+	print("before sort")
+	print(final_data[:, 0])
+	# sort array indirectly by returning indices of the sorted array
+	sorted_indexes = np.argsort(final_data[:, 0])
+	print("sort indexes")	
+	print(sorted_indexes)
+	_sorted = np.searchsorted(final_data[:, 0], to_find, sorter=sorted_indexes)
+	
+	print("found indices: ", _sorted)
 
 	#new_data = [ np.hstack((new_ids, new_vecs))
 	#print(new_vecs)

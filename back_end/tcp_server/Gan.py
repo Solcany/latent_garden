@@ -1,6 +1,6 @@
 import sle_gan
 import constants
-from slerp import slerp_list
+from slerp import lerp_list, slerp_list
 import numpy as np
 from PIL import Image
 
@@ -33,7 +33,7 @@ class Gan:
 		return images
 
 	def lerp_data(selection_indices):
-		
+
 
 	def generate_images_from_slerped_selection(self, selection_indices, slerp_steps):
 		vectors_selection = np.take(self.vectors, selection_indices, 0)
