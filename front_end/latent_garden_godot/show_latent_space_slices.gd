@@ -78,8 +78,9 @@ func initiate_latent_space_slices(embeddings : Array, slice_ids: Array, ids: Arr
 		self.add_child(slice)
 		
 func add_lerped_latent_nodes(selected_nodes_ids, slerp_steps) -> void:
+	print(selected_nodes_ids)
 	# WIP: Are slices a good idea?
-	# WIP: add new slices to the top most slice for now
+	# WIP hack: add new slices to the top most slice for now
 	var slices = get_tree().get_nodes_in_group(Constants.LATENT_SLICES_GROUP_NAME)
 	var top_slice : Spatial 
 	# find the top most slice
@@ -89,18 +90,18 @@ func add_lerped_latent_nodes(selected_nodes_ids, slerp_steps) -> void:
 	
 	var all_latent_nodes : Array = get_tree().get_nodes_in_group(Constants.LATENT_NODES_GROUP_NAME)	
 	var selected_latent_nodes : Array = []
-	# get nodes that will be lerped
-	for node in all_latent_nodes:
-		for id in selected_nodes_ids:
+	# get nodes that will be lerped, preserve their order
+	for id in selected_nodes_ids:	
+		for node in all_latent_nodes:
 			if (node.id == id):
 				selected_latent_nodes.append(node)
+				break
 	# lerp the nodes
 	var lerp_weights : Array = Utils.get_linear_space(0.0, 1.0, slerp_steps)
 	# remove the first weight = 0.0 to avoid duplicating existing node
 	lerp_weights.pop_front()
 	# remove the last weight = 1.0 to avoid duplicating existing node	
 	lerp_weights.pop_back()
-	print(lerp_weights)
 	
 	for node_i in range(selected_latent_nodes.size()-1):
 		var first_node : Spatial= selected_latent_nodes[node_i]
@@ -108,7 +109,6 @@ func add_lerped_latent_nodes(selected_nodes_ids, slerp_steps) -> void:
 		var first_pos : Vector3= first_node.translation
 		var last_pos : Vector3 = last_node.translation
 		for weight in lerp_weights:
-			print(weight)
 			# WIP: are float ids a good idea?
 			var new_id = lerp(first_node.id, last_node.id, weight)
 			var new_pos = Utils.lerp_vec3(first_pos, last_pos, weight)
