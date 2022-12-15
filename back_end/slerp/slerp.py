@@ -51,12 +51,38 @@ def main():
 	# 		np.array([3.0, 3.0, 3.0])]
 
 	#indexes = [1,2]
-	ids = np.array([np.array([1.0]), np.array([2.0])])
-	vecs = np.array([np.array([3.33, 3.33]), np.array([5.55, 5.55])])
-	data = np.hstack((ids, vecs))
+	steps = 4
 
-	#lerped_ids = lerp_list(ids)
-	print(data)
+	_ids = np.array([np.array([1.0]), np.array([2.0])])
+	_vecs = np.array([np.array([2., 10.]), np.array([4., 20.])])
+	data = np.hstack((_ids, _vecs))
+
+	ids = data[:, 0]
+	lerped_ids = lerp_list(data[:, 0], 4)
+
+	vecs = data[:, 1:]
+	slerped_vecs = slerp_list(vecs, 4)
+
+	new_vecs = slerped_vecs[1:-1]
+	new_ids = lerped_ids[1:-1]
+
+
+	new_data = list()
+	for z in zip(new_ids, new_vecs):
+		id, vecs = z
+		s = np.hstack((id, vecs))
+		new_data.append(s)
+	new_data = np.array(new_data)
+
+
+	final_data = np.vstack((data, new_data))
+	print(final_data)
+
+
+
+	#new_data = [ np.hstack((new_ids, new_vecs))
+	#print(new_vecs)
+	#print(new_data)
 	#slerp_list(vectors=data, steps=4)
 
 if __name__ == '__main__':
