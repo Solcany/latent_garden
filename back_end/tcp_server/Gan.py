@@ -9,7 +9,6 @@ class Gan:
 		csv = np.genfromtxt(constants.LATENT_VECTORS_PATH, delimiter=',', skip_header=constants.LATENT_VECTORS_SKIP_HEADER)
 		ids = csv[:,0]
 		vectors = csv[:,1:]
-		print(vectors.shape)
 		self.ids = ids # WIP: this isn't used for now, is it needed?
 		self.vectors = vectors
 		self.generator = sle_gan.Generator(constants.IMAGE_SHAPE)
@@ -32,6 +31,9 @@ class Gan:
 		vectors_selection = np.reshape(vectors_selection, constants.SLE_GAN_VECTOR_SHAPE)	
 		images = self.generate_images(vectors_selection)
 		return images
+
+	def lerp_data(selection_indices):
+		
 
 	def generate_images_from_slerped_selection(self, selection_indices, slerp_steps):
 		vectors_selection = np.take(self.vectors, selection_indices, 0)

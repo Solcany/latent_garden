@@ -59,7 +59,6 @@ def on_generate_images(request_data):
 
 def on_generate_slerped_images(request_data):
 		metadata, latent_vectors_indices = request_data
-		print(metadata)
 		images = gan.generate_images_from_slerped_selection(latent_vectors_indices, int(metadata["slerp_steps"]))
 		response_metadata ={"response": "slerped_images", 
 							"data_type": "b64_images",
