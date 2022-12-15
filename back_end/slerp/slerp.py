@@ -51,8 +51,12 @@ def main():
 	# 		np.array([3.0, 3.0, 3.0])]
 
 	#indexes = [1,2]
-	data = [np.array([1.0]), np.array([2.0])]
-	print(lerp_list(data))
+	ids = np.array([np.array([1.0]), np.array([2.0])])
+	vecs = np.array([np.array([3.33, 3.33]), np.array([5.55, 5.55])])
+	data = np.hstack((ids, vecs))
+
+	#lerped_ids = lerp_list(ids)
+	print(data)
 	#slerp_list(vectors=data, steps=4)
 
 if __name__ == '__main__':
