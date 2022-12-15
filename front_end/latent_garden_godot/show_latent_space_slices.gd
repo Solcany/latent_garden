@@ -94,11 +94,11 @@ func add_lerped_latent_nodes(selected_nodes_ids, slerp_steps) -> void:
 			if (node.id == id):
 				selected_latent_nodes.append(node)
 	# lerp the nodes
-	var lerp_weights : Array = Utils.get_linear_space(0.0, 1.0, slerp_steps, false)
-	# WIP: continue here, bug: lerp weights function creates more weights than expected
-
-	# remove the first weight = 0.0 to avoid duplicate nodes
+	var lerp_weights : Array = Utils.get_linear_space(0.0, 1.0, slerp_steps)
+	# remove the first weight = 0.0 to avoid duplicating existing node
 	lerp_weights.pop_front()
+	# remove the last weight = 1.0 to avoid duplicating existing node	
+	lerp_weights.pop_back()
 	print(lerp_weights)
 	
 	for node_i in range(selected_latent_nodes.size()-1):
