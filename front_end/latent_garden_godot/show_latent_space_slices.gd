@@ -106,7 +106,7 @@ func add_lerped_latent_nodes(selected_nodes_ids, slerp_steps) -> void:
 	for node_i in range(selected_latent_nodes.size()-1):
 		var first_node : Spatial= selected_latent_nodes[node_i]
 		var last_node : Spatial = selected_latent_nodes[node_i+1]
-		var first_pos : Vector3= first_node.translation
+		var first_pos : Vector3 = first_node.translation
 		var last_pos : Vector3 = last_node.translation
 		for weight in lerp_weights:
 			# WIP: are float ids a good idea?

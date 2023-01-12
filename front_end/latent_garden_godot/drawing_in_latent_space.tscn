@@ -79,11 +79,11 @@ transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -6 )
 script = ExtResource( 2 )
 
 [node name="Collider" type="CollisionShape" parent="Nodes/Nodes_Selector/Selector_collider"]
-transform = Transform( 0.02, 0, 0, 0, 0.02, 0, 0, 0, 6, 0, 0, 0 )
+transform = Transform( 0.06, 0, 0, 0, 0.06, 0, 0, 0, 6, 0, 0, 0 )
 shape = SubResource( 2 )
 
 [node name="Debug_collider_mesh" type="MeshInstance" parent="Nodes/Nodes_Selector/Selector_collider"]
-transform = Transform( 0.02, 0, 0, 0, 0.02, 0, 0, 0, 6, 0, 0, 0 )
+transform = Transform( 0.06, 0, 0, 0, 0.06, 0, 0, 0, 6, 0, 0, 0 )
 mesh = SubResource( 3 )
 
 [node name="Nodes_container" type="Spatial" parent="Nodes"]

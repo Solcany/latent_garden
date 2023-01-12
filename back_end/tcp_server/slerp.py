@@ -43,3 +43,5 @@ def slerp_list(vectors, steps):
 	# add the very last point
 	slerped_vectors.append(vectors[-1])
 	return np.array(slerped_vectors)
+
+

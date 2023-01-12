@@ -78,16 +78,37 @@ def main():
 	final_data = np.vstack((data, new_data))
 	#print(final_data[:, 0])
 
-	to_find = [2.0]
+	to_find = np.array([2.0, 1.33333333])
 	print("before sort")
 	print(final_data[:, 0])
+
 	# sort array indirectly by returning indices of the sorted array
-	sorted_indexes = np.argsort(final_data[:, 0])
-	print("sort indexes")	
-	print(sorted_indexes)
-	_sorted = np.searchsorted(final_data[:, 0], to_find, sorter=sorted_indexes)
-	
-	print("found indices: ", _sorted)
+	#sorted_indexes = np.argsort(final_data[:, 0])
+	#print("sort indexes")	
+	#print(sorted_indexes)
+	#_sorted = np.searchsorted(final_data[:, 0], to_find, sorter=sorted_indexes)
+	#print("found indices: ", _sorted)
+
+	# Sample array
+	#arr = np.array([1, 2, 3, 4, 5, 1, 2, 3, 4, 5])
+
+	# List of values to search for
+	#values = [2, 4]
+
+	# Get a boolean array indicating which values are present in the array
+	mask = np.isin(final_data[:, 0], to_find)
+	indices = np.where(mask)
+	print(indices)
+
+	# Get the indices of the values that are present in the array
+	#indices = np.where(mask)
+
+	# Print the indices
+	#print(indices)
+
+	# WIP: this finds the sorted elements of the vectors array
+	# do i need to sort the vecs array everytime i want to search it?
+
 
 	#new_data = [ np.hstack((new_ids, new_vecs))
 	#print(new_vecs)

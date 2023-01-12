@@ -16,4 +16,5 @@ def convert_value_to_string(value):
 				string += str(v)
 		return string
 	else:
-		 raise TypeError("Unsupported type") 
+		 raise TypeError("Unsupported type")
+
