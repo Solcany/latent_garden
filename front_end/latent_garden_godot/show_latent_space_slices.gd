@@ -100,7 +100,7 @@ func add_lerped_latent_nodes(existing_nodes_ids, lerped_nodes_ids, slerp_steps) 
 	lerp_weights.pop_front()
 	# remove the last weight = 1.0 to avoid duplicating existing node	
 	lerp_weights.pop_back()
-	
+	print(lerped_nodes_ids)
 	# create new nodes by lerping positions of existing nodes
 	for node_i in range(existing_nodes_ids.size()-1):
 		# process existing nodes in pairs
@@ -115,9 +115,10 @@ func add_lerped_latent_nodes(existing_nodes_ids, lerped_nodes_ids, slerp_steps) 
 			else:
 				lerp_id_idx = node_i + lerp_i + 1
 			var id : int = lerped_nodes_ids[lerp_id_idx]
+
 			var weight : float = lerp_weights[lerp_i]			
 			var new_pos : Vector3 = Utils.lerp_vec3(first_pos, second_pos, weight)
-			top_slice.add_latent_node(new_pos, id, Color(0, 1, 0))
+			top_slice.add_latent_node(id, new_pos, Color(0, 1, 0))
 	
 func _on_latent_node_selected(body) -> void: 
 	var latent_node_ref = body.get_parent()
