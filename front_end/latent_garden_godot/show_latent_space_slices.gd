@@ -87,14 +87,14 @@ func add_lerped_latent_nodes(existing_nodes_ids, lerped_nodes_ids, slerp_steps) 
 			top_slice = slice
 	
 	var all_latent_nodes : Array = get_tree().get_nodes_in_group(Constants.LATENT_NODES_GROUP_NAME)	
+	# find all nodes already in the scene
 	var existing_latent_nodes : Array = []
-	# get nodes that will be lerped, preserve their order
 	for id in existing_nodes_ids:	
 		for node in all_latent_nodes:
 			if (node.id == id):
 				existing_latent_nodes.append(node)
 				break
-	# lerp the nodes
+	# create new nodes in betweeen the existing ones
 	var lerp_weights : Array = Utils.get_linear_space(0.0, 1.0, slerp_steps)
 	# remove the first weight = 0.0 to avoid duplicating existing node
 	lerp_weights.pop_front()
@@ -103,14 +103,20 @@ func add_lerped_latent_nodes(existing_nodes_ids, lerped_nodes_ids, slerp_steps) 
 	
 	for node_i in range(existing_nodes_ids.size()-1):
 		# process existing nodes in pairs
-		var first_node : Spatial= existing_latent_nodes[node_i]
-		var last_node : Spatial = existing_latent_nodes[node_i+1]
-		var first_pos : Vector3 = first_node.translation
-		var last_pos : Vector3 = last_node.translation
-		for weight in lerp_weights:
-			var new_id = lerp(first_node.id, last_node.id, weight)
-			var new_pos = Utils.lerp_vec3(first_pos, last_pos, weight)
-			top_slice.add_latent_node(new_id, new_pos, Color(0, 1, 0))
+		var first_pos : Vector3 = existing_latent_nodes[node_i].translation
+		var second_pos : Vector3 = existing_latent_nodes[node_i+1].translation
+		for lerp_i in range(lerp_weights.size()):
+			# the ids of lerped points are generated on the backend and delivered with metadata of the images
+			# they are separate from the ids of existing nodes to avoid duplicating existing nodes
+			var lerp_id_idx : int
+			if(node_i == 0):
+				lerp_id_idx = lerp_i
+			else:
+				lerp_id_idx = node_i + lerp_i + 1
+			var id : int = lerped_nodes_ids[lerp_id_idx]
+			var weight : float = lerp_weights[lerp_i]			
+			var new_pos : Vector3 = Utils.lerp_vec3(first_pos, second_pos, weight)
+			top_slice.add_latent_node(new_pos, id, Color(0, 1, 0))
 	
 func _on_latent_node_selected(body) -> void: 
 	var latent_node_ref = body.get_parent()
