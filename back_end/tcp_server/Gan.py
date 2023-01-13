@@ -15,11 +15,6 @@ class Gan:
 		self.generator.build((1, 1, 1, constants.IMAGE_SHAPE))
 		self.generator.load_weights(constants.GAN_WEIGHTS_PATH)
 
-	def get_new_ids(self, n_ids):
-		last_id = self.ids[-1]
-		new_ids = np.arange(last_id + 1, last_id + n_ids + 1)
-		return new_ids
-
 	def generate_images(self, vectors):
 		images = self.generator(vectors)
 		images = images.numpy()
@@ -37,24 +32,37 @@ class Gan:
 		images = self.generate_images(vectors_selection)
 		return images
 
-	def get_slerped_ids(self, selection_indices, slerp_steps):
+	def create_new_ids(self, n_ids):
+		# new ids are created at the end of the list of the existing ones
+		last_id = self.ids[-1]
+		new_ids = np.arange(last_id + 1, last_id + n_ids + 1)
+		return new_ids
 
-		# continue here :)
-		
-		new_ids = np.array(selection_indices)
+	def update_all_ids(self, new_ids):
+		self.ids = np.append(self.ids, new_ids)
+
+	def get_lerped_ids(self, existing_ids, slerp_steps):
+		# create ids for dynamically generated lerped latent points
+		# for each existing latent point ID create slerp_steps amount of new ids
+
+		# where should be the new set of ids inserted in the list of the existing ids
 		insert_index = 1
-		for index in selection_indices[:len(selection_indices)-1]:
-			ids_segment = self.get_new_ids(slerp_steps)
-			self.ids = np.append(self.ids, ids_segment)
-			new_ids = np.insert(new_ids, insert_index, ids_segment)
+		# for each existing id (except the last one) create a list of new ids
+		ids = np.array(existing_ids, copy=True)
+		for index in existing_ids[:len(existing_ids)-1]:
+			new_ids = self.create_new_ids(slerp_steps)
+			# intersperse the new ids with the existing ones
+			ids = np.insert(ids, insert_index, new_ids)
+			# move the insertion index forward
 			insert_index = insert_index + slerp_steps + 1
-		print(new_ids)
+			self.update_all_ids(new_ids)
+
+		return ids
 
 	def generate_images_from_slerped_selection(self, selection_indices, slerp_steps):
 		vectors_selection = np.take(self.vectors, selection_indices, 0)
 		slerped_vectors = slerp_list(vectors_selection, slerp_steps)					
 		slerped_vectors = np.reshape(slerped_vectors, constants.SLE_GAN_VECTOR_SHAPE)			
-		print("slerrpppp!")
-		self.get_slerped_ids(selection_indices, 3)
+		ids = self.get_lerped_ids(selection_indices, slerp_steps)
 		images = self.generate_images(slerped_vectors)
-		return images
+		return (images, ids)
