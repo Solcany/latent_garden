@@ -50,7 +50,7 @@ func parse_client_data(client_data : String) -> Array:
 			# convert indices from strings to ints
 			metadata.indices = Utils.string_array_to_num_array(Utils.string_to_array(metadata.indices, Constants.MESSAGE_ARR_DATA_DELIMITER), "int")
 			if(metadata.response == "slerped_images"):
-				metadata.slerped_indices = Utils.string_array_to_num_array(Utils.string_to_array(metadata.slerped_indices, Constants.MESSAGE_ARR_DATA_DELIMITER), "int")
+				metadata.lerped_indices = Utils.string_array_to_num_array(Utils.string_to_array(metadata.lerped_indices, Constants.MESSAGE_ARR_DATA_DELIMITER), "int")
 			
 			var images_string_data : String =  client_data.get_slice(Constants.MESSAGE_HEADER_END_DELIMITER, 1)
 			var image_data : PoolStringArray = []

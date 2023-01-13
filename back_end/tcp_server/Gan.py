@@ -56,8 +56,7 @@ class Gan:
 			# move the insertion index forward
 			insert_index = insert_index + slerp_steps + 1
 			self.update_all_ids(new_ids)
-
-		return ids
+		return ids.tolist()
 
 	def generate_images_from_slerped_selection(self, selection_indices, slerp_steps):
 		vectors_selection = np.take(self.vectors, selection_indices, 0)
@@ -65,4 +64,5 @@ class Gan:
 		slerped_vectors = np.reshape(slerped_vectors, constants.SLE_GAN_VECTOR_SHAPE)			
 		ids = self.get_lerped_ids(selection_indices, slerp_steps)
 		images = self.generate_images(slerped_vectors)
+		print(ids)
 		return (images, ids)
