@@ -101,12 +101,13 @@ func add_lerped_latent_nodes(existing_nodes_ids, lerped_nodes_ids, slerp_steps) 
 	# remove the last weight = 1.0 to avoid duplicating existing node	
 	lerp_weights.pop_back()
 	
+	# create new nodes by lerping positions of existing nodes
 	for node_i in range(existing_nodes_ids.size()-1):
 		# process existing nodes in pairs
 		var first_pos : Vector3 = existing_latent_nodes[node_i].translation
 		var second_pos : Vector3 = existing_latent_nodes[node_i+1].translation
 		for lerp_i in range(lerp_weights.size()):
-			# the ids of lerped points are generated on the backend and delivered with metadata of the images
+			# the ids of lerped nodes are generated on the backend and delivered with metadata of the generated images
 			# they are separate from the ids of existing nodes to avoid duplicating existing nodes
 			var lerp_id_idx : int
 			if(node_i == 0):
