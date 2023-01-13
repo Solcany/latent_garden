@@ -67,11 +67,9 @@ class Gan:
 
 	def generate_images_from_slerped_selection(self, selection_indices, slerp_steps):
 		vectors_selection = np.take(self.vectors, selection_indices, 0)
+		# returns only slerped vectors, drops vecs at 0.0 and 1.0 weights		
 		slerped_vectors = slerp_list(vectors_selection, slerp_steps)					
 
-		# continue here
-		# as it is this will create duplicates of existing vectors
-		# as the slerped_vectors contain both the lerped and the existing points
 		self.update_all_vectors(slerped_vectors)		
 		slerped_vectors = np.reshape(slerped_vectors, constants.SLE_GAN_VECTOR_SHAPE)
 		ids = self.get_lerped_ids(selection_indices, slerp_steps)
