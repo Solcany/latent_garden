@@ -41,6 +41,9 @@ class Gan:
 	def update_all_ids(self, new_ids):
 		self.ids = np.append(self.ids, new_ids)
 
+	def update_all_vectors(self, new_vectors):
+		self.vectors = np.vstack((self.vectors, new_vectors))
+
 	def get_lerped_ids(self, existing_ids, slerp_steps):
 		# create ids for dynamically generated lerped latent points
 		# for each existing latent point ID create slerp_steps-2 amount of new ids
@@ -65,7 +68,12 @@ class Gan:
 	def generate_images_from_slerped_selection(self, selection_indices, slerp_steps):
 		vectors_selection = np.take(self.vectors, selection_indices, 0)
 		slerped_vectors = slerp_list(vectors_selection, slerp_steps)					
-		slerped_vectors = np.reshape(slerped_vectors, constants.SLE_GAN_VECTOR_SHAPE)			
+
+		# continue here
+		# as it is this will create duplicates of existing vectors
+		# as the slerped_vectors contain both the lerped and the existing points
+		self.update_all_vectors(slerped_vectors)		
+		slerped_vectors = np.reshape(slerped_vectors, constants.SLE_GAN_VECTOR_SHAPE)
 		ids = self.get_lerped_ids(selection_indices, slerp_steps)
 		images = self.generate_images(slerped_vectors)
 		return (images, ids)
