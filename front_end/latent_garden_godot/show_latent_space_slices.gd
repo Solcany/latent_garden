@@ -77,9 +77,7 @@ func initiate_latent_space_slices(embeddings : Array, slice_ids: Array, ids: Arr
 		slice.initiate_latent_nodes(points_data)
 		self.add_child(slice)
 		
-func add_lerped_latent_nodes(selected_nodes_ids, slerp_steps) -> void:
-	print(selected_nodes_ids)
-	# WIP: Are slices a good idea?
+func add_lerped_latent_nodes(existing_nodes_ids, lerped_nodes_ids, slerp_steps) -> void:
 	# WIP hack: add new slices to the top most slice for now
 	var slices = get_tree().get_nodes_in_group(Constants.LATENT_SLICES_GROUP_NAME)
 	var top_slice : Spatial 
@@ -89,12 +87,12 @@ func add_lerped_latent_nodes(selected_nodes_ids, slerp_steps) -> void:
 			top_slice = slice
 	
 	var all_latent_nodes : Array = get_tree().get_nodes_in_group(Constants.LATENT_NODES_GROUP_NAME)	
-	var selected_latent_nodes : Array = []
+	var existing_latent_nodes : Array = []
 	# get nodes that will be lerped, preserve their order
-	for id in selected_nodes_ids:	
+	for id in existing_nodes_ids:	
 		for node in all_latent_nodes:
 			if (node.id == id):
-				selected_latent_nodes.append(node)
+				existing_latent_nodes.append(node)
 				break
 	# lerp the nodes
 	var lerp_weights : Array = Utils.get_linear_space(0.0, 1.0, slerp_steps)
@@ -103,13 +101,13 @@ func add_lerped_latent_nodes(selected_nodes_ids, slerp_steps) -> void:
 	# remove the last weight = 1.0 to avoid duplicating existing node	
 	lerp_weights.pop_back()
 	
-	for node_i in range(selected_latent_nodes.size()-1):
-		var first_node : Spatial= selected_latent_nodes[node_i]
-		var last_node : Spatial = selected_latent_nodes[node_i+1]
+	for node_i in range(existing_nodes_ids.size()-1):
+		# process existing nodes in pairs
+		var first_node : Spatial= existing_latent_nodes[node_i]
+		var last_node : Spatial = existing_latent_nodes[node_i+1]
 		var first_pos : Vector3 = first_node.translation
 		var last_pos : Vector3 = last_node.translation
 		for weight in lerp_weights:
-			# WIP: are float ids a good idea?
 			var new_id = lerp(first_node.id, last_node.id, weight)
 			var new_pos = Utils.lerp_vec3(first_pos, last_pos, weight)
 			top_slice.add_latent_node(new_id, new_pos, Color(0, 1, 0))
@@ -152,11 +150,11 @@ func _on_return_images(data) -> void:
 			if(node.id == latent_space_index):
 				node.set_image_texture(texture)
 				break
-
+ 
 func _on_return_slerped_images(data) -> void:
 	var metadata: Dictionary = data[0]
-	#var images_data: PoolStringArray = data[1] 
-	add_lerped_latent_nodes(metadata.indices, Constants.LATENT_NODE_SLERP_STEPS)
+	var images_data: PoolStringArray = data[1] 
+	add_lerped_latent_nodes(metadata.indices, metadata.lerped_indices, Constants.LATENT_NODE_SLERP_STEPS)
 	
 func _ready():
 	# connect signals

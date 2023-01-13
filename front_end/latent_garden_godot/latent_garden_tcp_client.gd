@@ -49,12 +49,14 @@ func parse_client_data(client_data : String) -> Array:
 		if(metadata.response == "images" or metadata.response == "slerped_images"):
 			# convert indices from strings to ints
 			metadata.indices = Utils.string_array_to_num_array(Utils.string_to_array(metadata.indices, Constants.MESSAGE_ARR_DATA_DELIMITER), "int")
+			if(metadata.response == "slerped_images"):
+				metadata.slerped_indices = Utils.string_array_to_num_array(Utils.string_to_array(metadata.slerped_indices, Constants.MESSAGE_ARR_DATA_DELIMITER), "int")
 			
 			var images_string_data : String =  client_data.get_slice(Constants.MESSAGE_HEADER_END_DELIMITER, 1)
 			var image_data : PoolStringArray = []
 			# is there a single image or multiple?
 			# occurence of MESSAGE_DATA_DELIMITER suggests there's multiple images
-			if( images_string_data.find(Constants.MESSAGE_DATA_DELIMITER) > 0):			
+			if( images_string_data.find(Constants.MESSAGE_DATA_DELIMITER) > 0):
 				image_data = images_string_data.split(Constants.MESSAGE_DATA_DELIMITER)
 				return [metadata, image_data]
 			# otherwise it's a single image
