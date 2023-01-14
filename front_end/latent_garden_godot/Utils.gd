@@ -251,6 +251,12 @@ static func get_normalised_colors(colors: Array) -> Array:
 		normalised_colors.append(Color(normalised[0], normalised[1], normalised[2]))
 	return normalised_colors
 
+static func decode_b64_image_to_texture(b64_image : String) -> ImageTexture:
+	# decode image data to texture	
+	var image : Image = Encode_utils.decode_b64_image_string(b64_image)
+	var texture : ImageTexture = ImageTexture.new()
+	texture.create_from_image(image, 0)
+	return texture
 
 ### LERPING ###
 

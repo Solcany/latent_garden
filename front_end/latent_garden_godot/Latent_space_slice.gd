@@ -8,12 +8,14 @@ signal z_scale_changed
 signal slice_visibility_changed
 var rng = RandomNumberGenerator.new()
 	
-func add_latent_node(id: int, pos: Vector3, color : Color = Color(0.0, 1.0, 0.0)) -> void:
+func add_latent_node(id: int, pos: Vector3, color : Color = Color(0.0, 1.0, 0.0), texture : Texture = null) -> void:
 	var latent_node : Spatial = Latent_space_node.instance()
 	latent_node.add_to_group(Constants.LATENT_NODES_GROUP_NAME)	
 	latent_node.translation = pos
 	latent_node.id = id
 	latent_node.color = color
+	if(texture):
+		latent_node.set_image_texture(texture)
 	connect("slice_visibility_changed", latent_node, "_on_slice_visibility_changed")		
 	connect("z_scale_changed", latent_node, "_on_z_scale_changed")
 	self.add_child(latent_node)

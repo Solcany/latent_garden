@@ -77,7 +77,18 @@ func initiate_latent_space_slices(embeddings : Array, slice_ids: Array, ids: Arr
 		slice.initiate_latent_nodes(points_data)
 		self.add_child(slice)
 		
-func add_lerped_latent_nodes(existing_nodes_ids, lerped_nodes_ids, slerp_steps) -> void:
+func set_images_to_existing_nodes(images_data : Array, nodes_indices: Array):
+	var all_existing_nodes : Array = get_tree().get_nodes_in_group(Constants.LATENT_NODES_GROUP_NAME)
+	# pass decoded images to the relevant instances of Latent_space_node node
+	for index in range(images_data.size()):
+		# search through all existing nodes, find the relevant ones
+		for node in all_existing_nodes:
+			if(node.id == nodes_indices[index]):
+				var texture : Texture = Utils.decode_b64_image_to_texture(images_data[index])
+				node.set_image_texture(texture)
+				break
+				
+func add_lerped_latent_nodes(images_data: Array, existing_nodes_ids : Array, lerped_nodes_ids : Array, slerp_steps : int) -> void:
 	# WIP hack: add new slices to the top most slice for now
 	var slices = get_tree().get_nodes_in_group(Constants.LATENT_SLICES_GROUP_NAME)
 	var top_slice : Spatial 
@@ -85,9 +96,8 @@ func add_lerped_latent_nodes(existing_nodes_ids, lerped_nodes_ids, slerp_steps) 
 	for slice in slices:
 		if(slice.id == 0):
 			top_slice = slice
-	
+	# find the relevant nodes	 in the scene
 	var all_latent_nodes : Array = get_tree().get_nodes_in_group(Constants.LATENT_NODES_GROUP_NAME)	
-	# find nodes existing in the scene
 	var existing_latent_nodes : Array = []
 	for id in existing_nodes_ids:	
 		for node in all_latent_nodes:
@@ -111,8 +121,9 @@ func add_lerped_latent_nodes(existing_nodes_ids, lerped_nodes_ids, slerp_steps) 
 			# they are separate from the ids of existing nodes to avoid duplicating existing nodes
 			var id : int = lerped_nodes_ids[node_i + lerp_i]
 			var weight : float = lerp_weights[lerp_i]
-			var new_pos : Vector3 = Utils.lerp_vec3(first_pos, second_pos, weight)
-			top_slice.add_latent_node(id, new_pos, Color(0, 1, 0))
+			var pos : Vector3 = Utils.lerp_vec3(first_pos, second_pos, weight)
+			var texture : Texture = Utils.decode_b64_image_to_texture(images_data[node_i + lerp_i])
+			top_slice.add_latent_node(id, pos, Color(0, 1, 0), texture)
 	
 func _on_latent_node_selected(body) -> void: 
 	var latent_node_ref = body.get_parent()
@@ -138,25 +149,12 @@ func _on_return_images(data) -> void:
 	print("ims received in container")
 	var metadata: Dictionary = data[0]
 	var images_data: PoolStringArray = data[1] 
-	var latent_nodes : Array = get_tree().get_nodes_in_group(Constants.LATENT_NODES_GROUP_NAME)
-	# pass decoded images to the relevant instances of Latent_space_node node
-	for index in range(images_data.size()):
-		# decode image data to texture
-		var image : Image = Encode_utils.decode_b64_image_string(images_data[index])
-		var texture : ImageTexture = ImageTexture.new()
-		texture.create_from_image(image, 0)
-		# find where does the image belong to in the latent space
-		var latent_space_index : int = metadata.indices[index]
-		# find the relevant latent node 
-		for node in latent_nodes:
-			if(node.id == latent_space_index):
-				node.set_image_texture(texture)
-				break
+	set_images_to_existing_nodes(images_data, metadata.indices)
  
 func _on_return_slerped_images(data) -> void:
 	var metadata: Dictionary = data[0]
 	var images_data: PoolStringArray = data[1] 
-	add_lerped_latent_nodes(metadata.indices, metadata.lerped_indices, Constants.LATENT_NODE_SLERP_STEPS)
+	add_lerped_latent_nodes(images_data, metadata.indices, metadata.lerped_indices, Constants.LATENT_NODE_SLERP_STEPS)
 	
 func _ready():
 	# connect signals

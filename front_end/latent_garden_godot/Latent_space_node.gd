@@ -16,7 +16,6 @@ var solid_shader = preload("res://shader/solid.gdshader")
 func set_image_texture(texture: ImageTexture) -> void:
 	var mat = $Image_mesh.get_surface_material(0)
 	mat.set_shader_param("image", texture)
-	#$Image_mesh.set_surface_material(0, mat)
 	$Image_mesh.visible = true
 	$Collider/Mesh.visible = false
 	is_selected = false
