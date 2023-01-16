@@ -84,6 +84,9 @@ func set_images_to_existing_nodes(images_data : Array, nodes_indices: Array):
 		# search through all existing nodes, find the relevant ones
 		for node in all_existing_nodes:
 			if(node.id == nodes_indices[index]):
+				# unselect the nodes
+				update_selected_nodes_list(node)
+				# apply generated textures
 				var texture : Texture = Utils.decode_b64_image_to_texture(images_data[index])
 				node.set_image_texture(texture)
 				break
@@ -104,13 +107,16 @@ func add_lerped_latent_nodes(images_data: Array, existing_nodes_ids : Array, ler
 			if (node.id == id):
 				existing_latent_nodes.append(node)
 				break
+	# unselect the existing nodes
+	for node in existing_latent_nodes:
+		update_selected_nodes_list(node)
+
 	# create new nodes lerped from the existing ones
 	var lerp_weights : Array = Utils.get_linear_space(0.0, 1.0, slerp_steps)
 	# remove the first weight = 0.0 to avoid duplicating existing node
 	lerp_weights.pop_front()
 	# remove the last weight = 1.0 to avoid duplicating existing node	
 	lerp_weights.pop_back()
-	print(lerped_nodes_ids)
 	# create new nodes by lerping positions of existing nodes
 	for node_i in range(existing_nodes_ids.size()-1):
 		# process existing nodes in pairs
@@ -124,19 +130,24 @@ func add_lerped_latent_nodes(images_data: Array, existing_nodes_ids : Array, ler
 			var pos : Vector3 = Utils.lerp_vec3(first_pos, second_pos, weight)
 			var texture : Texture = Utils.decode_b64_image_to_texture(images_data[node_i + lerp_i])
 			top_slice.add_latent_node(id, pos, Color(0, 1, 0), texture)
-	
-func _on_latent_node_selected(body) -> void: 
-	var latent_node_ref = body.get_parent()
-	# if the node is being deselected remove it frorm the selected ids array
-	if(latent_node_ref.is_selected):
-		var remove_index = selected_nodes_ids.find(latent_node_ref.id)
+
+func update_selected_nodes_list(node : Spatial) -> void:
+	# if the node is being deselected remove it frorm the selected ids array	
+	if(node.is_selected):
+		var remove_index = selected_nodes_ids.find(node.id)
 		if(remove_index >= 0):
 			selected_nodes_ids.remove(remove_index)
 	# otherwise add it to the ids array
 	else: 
-		selected_nodes_ids.append(latent_node_ref.id)
+		selected_nodes_ids.append(node.id)
 	# update the selected state of the node itself
-	latent_node_ref.update_on_selected()
+	node.update_on_selected()	
+
+func _on_latent_node_selected(body) -> void: 
+	var node = body.get_parent()
+	update_selected_nodes_list(node)
+
+
 
 func _on_get_selected_latent_nodes(request_kind : String) -> void:
 	# emit ids of the selected nodes
@@ -146,7 +157,6 @@ func _on_z_scale_changed(z_scalar: float) -> void:
 	emit_signal("z_scale_changed", z_scalar)
 
 func _on_return_images(data) -> void:
-	print("ims received in container")
 	var metadata: Dictionary = data[0]
 	var images_data: PoolStringArray = data[1] 
 	set_images_to_existing_nodes(images_data, metadata.indices)
