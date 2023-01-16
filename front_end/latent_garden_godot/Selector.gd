@@ -1,9 +1,11 @@
 tool
 extends Node
 
-signal latent_node_selected
+var is_colliding_with_node : bool = false
+var colliding_body = null
 var selector_gui_size: Vector2
 onready var camera_ref = get_node("/root/App/Camera_controller/Camera")
+signal latent_node_selected
 
 func unproject_inworld_selector_to_gui_representation(selector_world_scale: Vector3) -> Vector2: 
 	# relative top left vertex
@@ -17,7 +19,6 @@ func unproject_inworld_selector_to_gui_representation(selector_world_scale: Vect
 	return Vector2(selector_gui_width, selector_gui_height)
 
 func init_selector_collider():
-	
 	var collider_scale : Vector3 = Vector3(Constants.SELECTOR_COLLIDER_XY_SCALE,
 											Constants.SELECTOR_COLLIDER_XY_SCALE,
 											Constants.SELECTOR_COLLIDER_Z_SCALE)
@@ -30,7 +31,7 @@ func init_selector_collider():
 	var latent_nodes_container_ref = get_node("/root/App/Nodes/Nodes_container")
 	connect("latent_node_selected", latent_nodes_container_ref ,"_on_latent_node_selected")
 
-func _on_mouse_event(event): 
+func handle_mouse_move(event): 
 	var mouse_x : float = event.position.x
 	var mouse_y : float = event.position.y
 	var left : float = mouse_x - selector_gui_size.x/2
@@ -46,16 +47,29 @@ func _on_mouse_event(event):
 	var collider_pos : Vector3 = camera_ref.project_position(Vector2(mouse_x,mouse_y), 1)
 	collider_pos.z = -Constants.SELECTOR_COLLIDER_Z_SCALE
 	$Selector_collider.translation = collider_pos
+	
+func handle_mouse_click(event) -> void:
+	if(is_colliding_with_node && colliding_body):
+		emit_signal("latent_node_selected", colliding_body)	
 
 func _on_z_scale_changed(scalar: float):
 	pass
 
-func _on_body_entered_selector(item_body):
-	emit_signal("latent_node_selected", item_body)
+func _on_body_entered_selector(body):
+	is_colliding_with_node = true
+	colliding_body = body
+	
+func _on_body_exited_selector(body):
+	is_colliding_with_node = false
+	colliding_body = null
 	
 func _ready():
 	init_selector_collider()
 	
 func _input(event):
 	if event is InputEventMouseMotion:
-		_on_mouse_event(event)
+		handle_mouse_move(event)
+	elif (event is InputEventMouseButton && !event.pressed):
+		handle_mouse_click(event)
+		
+		
