@@ -14,12 +14,11 @@ func add_latent_node(id: int, pos: Vector3, color : Color = Color(0.0, 1.0, 0.0)
 	latent_node.translation = pos
 	latent_node.id = id
 	latent_node.color = color
-	if(texture):
-		latent_node.set_image_texture(texture)
 	connect("slice_visibility_changed", latent_node, "_on_slice_visibility_changed")		
 	connect("z_scale_changed", latent_node, "_on_z_scale_changed")
 	self.add_child(latent_node)
-	
+	if(texture):
+		latent_node.set_image_texture(texture)
 	# WIP: should z_scale_changed be emitted when individual node is added?
 	# check last lines of initiate_latent_nodes func
 
