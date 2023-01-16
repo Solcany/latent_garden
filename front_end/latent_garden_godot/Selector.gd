@@ -24,10 +24,8 @@ func init_selector_collider():
 	$Selector_collider/Collider.scale = collider_scale
 	$Selector_collider/Debug_collider_mesh.scale = collider_scale
 	$Selector_collider.translation.z = -Constants.SELECTOR_COLLIDER_Z_SCALE
-
 	# unproject the world selector scale for the 2d gui overlay representation
 	selector_gui_size = unproject_inworld_selector_to_gui_representation(collider_scale)
-	
 	# pass signals when a node is selected to the container containing the nodes
 	var latent_nodes_container_ref = get_node("/root/App/Nodes/Nodes_container")
 	connect("latent_node_selected", latent_nodes_container_ref ,"_on_latent_node_selected")

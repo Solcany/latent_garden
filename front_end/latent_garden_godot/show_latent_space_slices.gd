@@ -2,6 +2,7 @@ tool
 extends Spatial
 
 var Latent_space_slice = load("res://Latent_space_slice.tscn")
+var selected_nodes_ids : Array = []
 signal return_selected_latent_nodes_ids
 signal z_scale_changed
 
@@ -51,13 +52,12 @@ func circle_pack_embeddings_slices(embeddings: Array, slice_ids: Array, ids : Ar
 		
 	return packed_embeddings
 	
-		
-func add_latent_space_slices_to_scene(embeddings : Array, slice_ids: Array, ids: Array) -> void:
+func initiate_latent_space_slices(embeddings : Array, slice_ids: Array, ids: Array) -> void:
 	var slices_ids = Utils.get_unique_numbers_of_array(slice_ids)
 	slices_ids.sort()
 	var lowest_id = slices_ids[0]
 	var highest_id = slices_ids[-1]
-	for slice_id in slices_ids:
+	for slice_id in range(1): #slices_ids:
 		var slice : Spatial = Latent_space_slice.instance()
 		slice.add_to_group(Constants.LATENT_SLICES_GROUP_NAME)		
 		var slice_z_pos = range_lerp(slice_id, lowest_id, highest_id, Constants.NODES_CONTAINER_SCALE_Z_MIN, Constants.NODES_CONTAINER_SCALE_Z_MAX)
@@ -76,42 +76,86 @@ func add_latent_space_slices_to_scene(embeddings : Array, slice_ids: Array, ids:
 				points_data.append({"pos": point_embeddings, "id": point_id})
 		slice.initiate_latent_nodes(points_data)
 		self.add_child(slice)
-			
+		
+func set_images_to_existing_nodes(images_data : Array, nodes_indices: Array):
+	var all_existing_nodes : Array = get_tree().get_nodes_in_group(Constants.LATENT_NODES_GROUP_NAME)
+	# pass decoded images to the relevant instances of Latent_space_node node
+	for index in range(images_data.size()):
+		# search through all existing nodes, find the relevant ones
+		for node in all_existing_nodes:
+			if(node.id == nodes_indices[index]):
+				var texture : Texture = Utils.decode_b64_image_to_texture(images_data[index])
+				node.set_image_texture(texture)
+				break
+				
+func add_lerped_latent_nodes(images_data: Array, existing_nodes_ids : Array, lerped_nodes_ids : Array, slerp_steps : int) -> void:
+	# WIP hack: add new slices to the top most slice for now
+	var slices = get_tree().get_nodes_in_group(Constants.LATENT_SLICES_GROUP_NAME)
+	var top_slice : Spatial 
+	# find the top most slice
+	for slice in slices:
+		if(slice.id == 0):
+			top_slice = slice
+	# find the relevant nodes	 in the scene
+	var all_latent_nodes : Array = get_tree().get_nodes_in_group(Constants.LATENT_NODES_GROUP_NAME)	
+	var existing_latent_nodes : Array = []
+	for id in existing_nodes_ids:	
+		for node in all_latent_nodes:
+			if (node.id == id):
+				existing_latent_nodes.append(node)
+				break
+	# create new nodes lerped from the existing ones
+	var lerp_weights : Array = Utils.get_linear_space(0.0, 1.0, slerp_steps)
+	# remove the first weight = 0.0 to avoid duplicating existing node
+	lerp_weights.pop_front()
+	# remove the last weight = 1.0 to avoid duplicating existing node	
+	lerp_weights.pop_back()
+	print(lerped_nodes_ids)
+	# create new nodes by lerping positions of existing nodes
+	for node_i in range(existing_nodes_ids.size()-1):
+		# process existing nodes in pairs
+		var first_pos : Vector3 = existing_latent_nodes[node_i].translation
+		var second_pos : Vector3 = existing_latent_nodes[node_i+1].translation
+		for lerp_i in range(lerp_weights.size()):
+			# the ids of lerped nodes are generated on the backend and delivered with metadata of the generated images
+			# they are separate from the ids of existing nodes to avoid duplicating existing nodes
+			var id : int = lerped_nodes_ids[node_i + lerp_i]
+			var weight : float = lerp_weights[lerp_i]
+			var pos : Vector3 = Utils.lerp_vec3(first_pos, second_pos, weight)
+			var texture : Texture = Utils.decode_b64_image_to_texture(images_data[node_i + lerp_i])
+			top_slice.add_latent_node(id, pos, Color(0, 1, 0), texture)
+	
 func _on_latent_node_selected(body) -> void: 
 	var latent_node_ref = body.get_parent()
+	# if the node is being deselected remove it frorm the selected ids array
+	if(latent_node_ref.is_selected):
+		var remove_index = selected_nodes_ids.find(latent_node_ref.id)
+		if(remove_index >= 0):
+			selected_nodes_ids.remove(remove_index)
+	# otherwise add it to the ids array
+	else: 
+		selected_nodes_ids.append(latent_node_ref.id)
+	# update the selected state of the node itself
 	latent_node_ref.update_on_selected()
-	
+
 func _on_get_selected_latent_nodes(request_kind : String) -> void:
-	var selected : Array = []
-	var nodes = get_tree().get_nodes_in_group(Constants.LATENT_NODES_GROUP_NAME)
-	for node in nodes:
-		if(node.is_selected):
-			selected.append(node.id)
-	emit_signal("return_selected_latent_nodes_ids", selected, request_kind)
+	# emit ids of the selected nodes
+	emit_signal("return_selected_latent_nodes_ids", selected_nodes_ids, request_kind)
 	
 func _on_z_scale_changed(z_scalar: float) -> void:
 	emit_signal("z_scale_changed", z_scalar)
 
-	
 func _on_return_images(data) -> void:
 	print("ims received in container")
 	var metadata: Dictionary = data[0]
 	var images_data: PoolStringArray = data[1] 
-	var latent_nodes : Array = get_tree().get_nodes_in_group(Constants.LATENT_NODES_GROUP_NAME)
-	# pass decoded images to the relevant instances of Latent_space_node node
-	for index in range(images_data.size()):
-		# decode image data to texture
-		var image : Image = Encode_utils.decode_b64_image_string(images_data[index])
-		var texture : ImageTexture = ImageTexture.new()
-		texture.create_from_image(image, 0)
-		# find where does the image belong to in the latent space
-		var latent_space_index : int = metadata.indices[index]
-		# find the relevant latent node 
-		for node in latent_nodes:
-			if(node.id == latent_space_index):
-				node.set_image_texture(texture)
-				break
-
+	set_images_to_existing_nodes(images_data, metadata.indices)
+ 
+func _on_return_slerped_images(data) -> void:
+	var metadata: Dictionary = data[0]
+	var images_data: PoolStringArray = data[1] 
+	add_lerped_latent_nodes(images_data, metadata.indices, metadata.lerped_indices, Constants.LATENT_NODE_SLERP_STEPS)
+	
 func _ready():
 	# connect signals
 	connect("return_selected_latent_nodes_ids", get_node("/root/App"), "_on_return_selected_latent_nodes_ids")
@@ -132,7 +176,7 @@ func _ready():
 	var ids : Array = Utils.filter_dicts_array_to_array(data, ["id"])
 	ids = Utils.string_array_to_num_array(ids, "int")
 	var packed_embeddings : Array = circle_pack_embeddings_slices(embeddings_scaled, slice_ids, ids, Constants.LATENT_NODES_CIRCLE_MESH_RADIUS)
-	add_latent_space_slices_to_scene(packed_embeddings, slice_ids, ids)
+	initiate_latent_space_slices(packed_embeddings, slice_ids, ids)
 	
 	var bounding_box_coords : Array = Geom.get_3d_bounding_box_from_vertices(embeddings_scaled)
 	center_self(bounding_box_coords[0], bounding_box_coords[1])

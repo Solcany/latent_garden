@@ -8,6 +8,20 @@ signal z_scale_changed
 signal slice_visibility_changed
 var rng = RandomNumberGenerator.new()
 	
+func add_latent_node(id: int, pos: Vector3, color : Color = Color(0.0, 1.0, 0.0), texture : Texture = null) -> void:
+	var latent_node : Spatial = Latent_space_node.instance()
+	latent_node.add_to_group(Constants.LATENT_NODES_GROUP_NAME)	
+	latent_node.translation = pos
+	latent_node.id = id
+	latent_node.color = color
+	connect("slice_visibility_changed", latent_node, "_on_slice_visibility_changed")		
+	connect("z_scale_changed", latent_node, "_on_z_scale_changed")
+	self.add_child(latent_node)
+	if(texture):
+		latent_node.set_image_texture(texture)
+	# WIP: should z_scale_changed be emitted when individual node is added?
+	# check last lines of initiate_latent_nodes func
+
 func initiate_latent_nodes(nodes_data: Array) -> void:
 	rng.randomize()
 	var color: Color = Color(rng.randf_range(0.5, 1.0), rng.randf_range(0.5, 1.0), rng.randf_range(0.5, 1.0))
@@ -15,17 +29,11 @@ func initiate_latent_nodes(nodes_data: Array) -> void:
 	for node_data in nodes_data:
 		var pos: Vector3 = node_data.pos
 		var id: int = node_data.id
-		var latent_node : Spatial = Latent_space_node.instance()
-		latent_node.add_to_group(Constants.LATENT_NODES_GROUP_NAME)
-		latent_node.translation = pos
-		latent_node.id = id
-		latent_node.color = color
-		connect("slice_visibility_changed", latent_node, "_on_slice_visibility_changed")		
-		connect("z_scale_changed", latent_node, "_on_z_scale_changed")
-		self.add_child(latent_node)
+		add_latent_node(id, pos, color)
+		
 	var node_mesh_scalar : float = range_lerp(self.translation.z, -Constants.NODES_CONTAINER_SCALE_Z_MIN, -Constants.NODES_CONTAINER_SCALE_Z_MAX, 1.0, 0.0)		
 	emit_signal("z_scale_changed", node_mesh_scalar)
-
+	
 func signal_own_visibility() -> void:
 	if(abs(self.translation.z) < Constants.CAMERA_FAR):
 		emit_signal("slice_visibility_changed", true)

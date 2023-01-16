@@ -8,7 +8,7 @@ var color : Color = Color(1,1,1)
 var has_image: bool = false
 var is_selectable : bool = true
 # WIP implement has_image to avoid requesting images for lat nodes that already have image generated#var has_image: bool = false
-var id : int 
+var id : float 
 
 var fade_image_shader = preload("res://shader/fade_image.gdshader")
 var solid_shader = preload("res://shader/solid.gdshader")
@@ -16,7 +16,6 @@ var solid_shader = preload("res://shader/solid.gdshader")
 func set_image_texture(texture: ImageTexture) -> void:
 	var mat = $Image_mesh.get_surface_material(0)
 	mat.set_shader_param("image", texture)
-	#$Image_mesh.set_surface_material(0, mat)
 	$Image_mesh.visible = true
 	$Collider/Mesh.visible = false
 	is_selected = false
