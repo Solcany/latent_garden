@@ -4,12 +4,12 @@ import os
 import umap
 import numpy as np
 
-TOTAL_SAMPLE_SIZE = 1000
-SLICE_SIZE = 100
+TOTAL_SAMPLE_SIZE = 800
+SLICE_SIZE = 400
 SLICES_N = int(TOTAL_SAMPLE_SIZE / SLICE_SIZE)
 LATENT_VECTOR_SIZE = 256
-UMAP_NEIGHBOURS = 50
-UMAP_MIN_DISTATNCE = 0.1
+UMAP_NEIGHBOURS = 150
+UMAP_MIN_DISTANCE = 0.5
 UMAP_DIMENSIONS = 2
 OUTPUT_PATH = "./output/"
 FRONT_END_CSV_FILENAME = "frontend_2d_embeddings_slices"
@@ -28,7 +28,7 @@ def main():
 	total_sample = np.random.normal(0, 1, (TOTAL_SAMPLE_SIZE, LATENT_VECTOR_SIZE))
 	print("Running umap")	
 	# reduce the dimensions of the sample to UMAP_DIMENSIONS dimensions
-	reducer = umap.UMAP(n_neighbors=UMAP_NEIGHBOURS, min_dist=UMAP_MIN_DISTATNCE, n_components=UMAP_DIMENSIONS)
+	reducer = umap.UMAP(n_neighbors=UMAP_NEIGHBOURS, min_dist=UMAP_MIN_DISTANCE, n_components=UMAP_DIMENSIONS)
 	embeddings = reducer.fit_transform(total_sample)
 
 	# get a pool of indexes to randomly choose from for each slice
