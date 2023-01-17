@@ -185,8 +185,10 @@ func _ready():
 	slice_ids = Utils.string_array_to_num_array(slice_ids, "int")
 	var ids : Array = Utils.filter_dicts_array_to_array(data, ["id"])
 	ids = Utils.string_array_to_num_array(ids, "int")
-	var packed_embeddings : Array = circle_pack_embeddings_slices(embeddings_scaled, slice_ids, ids, Constants.LATENT_NODES_CIRCLE_MESH_RADIUS)
-	initiate_latent_space_slices(packed_embeddings, slice_ids, ids)
+	#var packed_embeddings : Array = circle_pack_embeddings_slices(embeddings_scaled, slice_ids, ids, Constants.LATENT_NODES_CIRCLE_MESH_RADIUS)
+	#initiate_latent_space_slices(packed_embeddings, slice_ids, ids)
+	
+	initiate_latent_space_slices(embeddings_scaled, slice_ids, ids)
 	
 	var bounding_box_coords : Array = Geom.get_3d_bounding_box_from_vertices(embeddings_scaled)
 	center_self(bounding_box_coords[0], bounding_box_coords[1])

@@ -6,7 +6,7 @@ import umap
 import numpy as np
 
 umap_neighbours = 50
-umap_min_distatnce = 0.1
+umap_min_distance = 0.1
 umap_dimensions = 2
 output_path = "./output/"
 csv_filename = "random_nums_3d_embeddings"
@@ -24,7 +24,7 @@ def main():
 
 	print("Running umap")	
 	# get embeddings
-	reducer = umap.UMAP(n_neighbors=umap_neighbours, min_dist=umap_min_distatnce, n_components=umap_dimensions)
+	reducer = umap.UMAP(n_neighbors=umap_neighbours, min_dist=umap_min_distance, n_components=umap_dimensions)
 	embeddings = reducer.fit_transform(numbers)
 
 	# create 3rd column for z index, where z is always 0

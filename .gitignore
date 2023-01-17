@@ -21,3 +21,4 @@ sle_gan/
 *.jpg
 *.png
 back_end/umap_sky_watch_images/output/*.csv
+ui_sketch_assets/
