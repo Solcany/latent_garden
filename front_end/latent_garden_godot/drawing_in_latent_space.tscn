@@ -48,6 +48,7 @@ text = "Combine"
 script = ExtResource( 11 )
 
 [node name="Slider_nodes_container_z_scale" type="VSlider" parent="Gui"]
+visible = false
 margin_left = 1237.07
 margin_top = 239.772
 margin_right = 1257.07
