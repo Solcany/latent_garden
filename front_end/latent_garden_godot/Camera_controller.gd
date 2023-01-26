@@ -4,7 +4,7 @@ var viewport_size : Vector2
 var is_camera_panning : bool = false
 var prev_norm_mouse_pos : Vector2
 var camera_zoom : float = 0.0
-var camera_velocity: float = 0.1
+var camera_velocity: float = 0.03
 
 func handle_mouse_moving(event) -> void:
 	if(is_camera_panning):
@@ -57,11 +57,18 @@ func handle_mouse_moving(event) -> void:
 #		var dir : Vector3 = Vector3(x, y, 0);
 #		$Camera.translation += dir
 
-func handle_mouse_wheel_up():
+func handle_mouse_wheel_up() -> void:
 	if(camera_zoom < 1.0):
-		var projection_size = range_lerp(camera_zoom, 0.0, 1.0, Constants.CAMERA_PROJECTION_SIZE_MIN, Constants.CAMERA_PROJECTION_SIZE_MAX)
-		$Camera.size = projection_size
 		camera_zoom += camera_velocity
+		var projection_size = range_lerp(camera_zoom, 1.0, 0.0, Constants.CAMERA_PROJECTION_SIZE_MIN, Constants.CAMERA_PROJECTION_SIZE_MAX)
+		$Camera.size = projection_size
+
+func handle_mouse_wheel_down() -> void:
+	if(camera_zoom > 0.0):
+		camera_zoom -= camera_velocity
+		var projection_size = range_lerp(camera_zoom, 1.0, 0.0, Constants.CAMERA_PROJECTION_SIZE_MIN, Constants.CAMERA_PROJECTION_SIZE_MAX)
+		$Camera.size = projection_size
+
 		
 # WIP this handler funcand the event should be renamed to more generic name, 
 # change in App and the slider
@@ -82,7 +89,7 @@ func _process(delta):
 	if Input.is_action_just_released("ui_mouse_wheel_up"):
 		handle_mouse_wheel_up()
 	elif Input.is_action_just_released("ui_mouse_wheel_down"):
-		print("mouse wh down!")
+		handle_mouse_wheel_down()
 	
 	
 func _input(event):
