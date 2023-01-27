@@ -1,6 +1,6 @@
 extends Spatial
 
-### Person input signals
+### ui input signals
 signal get_selected_latent_nodes
 func _on_submit_generate_button_pressed() -> void:
 	emit_signal("get_selected_latent_nodes", "generate")
@@ -11,6 +11,11 @@ func _on_submit_generate_slerped_button_pressed() -> void:
 signal nodes_container_z_scale_changed
 func _on_slider_nodes_container_z_scale_value_changed(value) -> void:
 	emit_signal("nodes_container_z_scale_changed", value)
+	
+# relay mouse wheel update from Mouse_wheel ui element
+signal mouse_wheel_update
+func _on_mouse_wheel_update(value) -> void:
+	emit_signal("mouse_wheel_update", value)
 
 ### Server IO
 # when the Nodes container returns selected latent nodes
@@ -40,7 +45,8 @@ func _ready():
 	### Person input
 	connect("nodes_container_z_scale_changed", get_node("Nodes"), "_on_nodes_container_z_scale_changed")
 	connect("nodes_container_z_scale_changed", get_node("Camera_controller"), "_on_nodes_container_z_scale_changed")
-		
+	connect("mouse_wheel_update", get_node("/root/App/Camera_controller"), "_on_mouse_wheel_update")
+	
 	### Server IO
 	# query currently selected latent nodes from the Nodes container
 	connect("get_selected_latent_nodes", get_node("Nodes/Nodes_container"), "_on_get_selected_latent_nodes")
@@ -52,3 +58,5 @@ func _ready():
 	# request images from the server
 	connect("request_generate_images", get_node("Tcp_client"), "_on_request_generate_images")
 	connect("request_generate_slerped_images", get_node("Tcp_client"), "_on_request_generate_slerped_images")
+	
+	connect("mouse_wheel_update", get_node("/root/App/Camera_controller"), "_on_mouse_wheel_update")
