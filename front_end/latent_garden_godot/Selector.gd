@@ -1,7 +1,6 @@
 tool
 extends Node
 
-var is_colliding_with_node : bool = false
 var colliding_body = null
 var selector_gui_size: Vector2
 var selector_screen_pos : Vector2
@@ -87,18 +86,16 @@ func handle_mouse_move(event):
 	collider_pos.z = 0# -Constants.SELECTOR_COLLIDER_Z_SCALE
 	$Selector_collider.translation = collider_pos
 	
-func handle_mouse_click(event) -> void:
-	if(is_colliding_with_node && colliding_body):
+func handle_mouse_click() -> void:
+	if(colliding_body):
 		emit_signal("latent_node_selected", colliding_body)
 		
 func _on_body_entered_selector(body) -> void:
 	print("collision found")
-	is_colliding_with_node = true
 	colliding_body = body
 	
 func _on_body_exited_selector(body) -> void:
 	print("collision exited")	
-	is_colliding_with_node = false
 	colliding_body = null
 	
 func _on_mouse_wheel_update(mouse_wheel_value) -> void:
@@ -107,10 +104,13 @@ func _on_mouse_wheel_update(mouse_wheel_value) -> void:
 func _ready():
 	init_selector_collider()
 	
+func _process(delta):
+	if Input.is_action_just_released("ui_left_mouse"):
+		handle_mouse_click()
+		
 func _input(event):
 	if event is InputEventMouseMotion:
 		handle_mouse_move(event)
-	elif (event is InputEventMouseButton && !event.pressed):
-		handle_mouse_click(event)
+	
 		
 		
