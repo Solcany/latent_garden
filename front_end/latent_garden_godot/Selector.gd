@@ -91,11 +91,9 @@ func handle_mouse_click() -> void:
 		emit_signal("latent_node_selected", colliding_body)
 		
 func _on_body_entered_selector(body) -> void:
-	print("collision found")
 	colliding_body = body
 	
 func _on_body_exited_selector(body) -> void:
-	print("collision exited")	
 	colliding_body = null
 	
 func _on_mouse_wheel_update(mouse_wheel_value) -> void:

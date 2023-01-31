@@ -229,7 +229,20 @@ static func get_vec_array_min(array : Array, vec_coord : String, min_val_init : 
 	for vec in array:
 		min_val = min(vec[vec_coord], min_val)
 	return min_val
-
+	
+static func every_nth_el_of_array(array, n, keep=true) -> Array:
+	# keeps or removes every nth element of array
+	var new_arr : Array = []
+	if(!keep):
+		new_arr = array.duplicate()
+	for i in range(array.size()):
+		if(i % n == 0):
+			if(keep):
+				new_arr.append(array[i])
+			else:
+				new_arr.rermove(i)
+	return new_arr
+		
 ### IMAGES, COLOR ###
 	
 static func load_images_to_textures(folder_path : String, extension : String, num_images: int, start_index: int = 1) -> Array:
