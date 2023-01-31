@@ -230,18 +230,21 @@ static func get_vec_array_min(array : Array, vec_coord : String, min_val_init : 
 		min_val = min(vec[vec_coord], min_val)
 	return min_val
 	
-static func every_nth_el_of_array(array, n, keep=true) -> Array:
-	# keeps or removes every nth element of array
-	var new_arr : Array = []
-	if(!keep):
-		new_arr = array.duplicate()
+static func get_every_nth_el_of_array(array, n) -> Array:
+	var new_array : Array = []
 	for i in range(array.size()):
 		if(i % n == 0):
-			if(keep):
-				new_arr.append(array[i])
-			else:
-				new_arr.rermove(i)
-	return new_arr
+			new_array.append(array[i])
+	return new_array
+	
+static func remove_every_nth_el_of_array(array, n) -> Array:
+	var new_array = array.duplicate()
+	var n_removed : int = 0
+	for i in range(array.size()):
+		if(i % n == 0):
+			new_array.remove(i - n_removed)
+			n_removed += 1
+	return new_array
 		
 ### IMAGES, COLOR ###
 	
