@@ -14,7 +14,7 @@ func handle_mouse_wheel_down() -> void:
 		emit_signal("mouse_wheel_update", mouse_wheel_value)
 		
 func _ready():
-	connect("mouse_wheel_update", get_node("/root/App/Camera_controller"), "_on_mouse_wheel_update")
+	connect("mouse_wheel_update", get_node("/root/App"), "_on_mouse_wheel_update")
 
 func _process(delta):
 	if Input.is_action_just_released("ui_mouse_wheel_up"):

@@ -12,9 +12,9 @@
 [ext_resource path="res://Camera_controller.gd" type="Script" id=10]
 [ext_resource path="res://Button_submit_add_selection.gd" type="Script" id=11]
 
-[sub_resource type="BoxShape" id=2]
-
 [sub_resource type="CubeMesh" id=3]
+
+[sub_resource type="BoxShape" id=4]
 
 [sub_resource type="Environment" id=1]
 background_mode = 1
@@ -82,16 +82,14 @@ mouse_filter = 2
 editor_only = false
 
 [node name="Selector_collider" type="Area" parent="Nodes/Nodes_Selector"]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -6 )
 script = ExtResource( 2 )
 
-[node name="Collider" type="CollisionShape" parent="Nodes/Nodes_Selector/Selector_collider"]
-transform = Transform( 0.06, 0, 0, 0, 0.06, 0, 0, 0, 6, 0, 0, 0 )
-shape = SubResource( 2 )
-
-[node name="Debug_collider_mesh" type="MeshInstance" parent="Nodes/Nodes_Selector/Selector_collider"]
-transform = Transform( 0.06, 0, 0, 0, 0.06, 0, 0, 0, 6, 0, 0, 0 )
+[node name="Debug_collider_box" type="MeshInstance" parent="Nodes/Nodes_Selector/Selector_collider"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -7 )
 mesh = SubResource( 3 )
+
+[node name="Collision_shape" type="CollisionShape" parent="Nodes/Nodes_Selector/Selector_collider"]
+shape = SubResource( 4 )
 
 [node name="Nodes_container" type="Spatial" parent="Nodes"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -2.5, -1.57459, 0 )

@@ -4,6 +4,7 @@ extends Node
 var is_colliding_with_node : bool = false
 var colliding_body = null
 var selector_gui_size: Vector2
+var selector_screen_pos : Vector2
 onready var camera_ref = get_node("/root/App/Camera_controller/Camera")
 signal latent_node_selected
 
@@ -20,49 +21,88 @@ func unproject_world_selector_to_gui_representation(selector_world_scale: Vector
 	return Vector2(selector_gui_width, selector_gui_height)
 
 func init_selector_collider():
-	var collider_scale : Vector3 = Vector3(Constants.SELECTOR_COLLIDER_XY_SCALE,
-											Constants.SELECTOR_COLLIDER_XY_SCALE,
-											Constants.SELECTOR_COLLIDER_Z_SCALE)
-	$Selector_collider/Collider.scale = collider_scale
-	$Selector_collider/Debug_collider_mesh.scale = collider_scale
-	$Selector_collider.translation.z = -Constants.SELECTOR_COLLIDER_Z_SCALE
+	var collision_shape_scale : Vector3 = Vector3(Constants.SELECTOR_COLLIDER_SHAPE_XY_SCALE,
+												Constants.SELECTOR_COLLIDER_SHAPE_XY_SCALE,
+												Constants.SELECTOR_COLLIDER_SHAPE_Z_SCALE)
+												
+	var collision_debug_box_scale : Vector3 = Vector3(Constants.SELECTOR_COLLIDER_DEBUG_BOX_XY,
+													Constants.SELECTOR_COLLIDER_DEBUG_BOX_XY,
+													Constants.SELECTOR_COLLIDER_DEBUG_BOX_Z)
+										
+	$Selector_collider/Collision_shape.scale = collision_shape_scale
+	$Selector_collider/Collision_shape.shape.extents.x = Constants.SELECTOR_COLLIDER_SHAPE_XYZ_EXTENTS
+	$Selector_collider/Collision_shape.shape.extents.y = Constants.SELECTOR_COLLIDER_SHAPE_XYZ_EXTENTS
+	$Selector_collider/Collision_shape.shape.extents.z = Constants.SELECTOR_COLLIDER_SHAPE_XYZ_EXTENTS
+	
+	$Selector_collider/Debug_collider_box.scale = collision_debug_box_scale
+	#$Selector_collider.translation.z = -Constants.SELECTOR_COLLIDER_Z_SCALE
+	
 	# unproject the world selector scale for the 2d gui overlay representation
-	selector_gui_size = unproject_world_selector_to_gui_representation(collider_scale)
+	selector_gui_size = unproject_world_selector_to_gui_representation(collision_debug_box_scale)
 	# pass signals when a node is selected to the container containing the nodes
 	var latent_nodes_container_ref = get_node("/root/App/Nodes/Nodes_container")
 	connect("latent_node_selected", latent_nodes_container_ref ,"_on_latent_node_selected")
 
+func handle_mouse_wheel_update(scalar : float) -> void:
+	var collision_debug_box_scale : Vector3 = Vector3(Constants.SELECTOR_COLLIDER_DEBUG_BOX_XY,
+													Constants.SELECTOR_COLLIDER_DEBUG_BOX_XY,
+													Constants.SELECTOR_COLLIDER_DEBUG_BOX_Z)
+
+#	var collider_scale_xy : float = 
+#	$Selector_collider/Collider.scale = collider_scale
+#	$Selector_collider/Debug_collider_mesh.scale = collider_scale
+#	$Selector_collider.translation.z = -Constants.SELECTOR_COLLIDER_Z_SCALE
+	# unproject the world selector scale for the 2d gui overlay representation
+	selector_gui_size = unproject_world_selector_to_gui_representation(collision_debug_box_scale)
+	update_selector_size()
+	# pass signals when a node is selected to the container containing the nodes
+#	var latent_nodes_container_ref = get_node("/root/App/Nodes/Nodes_container")
+#	connect("latent_node_selected", latent_nodes_container_ref ,"_on_latent_node_selected")
+
+func update_selector_size() -> void:
+	print("update!")
+	var left : float = selector_screen_pos.x - selector_gui_size.x/2
+	var right : float = selector_screen_pos.x + selector_gui_size.x/2	
+	var top : float = selector_screen_pos.y - selector_gui_size.y/2
+	var bottom : float = selector_screen_pos.y + selector_gui_size.y/2
+	# translatet selector gui rectangle on mouse event
+	$Selector_gui/Selector_rect.margin_left = left
+	$Selector_gui/Selector_rect.margin_right = right
+	$Selector_gui/Selector_rect.margin_top	= top
+	$Selector_gui/Selector_rect.margin_bottom = bottom
+	
 func handle_mouse_move(event): 
-	var mouse_x : float = event.position.x
-	var mouse_y : float = event.position.y
-	var left : float = mouse_x - selector_gui_size.x/2
-	var right : float = mouse_x + selector_gui_size.x/2	
-	var top : float = mouse_y - selector_gui_size.y/2
-	var bottom : float = mouse_y + selector_gui_size.y/2
+	selector_screen_pos = Vector2(event.position.x, event.position.y)
+	var left : float = selector_screen_pos.x - selector_gui_size.x/2
+	var right : float = selector_screen_pos.x + selector_gui_size.x/2	
+	var top : float = selector_screen_pos.y - selector_gui_size.y/2
+	var bottom : float = selector_screen_pos.y + selector_gui_size.y/2
 	# translatet selector gui rectangle on mouse event
 	$Selector_gui/Selector_rect.margin_left = left
 	$Selector_gui/Selector_rect.margin_right = right
 	$Selector_gui/Selector_rect.margin_top	= top
 	$Selector_gui/Selector_rect.margin_bottom = bottom
 	# translate in world selector collider on mouse event
-	var collider_pos : Vector3 = camera_ref.project_position(Vector2(mouse_x,mouse_y), 1)
-	collider_pos.z = -Constants.SELECTOR_COLLIDER_Z_SCALE
+	var collider_pos : Vector3 = camera_ref.project_position(selector_screen_pos, 1)
+	collider_pos.z = 0# -Constants.SELECTOR_COLLIDER_Z_SCALE
 	$Selector_collider.translation = collider_pos
 	
 func handle_mouse_click(event) -> void:
 	if(is_colliding_with_node && colliding_body):
-		emit_signal("latent_node_selected", colliding_body)	
-
-func _on_z_scale_changed(scalar: float) -> void:
-	pass
-
+		emit_signal("latent_node_selected", colliding_body)
+		
 func _on_body_entered_selector(body) -> void:
+	print("collision found")
 	is_colliding_with_node = true
 	colliding_body = body
 	
 func _on_body_exited_selector(body) -> void:
+	print("collision exited")	
 	is_colliding_with_node = false
 	colliding_body = null
+	
+func _on_mouse_wheel_update(mouse_wheel_value) -> void:
+	handle_mouse_wheel_update(mouse_wheel_value)
 	
 func _ready():
 	init_selector_collider()

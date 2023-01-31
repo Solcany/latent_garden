@@ -46,6 +46,7 @@ func _ready():
 	connect("nodes_container_z_scale_changed", get_node("Nodes"), "_on_nodes_container_z_scale_changed")
 	connect("nodes_container_z_scale_changed", get_node("Camera_controller"), "_on_nodes_container_z_scale_changed")
 	connect("mouse_wheel_update", get_node("/root/App/Camera_controller"), "_on_mouse_wheel_update")
+	connect("mouse_wheel_update", get_node("/root/App/Nodes/Nodes_Selector"), "_on_mouse_wheel_update")
 	
 	### Server IO
 	# query currently selected latent nodes from the Nodes container
