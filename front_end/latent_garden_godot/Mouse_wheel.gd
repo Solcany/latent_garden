@@ -19,5 +19,6 @@ func _ready():
 func _process(delta):
 	if Input.is_action_just_released("ui_mouse_wheel_up"):
 		handle_mouse_wheel_up()
+		
 	elif Input.is_action_just_released("ui_mouse_wheel_down"):
 		handle_mouse_wheel_down()

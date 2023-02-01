@@ -29,20 +29,32 @@ def slerp(ratio, p1, p2):
 		return (1.0-ratio) * p1 + ratio * p2
 	return np.sin((1.0-ratio)*omega) / so * p1 + np.sin(ratio*omega) / so * p2
 
-def slerp_list(vectors, steps):
+def slerp_list(vectors, steps, keep_existing_vectors):
 	slerped_vectors = []
 	ratios = np.linspace(0, 1, num=steps)
-	# remove the first ratio = 0.0 to avoid duplicate vectors
-	# remove the last ratio = 1.0 to avoid duplicate vectors	
-	ratios = ratios[1:len(ratios)-1]
+
+	# keep existing vectors (ratio 0.0 and 1.0)
+	if keep_existing_vectors:
+		# add the first vector
+		slerped_vectors.append(vectors[0])		
+		# remove the first ratio = 0.0 to avoid duplicate vectors
+		ratios = ratios[1:]
+	# drop existing vectors
+	else:
+		# remove the first ratio = 0.0 to skip existing vectors
+		# remove the last ratio = 1.0 to skip existing vectors	
+		ratios = ratios[1:len(ratios)-1]
+
 	for idx in range(len(vectors)-1):
 		vec1 = vectors[idx]
 		vec2 = vectors[idx+1]
 		for ratio in ratios:
 			new_vec = slerp(ratio, vec1, vec2)
 			slerped_vectors.append(new_vec)
-	# add the very last point
-	slerped_vectors.append(vectors[-1])
+
+	#if keep_existing_vectors:
+		# add the very last point
+		#slerped_vectors.append(vectors[-1])
 	return np.array(slerped_vectors)
 
 

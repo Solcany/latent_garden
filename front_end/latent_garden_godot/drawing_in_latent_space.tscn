@@ -15,6 +15,7 @@
 [sub_resource type="CubeMesh" id=3]
 
 [sub_resource type="BoxShape" id=4]
+extents = Vector3( 0.205, 0.205, 0.205 )
 
 [sub_resource type="Environment" id=1]
 background_mode = 1
@@ -85,10 +86,11 @@ editor_only = false
 script = ExtResource( 2 )
 
 [node name="Debug_collider_box" type="MeshInstance" parent="Nodes/Nodes_Selector/Selector_collider"]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -7 )
+transform = Transform( 0.061, 0, 0, 0, 0.061, 0, 0, 0, 6, 0, 0, -7 )
 mesh = SubResource( 3 )
 
 [node name="Collision_shape" type="CollisionShape" parent="Nodes/Nodes_Selector/Selector_collider"]
+transform = Transform( 0.33, 0, 0, 0, 0.33, 0, 0, 0, 6, 0, 0, 0 )
 shape = SubResource( 4 )
 
 [node name="Nodes_container" type="Spatial" parent="Nodes"]
