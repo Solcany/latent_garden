@@ -3,7 +3,8 @@ extends Node
 var viewport_size : Vector2
 var is_camera_panning : bool = false
 var prev_norm_mouse_pos : Vector2
-
+var camera_zoom : float = 0.0
+var camera_velocity: float = 0.03
 
 func handle_mouse_moving(event) -> void:
 	if(is_camera_panning):
@@ -55,27 +56,27 @@ func handle_mouse_moving(event) -> void:
 #		var y : float = sin(angle) * Constants.CAMERA_LATERAL_MOVEMENT_DAMPING
 #		var dir : Vector3 = Vector3(x, y, 0);
 #		$Camera.translation += dir
-
+		
 # WIP this handler funcand the event should be renamed to more generic name, 
 # change in App and the slider
 func _on_nodes_container_z_scale_changed(value : float) -> void:
 	var projection_size = range_lerp(value, Constants.NODES_CONTAINER_SCALE_Z_MIN, Constants.NODES_CONTAINER_SCALE_Z_MAX, Constants.CAMERA_PROJECTION_SIZE_MIN, Constants.CAMERA_PROJECTION_SIZE_MAX)
 	$Camera.size = projection_size		
-		
+	
+func _on_mouse_wheel_update(mouse_wheel_value: float) -> void:
+	var projection_size = range_lerp(mouse_wheel_value, 1.0, 0.0, Constants.CAMERA_PROJECTION_SIZE_MIN, Constants.CAMERA_PROJECTION_SIZE_MAX)
+	$Camera.size = projection_size
+	
 func _ready():
 	$Camera.far = Constants.CAMERA_FAR	
 	viewport_size = get_viewport().size
-	#viewport_center = viewport_size/2
-
+	
 func _process(delta):
 	if !is_camera_panning and Input.is_action_pressed("camera_pan_mouse") and Input.is_action_pressed("camera_pan_key"):
 		is_camera_panning = true
 	elif is_camera_panning and Input.is_action_just_released("camera_pan_mouse") or Input.is_action_just_released("camera_pan_key"):
 		is_camera_panning = false
-
+	
 func _input(event):
-	if event is InputEventMouseMotion:
+	if event is InputEventMouseMotion: 
 		handle_mouse_moving(event)
-	#elif(event is InputEventMouseButton):
-	#	handle_mouse_pressed(event)
-
