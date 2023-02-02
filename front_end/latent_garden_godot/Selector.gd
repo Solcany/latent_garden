@@ -1,4 +1,3 @@
-tool
 extends Node
 
 var colliding_body = null
@@ -103,12 +102,12 @@ func _ready():
 	init_selector_collider()
 	
 func _process(delta):
-	if Input.is_action_just_released("ui_left_mouse"):
+	if Input.is_action_just_released("ui_mouse_left"):
 		handle_mouse_click()
 		
 func _input(event):
 	if event is InputEventMouseMotion:
 		handle_mouse_move(event)
-	
+
 		
 		
