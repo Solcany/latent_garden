@@ -65,21 +65,19 @@ class Gan:
 			self.update_all_ids(new_ids)
 		return lerped_ids.tolist()
 
-
 	def generate_images_from_slerped_selection(self, selection_indices, slerp_steps):
-		# returns only images resulting from slerping of the existing vectors		
 		vectors_selection = np.take(self.vectors, selection_indices, 0)
 
 		# get only slerped vectors
-		slerped_vectors = slerp_list(vectors_selection, slerp_steps, False)	
+		slerped_vectors = slerp_list(vectors_selection, slerp_steps, keep_existing_vectors=False)	
 
-		# update list of all vectors with the newly created vectors
+		# update list of all vectors with the newly slerped vectors
 		self.update_all_vectors(slerped_vectors)
 
-		# get slerped vectors intertwined with the existing ones
-		slerped_and_existing_vectors = slerp_list(vectors_selection, slerp_steps, True)
+		# get slerped vectors together with the existing ones
+		slerped_and_existing_vectors = slerp_list(vectors_selection, slerp_steps, keep_existing_vectors=True)
 
-		# reshape them to the GAN shape					
+		# reshape them to the GAN shape input				
 		slerped_and_existing_vectors = np.reshape(slerped_and_existing_vectors, constants.SLE_GAN_VECTOR_SHAPE)
 
 		# get ids of slerped vectors only

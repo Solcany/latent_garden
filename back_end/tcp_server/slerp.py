@@ -29,7 +29,7 @@ def slerp(ratio, p1, p2):
 		return (1.0-ratio) * p1 + ratio * p2
 	return np.sin((1.0-ratio)*omega) / so * p1 + np.sin(ratio*omega) / so * p2
 
-def slerp_list(vectors, steps, keep_existing_vectors):
+def slerp_list(vectors, steps, keep_existing_vectors=True):
 	slerped_vectors = []
 	ratios = np.linspace(0, 1, num=steps)
 
