@@ -44,7 +44,7 @@ func parse_client_data(client_data : String) -> Array:
 			var key = keyval.get_slice(Constants.MESSAGE_KEYVAL_DELIMITER, 0)
 			var val = keyval.get_slice(Constants.MESSAGE_KEYVAL_DELIMITER, 1)
 			metadata[key] = val
-			
+		
 		# continue parsing metadata based on the request kind of the client_data
 		if(metadata.response == "images" or metadata.response == "slerped_images"):
 			# convert indices from strings to ints

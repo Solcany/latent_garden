@@ -110,8 +110,21 @@ func add_slerped_latent_nodes(images_data: Array, existing_nodes_ids : Array, sl
 	# unselect the existing nodes
 	for node in existing_latent_nodes:
 		update_selected_nodes_list(node)
+		
+	# separate images belonging to the existing nodes and slerped images into 2 arrays
+	# get every existing node's image from the image data array
+	var images_from_existing_nodes : Array = Utils.get_every_nth_el_of_array(images_data, slerp_steps-1)
+	# remove every existing node's image from the image data array
+	var images_from_slerped_nodes : Array = Utils.remove_every_nth_el_of_array(images_data, slerp_steps-1)
 
-	# create new nodes lerped from the existing ones
+	# add images to the existing nodes
+	for node_i in range(existing_latent_nodes.size()):
+		var node = existing_latent_nodes[node_i]
+		if not node.has_image:
+			var texture : Texture = Utils.decode_b64_image_to_texture(images_from_existing_nodes[node_i])
+			node.set_image_texture(texture)		
+
+	# create new nodes by lerping existing ones, add images to them
 	var lerp_weights : Array = Utils.get_linear_space(0.0, 1.0, slerp_steps)
 	# remove the first weight = 0.0 to avoid duplicating existing node
 	lerp_weights.pop_front()
@@ -128,7 +141,7 @@ func add_slerped_latent_nodes(images_data: Array, existing_nodes_ids : Array, sl
 			var id : int = slerped_nodes_ids[node_i + lerp_i]
 			var weight : float = lerp_weights[lerp_i]
 			var pos : Vector3 = Utils.lerp_vec3(first_pos, second_pos, weight)
-			var texture : Texture = Utils.decode_b64_image_to_texture(images_data[node_i + lerp_i])
+			var texture : Texture = Utils.decode_b64_image_to_texture(images_from_slerped_nodes[node_i + lerp_i])
 			top_slice.add_latent_node(id, pos, Color(0, 1, 0), texture)
 
 func update_selected_nodes_list(node : Spatial) -> void:
@@ -146,8 +159,6 @@ func update_selected_nodes_list(node : Spatial) -> void:
 func _on_latent_node_selected(body) -> void: 
 	var node = body.get_parent()
 	update_selected_nodes_list(node)
-
-
 
 func _on_get_selected_latent_nodes(request_kind : String) -> void:
 	# emit ids of the selected nodes

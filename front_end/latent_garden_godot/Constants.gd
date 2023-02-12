@@ -28,7 +28,7 @@ const LATENT_NODE_COLLISION_SHAPE_SCALE_MIN : float = 0.02
 const LATENT_NODES_CIRCLE_MESH_RADIUS: float = 0.1
 const LATENT_NODES_CIRCLE_MESH_SEGMENTS: int = 115
 const LATENT_NODE_IMAGE_MESH_SCALE : float = 0.1
-const LATENT_NODE_SLERP_STEPS : int = 6 # includes the existing pair of nodes, example: STEPS = 3, will create 1 lerped point
+const LATENT_NODE_SLERP_STEPS : int = 6 # includes steps to create node @ slerp weight 0.0 and 1.0, example: STEPS = 3, will create 1 new lerped point
 
 # visualisation optimisation
 const CIRCLE_PACKER_MAX_SPEED : float = LATENT_NODES_CIRCLE_MESH_RADIUS/2.0
