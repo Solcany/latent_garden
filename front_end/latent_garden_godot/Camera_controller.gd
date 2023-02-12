@@ -73,10 +73,8 @@ func _ready():
 	
 func _process(delta):
 	if !is_camera_panning and Input.is_action_pressed("camera_pan_mouse") and Input.is_action_pressed("camera_pan_key"):
-		print("PAN!")
 		is_camera_panning = true
 	elif is_camera_panning and Input.is_action_just_released("camera_pan_mouse") or Input.is_action_just_released("camera_pan_key"):
-		print("UNPAN!")
 		is_camera_panning = false
 	
 func _input(event):

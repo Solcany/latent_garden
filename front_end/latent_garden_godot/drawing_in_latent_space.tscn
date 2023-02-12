@@ -1,4 +1,4 @@
-[gd_scene load_steps=15 format=2]
+[gd_scene load_steps=16 format=2]
 
 [ext_resource path="res://show_latent_space_slices.gd" type="Script" id=1]
 [ext_resource path="res://Selector_collider.gd" type="Script" id=2]
@@ -11,6 +11,7 @@
 [ext_resource path="res://Nodes.gd" type="Script" id=9]
 [ext_resource path="res://Camera_controller.gd" type="Script" id=10]
 [ext_resource path="res://Button_submit_add_selection.gd" type="Script" id=11]
+[ext_resource path="res://Image_exporter.gd" type="Script" id=12]
 
 [sub_resource type="CubeMesh" id=3]
 
@@ -27,6 +28,9 @@ script = ExtResource( 6 )
 
 [node name="Tcp_client" type="Node" parent="."]
 script = ExtResource( 3 )
+
+[node name="Image_exporter" type="Node" parent="."]
+script = ExtResource( 12 )
 
 [node name="Gui" type="Control" parent="."]
 margin_left = -2.0
