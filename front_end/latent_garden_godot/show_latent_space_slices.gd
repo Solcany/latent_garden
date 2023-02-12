@@ -91,7 +91,7 @@ func set_images_to_existing_nodes(images_data : Array, nodes_indices: Array):
 				node.set_image_texture(texture)
 				break
 				
-func add_lerped_latent_nodes(images_data: Array, existing_nodes_ids : Array, lerped_nodes_ids : Array, slerp_steps : int) -> void:
+func add_slerped_latent_nodes(images_data: Array, existing_nodes_ids : Array, slerped_nodes_ids : Array, slerp_steps : int) -> void:	
 	# WIP hack: add new slices to the top most slice for now
 	var slices = get_tree().get_nodes_in_group(Constants.LATENT_SLICES_GROUP_NAME)
 	var top_slice : Spatial 
@@ -99,7 +99,7 @@ func add_lerped_latent_nodes(images_data: Array, existing_nodes_ids : Array, ler
 	for slice in slices:
 		if(slice.id == 0):
 			top_slice = slice
-	# find the relevant nodes	 in the scene
+	# find the existing nodes	 in the scene from which the slerped onese were created
 	var all_latent_nodes : Array = get_tree().get_nodes_in_group(Constants.LATENT_NODES_GROUP_NAME)	
 	var existing_latent_nodes : Array = []
 	for id in existing_nodes_ids:	
@@ -110,8 +110,21 @@ func add_lerped_latent_nodes(images_data: Array, existing_nodes_ids : Array, ler
 	# unselect the existing nodes
 	for node in existing_latent_nodes:
 		update_selected_nodes_list(node)
+		
+	# separate images belonging to the existing nodes and slerped images into 2 arrays
+	# get every existing node's image from the image data array
+	var images_from_existing_nodes : Array = Utils.get_every_nth_el_of_array(images_data, slerp_steps-1)
+	# remove every existing node's image from the image data array
+	var images_from_slerped_nodes : Array = Utils.remove_every_nth_el_of_array(images_data, slerp_steps-1)
 
-	# create new nodes lerped from the existing ones
+	# add images to the existing nodes
+	for node_i in range(existing_latent_nodes.size()):
+		var node = existing_latent_nodes[node_i]
+		if not node.has_image:
+			var texture : Texture = Utils.decode_b64_image_to_texture(images_from_existing_nodes[node_i])
+			node.set_image_texture(texture)		
+
+	# create new nodes by lerping existing ones, add images to them
 	var lerp_weights : Array = Utils.get_linear_space(0.0, 1.0, slerp_steps)
 	# remove the first weight = 0.0 to avoid duplicating existing node
 	lerp_weights.pop_front()
@@ -125,10 +138,10 @@ func add_lerped_latent_nodes(images_data: Array, existing_nodes_ids : Array, ler
 		for lerp_i in range(lerp_weights.size()):
 			# the ids of lerped nodes are generated on the backend and delivered with metadata of the generated images
 			# they are separate from the ids of existing nodes to avoid duplicating existing nodes
-			var id : int = lerped_nodes_ids[node_i + lerp_i]
+			var id : int = slerped_nodes_ids[node_i + lerp_i]
 			var weight : float = lerp_weights[lerp_i]
 			var pos : Vector3 = Utils.lerp_vec3(first_pos, second_pos, weight)
-			var texture : Texture = Utils.decode_b64_image_to_texture(images_data[node_i + lerp_i])
+			var texture : Texture = Utils.decode_b64_image_to_texture(images_from_slerped_nodes[node_i + lerp_i])
 			top_slice.add_latent_node(id, pos, Color(0, 1, 0), texture)
 
 func update_selected_nodes_list(node : Spatial) -> void:
@@ -147,8 +160,6 @@ func _on_latent_node_selected(body) -> void:
 	var node = body.get_parent()
 	update_selected_nodes_list(node)
 
-
-
 func _on_get_selected_latent_nodes(request_kind : String) -> void:
 	# emit ids of the selected nodes
 	emit_signal("return_selected_latent_nodes_ids", selected_nodes_ids, request_kind)
@@ -164,7 +175,7 @@ func _on_return_images(data) -> void:
 func _on_return_slerped_images(data) -> void:
 	var metadata: Dictionary = data[0]
 	var images_data: PoolStringArray = data[1] 
-	add_lerped_latent_nodes(images_data, metadata.indices, metadata.lerped_indices, Constants.LATENT_NODE_SLERP_STEPS)
+	add_slerped_latent_nodes(images_data, metadata.indices, metadata.slerped_indices,  metadata.slerp_steps)
 	
 func _ready():
 	# connect signals

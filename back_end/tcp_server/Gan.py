@@ -60,18 +60,29 @@ class Gan:
 			# intersperse the new ids with the existing ones
 			# ids = np.insert(ids, insert_index, new_ids)
 			lerped_ids = np.append(lerped_ids, new_ids)
-			# move the insertion index forward
+			# move the insertion iødex forward
 			# insert_index = insert_index + slerp_steps + 1
 			self.update_all_ids(new_ids)
 		return lerped_ids.tolist()
 
 	def generate_images_from_slerped_selection(self, selection_indices, slerp_steps):
-		# returns only images resulting from slerping of the existing vectors		
 		vectors_selection = np.take(self.vectors, selection_indices, 0)
-		# returns only slerped vectors, drops vecs at 0.0 and 1.0 weights		
-		slerped_vectors = slerp_list(vectors_selection, slerp_steps)					
-		self.update_all_vectors(slerped_vectors)		
-		slerped_vectors = np.reshape(slerped_vectors, constants.SLE_GAN_VECTOR_SHAPE)
-		ids = self.get_lerped_ids(selection_indices, slerp_steps)
-		images = self.generate_images(slerped_vectors)
-		return (images, ids)
+
+		# get only slerped vectors
+		slerped_vectors = slerp_list(vectors_selection, slerp_steps, keep_existing_vectors=False)	
+
+		# update list of all vectors with the newly slerped vectors
+		self.update_all_vectors(slerped_vectors)
+
+		# get slerped vectors together with the existing ones
+		slerped_and_existing_vectors = slerp_list(vectors_selection, slerp_steps, keep_existing_vectors=True)
+
+		# reshape them to the GAN shape input				
+		slerped_and_existing_vectors = np.reshape(slerped_and_existing_vectors, constants.SLE_GAN_VECTOR_SHAPE)
+
+		# get ids of slerped vectors only
+		ids_of_slerped = self.get_lerped_ids(selection_indices, slerp_steps)
+
+		# generate images
+		images = self.generate_images(slerped_and_existing_vectors)
+		return (images, ids_of_slerped)

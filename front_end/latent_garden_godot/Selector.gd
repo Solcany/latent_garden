@@ -1,4 +1,3 @@
-tool
 extends Node
 
 var colliding_body = null
@@ -59,7 +58,6 @@ func handle_mouse_wheel_update(scalar : float) -> void:
 #	connect("latent_node_selected", latent_nodes_container_ref ,"_on_latent_node_selected")
 
 func update_selector_size() -> void:
-	print("update!")
 	var left : float = selector_screen_pos.x - selector_gui_size.x/2
 	var right : float = selector_screen_pos.x + selector_gui_size.x/2	
 	var top : float = selector_screen_pos.y - selector_gui_size.y/2
@@ -103,12 +101,15 @@ func _ready():
 	init_selector_collider()
 	
 func _process(delta):
-	if Input.is_action_just_released("ui_left_mouse"):
+	if Input.is_action_just_released("camera_pan_mouse") and not Input.is_action_pressed("camera_pan_key"):
 		handle_mouse_click()
+	
+	#if Input.is_action_just_released("ui_mouse_left"):
+	#	handle_mouse_click()
 		
 func _input(event):
 	if event is InputEventMouseMotion:
 		handle_mouse_move(event)
-	
+
 		
 		
