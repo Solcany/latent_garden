@@ -1,4 +1,4 @@
-[gd_scene load_steps=15 format=2]
+[gd_scene load_steps=16 format=2]
 
 [ext_resource path="res://show_latent_space_slices.gd" type="Script" id=1]
 [ext_resource path="res://Selector_collider.gd" type="Script" id=2]
@@ -11,6 +11,7 @@
 [ext_resource path="res://Nodes.gd" type="Script" id=9]
 [ext_resource path="res://Camera_controller.gd" type="Script" id=10]
 [ext_resource path="res://Button_submit_add_selection.gd" type="Script" id=11]
+[ext_resource path="res://Nodes_raycast_selector.gd" type="Script" id=12]
 
 [sub_resource type="CubeMesh" id=3]
 
@@ -68,28 +69,44 @@ script = ExtResource( 8 )
 [node name="Nodes" type="Node" parent="."]
 script = ExtResource( 9 )
 
-[node name="Nodes_Selector" type="Node" parent="Nodes"]
-script = ExtResource( 4 )
+[node name="Nodes_raycast_selector" type="Node" parent="Nodes"]
+script = ExtResource( 12 )
 
-[node name="Selector_gui" type="Control" parent="Nodes/Nodes_Selector"]
+[node name="Selector_gui" type="Control" parent="Nodes/Nodes_raycast_selector"]
 margin_right = 40.0
 margin_bottom = 40.0
 mouse_filter = 2
 
-[node name="Selector_rect" type="ReferenceRect" parent="Nodes/Nodes_Selector/Selector_gui"]
+[node name="Selector_rect" type="ReferenceRect" parent="Nodes/Nodes_raycast_selector/Selector_gui"]
 margin_right = 100.0
 margin_bottom = 100.0
 mouse_filter = 2
 editor_only = false
 
-[node name="Selector_collider" type="Area" parent="Nodes/Nodes_Selector"]
+[node name="(disabled in the code) Nodes_Selector" type="Node" parent="Nodes"]
+script = ExtResource( 4 )
+
+[node name="Selector_gui" type="Control" parent="Nodes/(disabled in the code) Nodes_Selector"]
+visible = false
+margin_right = 40.0
+margin_bottom = 40.0
+mouse_filter = 2
+
+[node name="Selector_rect" type="ReferenceRect" parent="Nodes/(disabled in the code) Nodes_Selector/Selector_gui"]
+margin_right = 100.0
+margin_bottom = 100.0
+mouse_filter = 2
+editor_only = false
+
+[node name="Selector_collider" type="Area" parent="Nodes/(disabled in the code) Nodes_Selector"]
+visible = false
 script = ExtResource( 2 )
 
-[node name="Debug_collider_box" type="MeshInstance" parent="Nodes/Nodes_Selector/Selector_collider"]
+[node name="Debug_collider_box" type="MeshInstance" parent="Nodes/(disabled in the code) Nodes_Selector/Selector_collider"]
 transform = Transform( 0.061, 0, 0, 0, 0.061, 0, 0, 0, 6, 0, 0, -7 )
 mesh = SubResource( 3 )
 
-[node name="Collision_shape" type="CollisionShape" parent="Nodes/Nodes_Selector/Selector_collider"]
+[node name="Collision_shape" type="CollisionShape" parent="Nodes/(disabled in the code) Nodes_Selector/Selector_collider"]
 transform = Transform( 0.33, 0, 0, 0, 0.33, 0, 0, 0, 6, 0, 0, 0 )
 shape = SubResource( 4 )
 
