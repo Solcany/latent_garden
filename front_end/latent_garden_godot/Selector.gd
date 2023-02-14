@@ -100,6 +100,11 @@ func _on_mouse_wheel_update(mouse_wheel_value) -> void:
 func _ready():
 	init_selector_collider()
 	
+
+	# !!!!!
+	# THIS DISABLES THE NODE 
+	set_process(false)
+	
 func _process(delta):
 	if Input.is_action_just_released("camera_pan_mouse") and not Input.is_action_pressed("camera_pan_key"):
 		handle_mouse_click()
