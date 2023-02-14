@@ -83,30 +83,30 @@ margin_bottom = 100.0
 mouse_filter = 2
 editor_only = false
 
-[node name="Nodes_Selector" type="Node" parent="Nodes"]
+[node name="(disabled in the code) Nodes_Selector" type="Node" parent="Nodes"]
 script = ExtResource( 4 )
 
-[node name="Selector_gui" type="Control" parent="Nodes/Nodes_Selector"]
+[node name="Selector_gui" type="Control" parent="Nodes/(disabled in the code) Nodes_Selector"]
 visible = false
 margin_right = 40.0
 margin_bottom = 40.0
 mouse_filter = 2
 
-[node name="Selector_rect" type="ReferenceRect" parent="Nodes/Nodes_Selector/Selector_gui"]
+[node name="Selector_rect" type="ReferenceRect" parent="Nodes/(disabled in the code) Nodes_Selector/Selector_gui"]
 margin_right = 100.0
 margin_bottom = 100.0
 mouse_filter = 2
 editor_only = false
 
-[node name="Selector_collider" type="Area" parent="Nodes/Nodes_Selector"]
+[node name="Selector_collider" type="Area" parent="Nodes/(disabled in the code) Nodes_Selector"]
 visible = false
 script = ExtResource( 2 )
 
-[node name="Debug_collider_box" type="MeshInstance" parent="Nodes/Nodes_Selector/Selector_collider"]
+[node name="Debug_collider_box" type="MeshInstance" parent="Nodes/(disabled in the code) Nodes_Selector/Selector_collider"]
 transform = Transform( 0.061, 0, 0, 0, 0.061, 0, 0, 0, 6, 0, 0, -7 )
 mesh = SubResource( 3 )
 
-[node name="Collision_shape" type="CollisionShape" parent="Nodes/Nodes_Selector/Selector_collider"]
+[node name="Collision_shape" type="CollisionShape" parent="Nodes/(disabled in the code) Nodes_Selector/Selector_collider"]
 transform = Transform( 0.33, 0, 0, 0, 0.33, 0, 0, 0, 6, 0, 0, 0 )
 shape = SubResource( 4 )
 
