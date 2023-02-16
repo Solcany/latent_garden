@@ -98,7 +98,8 @@ func _on_mouse_wheel_update(mouse_wheel_value) -> void:
 	handle_mouse_wheel_update(mouse_wheel_value)
 	
 func _ready():
-	init_selector_collider()
+	# uncomment to enable
+	# init_selector_collider()
 	
 
 	# !!!!!
