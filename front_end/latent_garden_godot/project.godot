@@ -57,7 +57,7 @@ _global_script_class_icons={
 [application]
 
 config/name="Latent Garden"
-run/main_scene="res://drawing_in_latent_space.tscn"
+run/main_scene="res://export_image_demo.tscn"
 run/delta_sync_after_draw=true
 config/icon="res://icon.png"
 

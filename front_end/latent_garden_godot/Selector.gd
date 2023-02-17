@@ -101,8 +101,6 @@ func _ready():
 	# uncomment to enable
 	# init_selector_collider()
 	
-
-	# !!!!!
 	# THIS DISABLES THE NODE 
 	set_process(false)
 	

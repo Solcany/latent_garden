@@ -15,7 +15,7 @@ func _input(event):
 		var direct_state = get_world().direct_space_state
 		var collision = direct_state.intersect_ray(from, to)
 		if collision:
-			print("collision!")			
+			print("collision!")
 			print(collision)
 		#var cursorPos = Plane(Vector3.UP, transform.origin.y).intersects_ray(from, to)
 		#print(cursorPos)
