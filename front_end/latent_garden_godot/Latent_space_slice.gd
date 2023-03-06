@@ -24,8 +24,8 @@ func add_latent_node(id: int, pos: Vector3, color : Color = Color(0.0, 1.0, 0.0)
 
 func initiate_latent_nodes(nodes_data: Array) -> void:
 	rng.randomize()
-	var color: Color = Color(rng.randf_range(0.5, 1.0), rng.randf_range(0.5, 1.0), rng.randf_range(0.5, 1.0))
-
+	#var color: Color = Color(rng.randf_range(0.5, 1.0), rng.randf_range(0.5, 1.0), rng.randf_range(0.5, 1.0))
+	var color: Color = Color(1.0, 1.0, 1.0)
 	for node_data in nodes_data:
 		var pos: Vector3 = node_data.pos
 		var id: int = node_data.id
