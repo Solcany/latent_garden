@@ -20,6 +20,7 @@ func handle_mouse_click(event) -> void:
 	var from = camera_ref.project_ray_origin(event.position)
 	var to = from + camera_ref.project_ray_normal(event.position) * 100
 	var direct_state = camera_ref.get_world().direct_space_state
+	
 	var collision = direct_state.intersect_ray(from, to)
 	if collision:
 		emit_signal("latent_node_selected", collision.collider)
