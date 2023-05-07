@@ -57,6 +57,7 @@ func initiate_latent_space_slices(embeddings : Array, slice_ids: Array, ids: Arr
 	slices_ids.sort()
 	var lowest_id = slices_ids[0]
 	var highest_id = slices_ids[-1]
+	# debub: initiate only a single slice
 	for slice_id in range(1): #slices_ids:
 		var slice : Spatial = Latent_space_slice.instance()
 		slice.add_to_group(Constants.LATENT_SLICES_GROUP_NAME)		
